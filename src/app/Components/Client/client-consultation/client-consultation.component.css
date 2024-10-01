@@ -1,0 +1,455 @@
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+.blog-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.blog-card {
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 1rem rgba(0,0,0,0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.card-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.card-details {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  background: #f8f9fa;
+}
+
+.card-details span {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.card-text {
+  padding: 1rem;
+}
+
+.read-more {
+  padding: 1rem;
+  background: #007bff;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+}
+
+.read-more:hover {
+  background: #0056b3;
+}
+
+.btn-remove {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.btn-remove:hover {
+  background-color: #c82333;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 250px;
+  background-color: #4c3575;
+  color: white;
+  height: 100%;
+  padding: 1rem;
+}
+
+.sidebar .brand-icon {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+}
+
+.sidebar .logo-icon {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar .logo-icon img {
+  margin-right: 10px;
+}
+
+.sidebar .logo-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.sidebar .menu-list {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar .menu-list li {
+  margin: 0;
+}
+
+.sidebar .menu-list a {
+  display: flex;
+  align-items: center;
+  color: white;
+  padding: 0.75rem 1rem;
+  transition: background-color 0.3s;
+}
+
+.sidebar .menu-list a:hover {
+  background-color: #495057;
+}
+
+.sidebar .menu-list i {
+  margin-right: 10px;
+}
+
+.sidebar .btn {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Main Content Styles */
+.main {
+  margin-left: 250px;
+  padding: 1rem;
+}
+
+.main .container-xxl {
+  margin-top: 1rem;
+}
+
+.main .row {
+  margin-bottom: 1rem;
+}
+
+.banner img {
+  width: 100%;
+  height: auto;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.title {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.follow-info {
+  display: flex;
+  align-items: center;
+}
+
+.follow-info h2 {
+  margin: 0;
+  margin-left: 0.5rem;
+}
+
+.desc {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-top: 0.5rem;
+}
+
+/* Case Card Styles */
+.case-card {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.case-card .card-header {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.case-card .card-body {
+  padding: 1rem;
+}
+
+.case-card .card-footer {
+  background-color: #e9ecef;
+}
+
+.case-card .card-footer button {
+  margin-left: 0.5rem;
+}
+
+/* Modal Styles */
+.modal-content {
+  border-radius: 8px;
+}
+
+.modal-header, .modal-footer {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header {
+  background-color: #f8f9fa;
+}
+
+.modal-footer {
+  background-color: #f8f9fa;
+}
+
+.modal-body {
+  padding: 1rem;
+}
+
+.modal-body .form-label {
+  font-weight: bold;
+}
+
+.modal-body .form-control {
+  margin-bottom: 0.75rem;
+}
+
+/* Additional Styles */
+.container-xxl {
+  max-width: 1140px;
+  margin: auto;
+}
+
+.container {
+  margin-top: 2rem;
+}
+
+/* Section Title */
+.section-title h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Brutalist Card Styling */
+.brutalist-card {
+  width: calc(33.333% - 1rem);
+  margin: 0.5rem;
+  border: 4px solid #000;
+  background-color: #fff;
+  padding: 1.5rem;
+  box-shadow: 10px 10px 0 #000;
+  font-family: Arial, sans-serif;
+}
+
+.brutalist-card__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #000;
+  padding-bottom: 1rem;
+}
+
+.brutalist-card__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
+  padding: 0.5rem;
+}
+
+.brutalist-card__icon svg {
+  height: 1.5rem;
+  width: 1.5rem;
+  fill: #fff;
+}
+
+.brutalist-card__alert {
+  font-weight: 900;
+  color: #000;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+
+/* Brutalist Card Message Styling */
+.brutalist-card__message {
+  margin-top: 1rem;
+  color: #000;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  border-bottom: 2px solid #000;
+  padding-bottom: 1rem;
+  font-weight: 600;
+  overflow: hidden; /* Hide overflow content, but not necessarily */
+  white-space: normal; /* Allow text to wrap onto multiple lines */
+  word-wrap: break-word; /* Break long words to avoid overflow */
+}
+.text-danger {
+  color: #dc3545; /* Red color for less than a week */
+}
+
+.text-warning {
+  color: #ffc107; /* Yellow color for more than a week */
+}
+
+
+.brutalist-card__actions {
+  margin-top: 1rem;
+}
+
+.brutalist-card__button {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 3px solid #000;
+  background-color: #fff;
+  color: #000;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 5px 5px 0 #000;
+  overflow: hidden;
+  text-decoration: none;
+  margin-bottom: 1rem;
+}
+
+.brutalist-card__button--read {
+  background-color: #000;
+  color: #fff;
+}
+
+.brutalist-card__button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: all 0.6s;
+}
+
+.brutalist-card__button:hover::before {
+  left: 100%;
+}
+
+.brutalist-card__button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 #000;
+}
+
+.brutalist-card__button--mark:hover {
+  background-color: #296fbb;
+  border-color: #296fbb;
+  color: #fff;
+  box-shadow: 7px 7px 0 #004280;
+}
+
+.brutalist-card__button--read:hover {
+  background-color: #ff0000;
+  border-color: #ff0000;
+  color: #fff;
+  box-shadow: 7px 7px 0 #cc0000;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+  .brutalist-card {
+    width: calc(50% - 1rem); /* Adjust card width for smaller screens */
+  }
+}
+
+@media (max-width: 576px) {
+  .brutalist-card {
+    width: calc(100% - 1rem); /* Adjust card width for mobile screens */
+  }
+}
+.calendar-container {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-container app-calendar {
+  width: 100%;
+  height: auto;
+  transform:translateY(-18px);
+}
+
+/* Additional Styling for Calendar */
+.calendar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f4f8;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.calendar-container app-calendar {
+  max-width: 800px;
+  width: 100%;
+  height: 600px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-container .day {
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.calendar-container .day.selected {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.calendar-container .day:hover {
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}

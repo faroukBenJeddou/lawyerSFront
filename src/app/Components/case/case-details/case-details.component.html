@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lawyer Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark  fixed-top">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Centered Navbar Items -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mx-auto">
+        <!-- Your centered navbar items (if any) go here -->
+      </ul>
+    </div>
+
+    <!-- Right-aligned Notifications and Profile Image -->
+    <div class="d-flex align-items-center">
+      <a class="profile-link" [routerLink]="['/lawyer', lawyerId]" role="button"   aria-expanded="false">
+        Profile
+      </a>
+      <!-- Notifications Dropdown -->
+      <div class="nav-item dropdown me-3">
+        <a
+          class="nav-link dropdown-toggle"
+          href="#"
+          id="notificationsDropdown"
+          role="button"
+          (click)="markNotificationsAsViewed()"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="notification-icon fas fa-bell" [ngClass]="{ 'shake-icon': hasNewNotifications }"></i>
+          Notifications
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+          <!-- Check if there are no notifications -->
+          <li *ngIf="notifications.length === 0" class="dropdown-item text-center">
+            No new notifications
+          </li>
+
+          <!-- Iterate through notifications if available -->
+          <li *ngFor="let notification of notifications" class="notification-item">
+            <a class="dropdown-item" href="#">
+              <div class="notification-content">
+                <strong>{{ notification.client.firstName }} {{ notification.client.familyName }}</strong>
+                <p class="notification-details">
+                  Title: {{ notification.title }}<br />
+                  Day: {{ notification.start | date: 'fullDate' }}<br />
+                  Time: {{ notification.start | date: 'shortTime' }}
+                  <span class="notification-time">{{ getTimeAgo(notification.start) }}</span>
+                </p>
+                <span class="notification-time">{{ notification.time }}</span>
+              </div>
+            </a>
+            <!-- Accept and Decline Buttons -->
+            <div class="d-flex justify-content-between mt-2 px-2">
+              <button class="btn btn-success btn-sm" (click)="acceptRequest(notification.requestId)">Accept</button>
+              <button class="btn btn-danger btn-sm" (click)="declineRequest(notification.requestId)">Decline</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Lawyer's Image and Dropdown -->
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle notification-icon" [ngClass]="{ 'shake': hasNewNotifications }" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+
+          <style>
+            /* Make the profile picture div transparent */
+            .dropdown .btn.btn-secondary {
+              background-color: transparent;
+              border: none; /* Optional: Remove border if you want */
+            }
+
+            /* Adjust the profile picture styling */
+            .dropdown .btn.btn-secondary img {
+              border-radius: 50%;
+              width: 70px;
+              height: 70px;
+            }
+          </style>
+
+          <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="rounded-circle" style="width: 70px; height: 70px;">
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" [routerLink]="['/lawyer', lawyerId]">Profile</a></li>
+          <li><a class="dropdown-item" href="#logout" (click)="onLogout()">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="sidebar px-4 py-4 py-md-5 me-0">
+  <div class="d-flex flex-column h-100">
+    <a class="mb-0 brand-icon">
+    <span class="logo-icon">
+    <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png" style="width: 200px; height:150px; " />
+
+</span>
+
+
+    </a>
+    <ul class="menu-list flex-grow-1 mt-3">
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
+          <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
+          <i class="icofont-briefcase"></i> <mat-icon>people</mat-icon> <span>Clients</span>
+        </a>
+      </li>
+
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
+          <i class="icofont-ticket"></i><mat-icon>gavel</mat-icon> <span>Cases</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
+          <i class="icofont-ticket"></i><mat-icon>event</mat-icon> <span>Consultations</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
+          <i class="icofont-users-alt-5"></i> <mat-icon>group</mat-icon> <span>Assistant</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+    </ul>
+    <button class="btn btn-danger" (click)="onLogout()">Logout
+      <span class="ms-2"> <mat-icon>exit_to_app</mat-icon>
+</span>
+    </button>
+  </div>
+</div>
+
+<div class="container mt-4" style="padding-top:200px">
+  <!-- Case Card -->
+  <div class="case-card card mb-3">
+    <div class="card-header d-flex align-items-center">
+      <span class="material-icons">gavel</span>
+      <h2 class="ms-2 mb-0" style="font-size: 20px">{{ case?.caseStatus }}</h2>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <span class="material-icons">badge</span>
+          <span class="ms-2" style="font-size: 20px">{{ case?.caseType }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="material-icons">calendar_today</span>
+          <span class="ms-2" style="font-size: 20px">{{ case?.start }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="material-icons">person</span>
+          <span class="ms-2" style="font-size: 20px">{{ case.client?.firstName }} {{ case.client?.familyName }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="material-icons">description</span>
+          <span class="ms-2" style="font-size: 20px">{{ case?.description }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="material-icons">attach_money</span>
+          <span class="ms-2" style="font-size: 20px">{{ case?.invoice?.price }}</span>
+        </div>
+
+        <div class="col-md-6 mb-3" *ngIf="calculateDaysLeft() !== null">
+          <span class="material-icons">event_note</span>
+          <span class="ms-2" style="font-size: 20px">{{ calculateDaysLeft() }} days until the closest hearing</span>
+        </div>
+
+        <div class="progress-bar-wrapper">
+          <!-- Visual progress bar -->
+          <div class="progress-bar">
+            <div class="progress" [ngStyle]="{'width': progressPercentage + '%'}"></div>
+          </div>
+
+          <!-- Phases with clickable buttons -->
+        </div>
+
+
+      </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+      <button class="btn btn-warning" (click)="openModal(case.caseId)">Add Documents</button>
+      <button class="btn btn-info" (click)="openHearingModal(case.caseId)">Add Hearing</button>
+    </div>
+  </div>
+
+  <!-- Hearings Section -->
+  <div class="container">
+    <div class="section-title mb-4">
+      <h3>Hearings</h3>
+    </div>
+    <div class="d-flex flex-wrap mb-4">
+      <div class="brutalist-card hearing-card" *ngFor="let hearing of hearings">
+        <div class="brutalist-card__header">
+          <div class="brutalist-card__icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 11h-6l1.5-1.5-4-4L10 7.5 5.5 3 3 5.5l4.5 4.5L6 13H3v2h8l-4 4h2l4-4 4 4h2l-4-4h8v-2z"/>
+            </svg>
+
+          </div>
+          <h4 class="brutalist-card__alert hearing-card__title">{{ hearing.title }}</h4>
+        </div>
+        <div class="brutalist-card__message hearing-card__date"><strong>Date:</strong> {{ hearing.start | date:'fullDate' }}
+        <br>
+          {{ hearing.start | date:'shortTime' }}
+        </div>
+        <div class="brutalist-card__actions">
+          <button class="btn btn-danger brutalist-card__button brutalist-card__button--read" (click)="deleteHearing(hearing.hearingId)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Documents Section -->
+  <div class="container">
+    <div class="section-title mb-4">
+      <h3>Documents</h3>
+    </div>
+    <div class="d-flex flex-wrap">
+      <div class="brutalist-card" *ngFor="let doc of documents">
+        <div class="brutalist-card__header">
+          <div class="brutalist-card__icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-4-4zm0 2.5L18.5 8H14V4.5zM6 4h8v4h4v12H6V4zm0 14h12v2H6v-2z"/>
+            </svg>
+          </div>
+          <h3 class="brutalist-card__alert">{{ doc.title }}</h3>
+        </div>
+        <div class="brutalist-card__message">
+          {{ doc.content }}
+        </div>
+        <div class="brutalist-card__actions">
+          <button class="btn btn-danger brutalist-card__button brutalist-card__button--read" (click)="deleteDocument(doc.id)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- Add Document Modal -->
+<div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true" [ngClass]="{'show': isModalOpen}" [ngStyle]="{'display': isModalOpen ? 'block' : 'none'}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title" id="documentModalLabel">Add Document</h4>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+      </div>
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <form (ngSubmit)="addDocument()">
+          <div class="mb-3">
+            <label for="documentTitle" class="form-label">Title</label>
+            <input type="text" class="form-control" id="documentTitle" [(ngModel)]="newDocument.title" name="title" required>
+          </div>
+          <div class="mb-3">
+            <label for="documentDate" class="form-label">Date</label>
+            <input type="date" class="form-control" id="documentDate" [(ngModel)]="newDocument.date" name="date" required>
+          </div>
+          <div class="mb-3">
+            <label for="documentContent" class="form-label">Content</label>
+            <textarea class="form-control" id="documentContent" [(ngModel)]="newDocument.content" name="content" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Document</button>
+        </form>
+      </div>
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Hearing Modal -->
+<!-- Add Hearing Modal -->
+<div class="modal fade" id="addNewHearingModal" tabindex="-1" aria-labelledby="addNewHearingModalLabel" aria-hidden="true" [ngClass]="{'show': isHearingModalOpen}" [ngStyle]="{'display': isHearingModalOpen ? 'block' : 'none'}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addNewHearingModalLabel">Add New Hearing</h5>
+        <button type="button" class="btn-close" (click)="closeHearingModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="newHearingDateTime" class="form-label">Hearing Date and Time</label>
+          <input type="datetime-local" id="newHearingDateTime" [(ngModel)]="newHearing.start" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="newHearingDescription" class="form-label">Description</label>
+          <textarea id="newHearingDescription" [(ngModel)]="newHearing.title" class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeHearingModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="addHearing()">Add Hearing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@angular/core@15.0.0/bundles/core.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@angular/common@15.0.0/bundles/common.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@angular/forms@15.0.0/bundles/forms.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

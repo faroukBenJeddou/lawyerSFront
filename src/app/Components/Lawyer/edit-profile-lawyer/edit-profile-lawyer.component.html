@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lawyer Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="utf-8"/>
+  <meta content="follow, index" name="robots"/>
+  <link href="user-profile.html" rel="canonical"/>
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+  <meta content="User profile page, powered by Tailwind CSS" name="description"/>
+  <meta content=" keenthemes" name="twitter:site"/>
+  <meta content=" keenthemes" name="twitter:creator"/>
+  <meta content="summary_large_image" name="twitter:card"/>
+  <meta content="Metronic - Tailwind CSS User Profile" name="twitter:title"/>
+  <meta content="User profile page, powered by Tailwind CSS" name="twitter:description"/>
+  <meta content="/static/metronic/tailwind/dist/assets/media/app/og-image.png" name="twitter:image"/>
+  <meta content="https://keenthemes.com/metronic/tailwind/demo1/account/home/user-profile" property="og:url"/>
+  <meta content="en_US" property="og:locale"/>
+  <meta content="website" property="og:type"/>
+  <meta content=" keenthemes" property="og:site_name"/>
+  <meta content="Metronic - Tailwind CSS User Profile" property="og:title"/>
+  <meta content="User profile page, powered by Tailwind CSS" property="og:description"/>
+  <meta content="/static/metronic/tailwind/dist/assets/media/app/og-image.png" property="og:image"/>
+  <link href="../aaaa/keenthemes.com/static/metronic/tailwind/dist/assets/media/app/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+  <link href="../aaaa/keenthemes.com/static/metronic/tailwind/dist/assets/media/app/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+  <link href="../aaaa/keenthemes.com/static/metronic/tailwind/dist/assets/media/app/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+  <link href="https://keenthemes.com/static/metronic/tailwind/dist/assets/media/app/favicon.ico" rel="shortcut icon"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght 400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <!-- Google tag (gtag.js) -->
+  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-52YZ3XGZJ6">
+
+  </script>
+  <script>
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+      const dropdown = this.nextElementSibling;
+      dropdown.classList.toggle('hidden');
+    });
+
+  </script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-52YZ3XGZJ6');
+  </script>
+</head>
+<body>
+<header style="background-color: #4c3575;" class="header fixed top-0 z-10 left-0 right-0 flex items-stretch shrink-0 bg-[--tw-page-bg] dark:bg-[--tw-page-bg-dark]" data-sticky="true" data-sticky-class="shadow-sm" data-sticky-name="header" id="header">
+  <!-- Container -->
+  <div class="container-fixed flex justify-between items-stretch lg:gap-4" id="header_container"style="border: none; /* Remove any border */
+  outline: none;margin-right: -10px /* Remove any outline */">
+    <!-- Mobile Logo -->
+    <div class="flex gap-1 lg:hidden items-center -ml-1"  style="margin-left: 200px">
+      <a class="shrink-0" href="https://keenthemes.com/metronic/tailwind/demo1/" >
+        <img class="max-h-[25px] w-full" [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'"/>
+      </a>
+      <div class="flex items-center">
+        <button class="btn btn-icon btn-light btn-clear btn-sm" data-drawer-toggle="#sidebar">
+          <i class="ki-filled ki-menu">
+          </i>
+        </button>
+      </div>
+    </div>
+    <!-- End of Mobile Logo -->
+    <!-- Breadcrumbs -->
+    <div class="flex [.header_&amp;]:below-lg:hidden items-center gap-1.25 text-xs lg:text-sm font-medium mb-2.5 lg:mb-0" data-reparent="true" data-reparent-mode="prepend|lg:prepend" data-reparent-target="#content_container|lg:#header_container" >
+       <span class="text-gray-700">
+
+       </span>
+
+      <span class="text-gray-700">
+       </span>
+    </div>
+    <!-- End of Breadcrumbs -->
+    <div *ngIf="alertVisible" [ngClass]="{'alert-success': alertType === 'success', 'alert-danger': alertType === 'error'}" class="alert" role="alert">
+      {{ alertMessage }}
+    </div>
+
+    <!-- Topbar -->
+    <div class="flex items-center gap-2 lg:gap-3.5" >
+      <!-- Notification Button -->
+      <div class="relative">
+        <a
+          class="nav-link dropdown-toggle"
+          href="#"
+          id="notificationsDropdown"
+          role="button"
+          (click)="markNotificationsAsViewed()"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="ki-filled ki-notification-on"></i>
+
+          <!-- Removed the "Notifications" text -->
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+          <!-- Check if there are no notifications -->
+          <li *ngIf="notifications.length === 0" class="dropdown-item text-center">
+            No new notifications
+          </li>
+
+          <!-- Iterate through notifications if available -->
+          <li *ngFor="let notification of notifications" class="notification-item">
+            <a class="dropdown-item" href="#">
+              <div class="notification-content">
+                <strong>{{ notification.client.firstName }} {{ notification.client.familyName }}</strong>
+                <p class="notification-details">
+                  Title: {{ notification.title }}<br />
+                  Day: {{ notification.start | date: 'fullDate' }}<br />
+                  Time: {{ notification.start | date: 'shortTime' }}
+                  <span class="notification-time">{{ getTimeAgo(notification.start) }}</span>
+                </p>
+                <span class="notification-time">{{ notification.time }}</span>
+              </div>
+            </a>
+            <!-- Accept and Decline Buttons -->
+            <div class="d-flex justify-content-between mt-2 px-2">
+              <button class="btn btn-success btn-sm" (click)="acceptRequest(notification.requestId)">Accept</button>
+              <button class="btn btn-danger btn-sm" (click)="declineRequest(notification.requestId)">Decline</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+
+
+
+
+      <!-- Profile Dropdown -->
+      <div class="relative" (click)="toggleDropdown()">
+        <div class="cursor-pointer">
+          <img alt="Profile" class=" rounded-full border-2 border-success shrink-0" style="width: 70px;  /* Adjust to your desired size */
+  height: 70px; /* Adjust to your desired size */"
+               [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'">
+        </div>
+
+        <!-- Dropdown Menu -->
+        <div *ngIf="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
+          <div class="px-4 py-3">
+            <p class="text-sm font-semibold">{{lawyer?.firstName}} {{lawyer?.familyName}}</p>
+            <p class="text-xs text-gray-600">{{lawyer?.email}}</p>
+          </div>
+          <div class="border-t border-gray-200"></div>
+          <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+          <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
+          <a (click)="onLogout()" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a>
+        </div>
+      </div>
+    </div>
+    <!-- End of Topbar -->
+  </div>
+  <!-- End of Container -->
+</header>
+
+
+<div class="sidebar px-4 py-4 py-md-5 me-0">
+  <div class="d-flex flex-column h-100">
+    <a class="mb-0 brand-icon">
+    <span class="logo-icon">
+    <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png" style="width: 200px; height:150px;" />
+
+</span>
+
+
+    </a>
+    <ul class="menu-list flex-grow-1 mt-3">
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
+          <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
+          <i class="icofont-briefcase"></i> <mat-icon>people</mat-icon> <span>Clients</span>
+        </a>
+      </li>
+
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
+          <i class="icofont-ticket"></i><mat-icon>gavel</mat-icon> <span>Cases</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
+          <i class="icofont-ticket"></i><mat-icon>event</mat-icon> <span>Consultations</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
+          <i class="icofont-users-alt-5"></i> <mat-icon>group</mat-icon> <span>Assistant</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+    </ul>
+    <button class="btn btn-danger" (click)="onLogout()">Logout
+      <span class="ms-2"> <mat-icon>exit_to_app</mat-icon>
+</span>
+    </button>
+  </div>
+</div>
+
+<div class="container-xl px-4 mt-4" style="padding-top:200px;" >
+  <!-- Account page navigation-->
+  <hr class="mt-0 mb-4">
+  <div class="row">
+    <div class="col-xl-4">
+
+      <!-- Profile picture card -->
+      <div class="card mb-4 mb-xl-0" style="border: 1px solid #ccc; border-radius: 8px;">
+        <div class="card-header" style="font-weight: bold;background-color: #4c3575;color:white">Profile Picture</div>
+        <div class="card-body text-center">
+          <div class="profile-picture-container" style="width:150px; display: flex; justify-content: center; align-items: center; margin: 0 auto;">
+            <img *ngIf="imageUrl" [src]="imageUrl" alt="Profile Picture" class="img-account-profile" style="border: 2px solid #ccc; border-radius: 50%; padding: 5px;">
+          </div>
+          <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+          <input type="file" class="form-control mb-2" (change)="onFileSelected($event)" formControlName="image">
+          <button class="btn btn-primary" (click)="uploadProfilePic()" style="background-color: #4c3575; border-color: #4c3575;">Upload</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-xl-8">
+      <!-- Account details card-->
+      <div class="card mb-4" style="border: 1px solid #ccc; border-radius: 8px;">
+        <div class="card-header" style="font-weight: bold;background-color: #4c3575;color:white">Account Details</div>
+        <div class="card-body">
+          <form [formGroup]="lawyerForm" (ngSubmit)="updateProfile()">
+            <div class="row gx-3 mb-3">
+              <!-- Form Group (first name)-->
+              <div class="col-md-6">
+                <label class="small mb-1" for="inputFirstName">First name</label>
+                <input class="form-control" id="inputFirstName" formControlName="firstName" type="text" placeholder="Enter your first name" style="border: 1px solid #ccc;">
+              </div>
+              <!-- Form Group (last name)-->
+              <div class="col-md-6">
+                <label class="small mb-1" for="inputLastName">Last name</label>
+                <input class="form-control" id="inputLastName" formControlName="familyName" type="text" placeholder="Enter your last name" style="border: 1px solid #ccc;">
+              </div>
+            </div>
+            <!-- Form Row -->
+            <div class="row gx-3 mb-3">
+              <!-- Form Group (phone number)-->
+              <div class="col-md-6">
+                <label class="small mb-1" for="inputPhone">Phone number</label>
+                <input class="form-control" id="inputPhone" formControlName="phoneNumber" type="tel" placeholder="Enter your phone number" style="border: 1px solid #ccc;">
+              </div>
+              <!-- Form Group (birthday)-->
+              <div class="col-md-6">
+                <label class="small mb-1" for="inputBirthday">Birthday</label>
+                <input class="form-control" id="inputBirthday" formControlName="birthdate" type="text" placeholder="Enter your birthday" style="border: 1px solid #ccc;">
+              </div>
+            </div>
+            <!-- Form Row -->
+            <div class="row gx-3 mb-3">
+              <!-- Form Group (office address)-->
+              <div class="col-md-6">
+                <label class="small mb-1" for="inputOrgName">Office Address</label>
+                <input class="form-control" id="inputOrgName" formControlName="office_adress" type="text" placeholder="Enter your office address" style="border: 1px solid #ccc;">
+              </div>
+              <!-- Form Group (password)-->
+              <div class="col-md-6">
+                <label class="small mb-1" for="inputPassword">Password</label>
+                <input class="form-control" id="inputPassword" formControlName="password" type="password" placeholder="Enter your password" style="border: 1px solid #ccc;">
+              </div>
+            </div>
+            <!-- Form Group (email address)-->
+            <div class="mb-3">
+              <label class="small mb-1" for="inputEmailAddress">Email address</label>
+              <input class="form-control" id="inputEmailAddress" formControlName="email" type="email" placeholder="Enter your email address" style="border: 1px solid #ccc;">
+            </div>
+            <!-- Save changes button-->
+            <button class="btn btn-primary" type="submit" style="background-color: #4c3575; border-color: #4c3575;">Save changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

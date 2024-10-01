@@ -1,0 +1,563 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+.navbar {
+  background-color: #4c3575;
+  padding:1px
+}
+.navbar .nav-link {
+  color: white !important;
+}
+.navbar .nav-link:hover {
+  color: #d1c4e9 !important;
+}
+/* notification.component.css */
+.notification-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+/* Notifications Dropdown */
+.nav-item.dropdown {
+  position: relative;
+}
+
+.nav-link.dropdown-toggle {
+  color: white !important;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+.nav-link.dropdown-toggle:hover {
+  color: #d1c4e9 !important;
+}
+
+.dropdown-menu {
+  background-color: #8472a2; /* Matches the sidebar background */
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 0.5rem;
+  min-width: 300px;
+  max-height: 400px; /* Limit the height to avoid overflow */
+  overflow-y: auto; /* Scroll if content exceeds max height */
+}
+
+.notification-item {
+  border-bottom: 1px solid #3b2763; /* Slightly darker border for separation */
+}
+
+.notification-item:last-child {
+  border-bottom: none; /* Remove border for the last item */
+}
+
+.notification-content {
+  color: #111111;
+  padding: 0.5rem;
+}
+
+.notification-content strong {
+  color: #0a0a0a; /* Light color for title */
+}
+
+.notification-details {
+  font-size: 0.875rem;
+  color: #090909;
+}
+
+.notification-time {
+  font-size: 0.75rem;
+  color: #070707; /* Lighter color for time */
+}
+
+/* Enhance the icon styles */
+.notification-icon {
+  color: #b01111; /* Bright yellow for the notification icon */
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+.notification-icon:hover {
+  color: #fbc02d; /* Slightly darker yellow on hover */
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .dropdown-menu {
+    min-width: 100%; /* Ensure dropdown fits the screen width on small devices */
+  }
+}
+
+.notification-icon img {
+  width: 70px;
+  height: 70px;
+}
+
+/* Add to your <style> section or CSS file */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(0); }
+  75% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+.shake-icon {
+  animation: shake 0.5s ease-in-out infinite;
+}
+
+
+
+.navbar .profile-link {
+  color: #ffffff; /* Set the text color */
+  font-weight: 500; /* Make the text bold */
+  padding: 0.5rem 1rem; /* Add padding for better spacing */
+  text-decoration: none; /* Remove underline */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.navbar .profile-link:hover,
+.navbar .profile-link:focus {
+  background-color: #4c3575; /* Change background color on hover */
+  color: #ffffff; /* Keep text color white */
+}
+
+/* Align the profile link vertically and add some margin */
+.d-flex.align-items-center a.profile-link {
+  margin-right: 15px; /* Add spacing to the right of the link */
+  display: inline-block;
+  line-height: 1.5;
+}
+
+.shake {
+  animation: shake 0.5s;
+}
+.sidebar {
+  background-color: #4c3575;
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  z-index: 1050; /* Ensure it's above the navbar */
+
+}
+
+.card {
+  overflow: hidden; /* Hide any content that overflows the card */
+  width: 100%; /* Ensure the card takes up the full width of its container */
+}
+.img-account-profile {
+  width: 150px;  /* Adjust width as needed */
+  height: 150px; /* Adjust height as needed */
+  object-fit: cover; /* Ensure the image fits within the dimensions */
+  border-radius: 50%; /* Maintain circular shape */
+  display: block; /* Ensure it's a block element to respect its dimensions */
+  margin: 0 auto; /* Center the image horizontally within its container */
+}
+
+.brand-icon {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo-icon img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.menu-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.menu-list li {
+  margin-bottom: 1rem;
+}
+
+.menu-list .m-link {
+  color: #fff;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.menu-list .m-link:hover {
+  background-color: #3b2763;
+}
+
+.menu-list .m-link.active {
+  background-color: #3b2763;
+}
+
+.menu-list .m-link .arrow {
+  margin-left: auto;
+}
+
+.menu-list .sub-menu {
+  list-style-type: none;
+  padding-left: 1rem;
+  display: none; /* Initially hidden */
+}
+
+.menu-list .sub-menu .ms-link {
+  color: #ddd;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.menu-list .sub-menu.show {
+  display: block; /* Display when active */
+}
+
+.sidebar-mini-btn {
+  margin-top: auto;
+  align-self: flex-start;
+  color: #fff;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-mini-btn:hover {
+  transform: scale(1.2);
+}
+/* Modal Styling */
+.modal-content {
+  border-radius: 0.5rem;
+}
+
+.modal-header {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+body {
+  padding-top:100px; /* Adjust based on the height of your navbar */
+}
+/* Profile Details Card Styles */
+.profile-details-card {
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  padding: 20px;
+}
+
+.profile-details-card .card-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background-color: #4c3575;
+  color: white;
+  padding: 15px;
+  border-bottom: none;
+}
+
+.profile-picture-container {
+  margin-bottom: 20px;
+}
+
+.img-account-profile {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #4c3575;
+}
+
+.card-details {
+  padding: 20px;
+}
+
+.profile-name {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.profile-info {
+  font-size: 1.2rem;
+  color: #555;
+  margin: 5px 0;
+}
+
+.profile-info:last-of-type {
+  margin-bottom: 0;
+}
+
+.profile-details-card p {
+  margin: 0;
+}
+/* From Uiverse.io by Javierrocadev */
+.carde {
+  width: 600px;
+  min-height: 350px; /* Changed to min-height to allow the card to grow */
+  background: #E8EAEA;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform:translateX(-45px);
+  padding-left:20px;
+
+}
+
+.title, .more {
+  padding: 10px 15px;
+}
+
+.user {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+}
+
+.user__content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.user__container {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-weight: 900;
+  font-size: 1.3em;
+}
+
+.name {
+  font-weight: 800;
+}
+
+.username {
+  font-size: .9em;
+  color: #64696e;
+}
+
+.image {
+  width: 60px;
+  height: 60px;
+  background: rgb(22,19,70);
+  background: linear-gradient(295deg, rgba(22,19,70,1) 41%, rgba(89,177,237,1) 100%);
+  border-radius: 50%;
+  margin-right: 15px;
+  overflow: hidden; /* Ensures the image does not overflow the div */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image img {
+  width: 100%; /* Makes the image take up the full width of the div */
+  height: 100%; /* Ensures the image fills the height as well */
+  object-fit: cover; /* Crops the image to fit within the container while maintaining aspect ratio */
+  border-radius: 50%; /* Ensures the image keeps the circular shape */
+}
+
+
+.follow {
+  border: none;
+  border-radius: 25px;
+  background-color: #4c3575;
+  color: white;
+  padding: 8px 15px;
+  font-weight: 700;
+}
+
+.more {
+  display: block;
+  text-decoration: none;
+  color: rgb(29, 155, 240);
+  font-weight: 800;
+}
+
+.user:hover {
+  background-color: #b3b6b6;
+}
+
+.more:hover {
+  background-color: #b3b6b6;
+  border-radius: 0px 0px 15px 15px;
+}
+
+.follow:hover {
+  background-color: #2c3136;
+}
+.container {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 1200px; /* Adjust based on your layout */
+}
+
+.clients-card {
+  flex: 1; /* Adjust width as needed */
+  margin-right: 80px; /* Space between cards */
+}
+
+.my-files-card {
+  flex: 1; /* Adjust width as needed */
+  margin-left: 300px; /* Space between cards */
+}
+
+.item {
+  display: flex; /* Flexbox for horizontal layout */
+  align-items: center; /* Center vertically */
+  padding: 10px 0; /* Padding for each item */
+  border-bottom: 1px solid #e0e0e0; /* Fine line separator */
+  justify-content: space-between; /* Space between text and date */
+}
+
+.item:last-child {
+  border-bottom: none; /* Remove bottom border for last item */
+}
+
+.icon-wrapper {
+  width: 60px; /* Set fixed width for the icon wrapper */
+  height: 60px; /* Set fixed height for the icon wrapper */
+  margin-right: 10px; /* Space between icon and text */
+  background-color: #e9ecef; /* Light grey background for the icon wrapper */
+  border-radius: 4px; /* Slightly rounded corners */
+  display: flex; /* Center the image */
+  justify-content: center; /* Center the image */
+  align-items: center; /* Center the image */
+}
+
+.icon-wrapper img {
+  width: 100%; /* Image fills the wrapper */
+  height: 100%; /* Image fills the wrapper */
+  object-fit: cover; /* Maintain aspect ratio */
+}
+
+h3 {
+  margin: 0; /* Remove default margin */
+  font-size: 16px; /* Adjust font size */
+  color: #495057; /* Darker text color for case type */
+}
+
+p {
+  margin: 3px 0; /* Margin for paragraph text */
+  color: #6c757d; /* Grey color for status and start date */
+  white-space: nowrap; /* Prevent text wrapping */
+}
+.cardee {
+  border: 1px solid #dee2e6; /* Add a light grey border */
+  border-radius: 4px; /* Optional: rounded corners */
+  padding: 15px; /* Padding inside the card */
+  background-color: #fff; /* White background for the card */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for depth */
+  width:620px
+}
+
+.item {
+  display: flex; /* Flexbox for horizontal layout */
+  align-items: center; /* Center vertically */
+  padding: 10px 0; /* Padding for each item */
+  border-bottom: 1px solid #e0e0e0; /* Fine line separator */
+  justify-content: space-between; /* Space between text and date */
+}
+
+.item:last-child {
+  border-bottom: none; /* Remove bottom border for last item */
+}
+
+/* Existing styles remain unchanged */
+
+
+.yellow { background: #fefcbf; }
+.green { background: #d1fae5; }
+.red { background: #fee2e2; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* Grid layout */
+/* Flexbox layout to align profile and consultations side by side */
+.row {
+  display: flex;
+  justify-content: space-between; /* Space between the profile and consultation cards */
+  gap: 300px; /* Add some gap between the two sections */
+  flex-wrap: wrap; /* Makes the layout responsive, so they stack on smaller screens */
+}
+.consultation-section h2 {
+  font-size: 24px;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.profile-section {
+  flex: 1; /* Takes up 1 part of the space */
+  min-width: 300px; /* Minimum width for the profile section */
+}
+
+.consultation-section {
+  flex: 2; /* Takes up 2 parts of the space (bigger than profile) */
+  min-width: 300px; /* Minimum width for the consultation section */
+}
+
+/* Define distinct background colors for the cards */
+.cardes:nth-child(1) {
+  background-color: #d1e7dd; /* Greenish color */
+}
+.cardes:nth-child(2) {
+  background-color: #f8d7da; /* Light reddish color */
+}
+.cardes:nth-child(3) {
+  background-color: #cfe2ff; /* Light blue color */
+}
+.cardes:nth-child(4) {
+  background-color: #fff3cd; /* Light yellow color */
+}
+
+.cardes {
+  border: 3px solid #000;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: left;
+  margin-bottom: 20px; /* Add space between consultation cards */
+}
+
+.cardes:hover {
+  transform: scale(1.05);
+  box-shadow: none;
+}
+
+/* Make consultations stack vertically */
+.grid {
+  display: block;
+}

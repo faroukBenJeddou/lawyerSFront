@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lawyer Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark  fixed-top">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Centered Navbar Items -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mx-auto">
+        <!-- Your centered navbar items (if any) go here -->
+      </ul>
+    </div>
+
+    <!-- Right-aligned Notifications and Profile Image -->
+    <div class="d-flex align-items-center">
+      <a class="profile-link" [routerLink]="['/lawyer', lawyerId]" role="button"   aria-expanded="false">
+        Profile
+      </a>
+      <!-- Notifications Dropdown -->
+      <div class="nav-item dropdown me-3">
+        <a
+          class="nav-link dropdown-toggle"
+          href="#"
+          id="notificationsDropdown"
+          role="button"
+          (click)="markNotificationsAsViewed()"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="notification-icon fas fa-bell" [ngClass]="{ 'shake-icon': hasNewNotifications }"></i>
+          Notifications
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+          <!-- Check if there are no notifications -->
+          <li *ngIf="notifications.length === 0" class="dropdown-item text-center">
+            No new notifications
+          </li>
+
+          <!-- Iterate through notifications if available -->
+          <li *ngFor="let notification of notifications" class="notification-item">
+            <a class="dropdown-item" href="#">
+              <div class="notification-content">
+                <strong>{{ notification.client.firstName }} {{ notification.client.familyName }}</strong>
+                <p class="notification-details">
+                  Title: {{ notification.title }}<br />
+                  Day: {{ notification.start | date: 'fullDate' }}<br />
+                  Time: {{ notification.start | date: 'shortTime' }}
+                  <span class="notification-time">{{ getTimeAgo(notification.start) }}</span>
+                </p>
+                <span class="notification-time">{{ notification.time }}</span>
+              </div>
+            </a>
+            <!-- Accept and Decline Buttons -->
+            <div class="d-flex justify-content-between mt-2 px-2">
+              <button class="btn btn-success btn-sm" (click)="acceptRequest(notification.requestId)">Accept</button>
+              <button class="btn btn-danger btn-sm" (click)="declineRequest(notification.requestId)">Decline</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Lawyer's Image and Dropdown -->
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle notification-icon" [ngClass]="{ 'shake': hasNewNotifications }" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+
+          <style>
+            /* Make the profile picture div transparent */
+            .dropdown .btn.btn-secondary {
+              background-color: transparent;
+              border: none; /* Optional: Remove border if you want */
+            }
+
+            /* Adjust the profile picture styling */
+            .dropdown .btn.btn-secondary img {
+              border-radius: 50%;
+              width: 70px;
+              height: 70px;
+            }
+          </style>
+
+          <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="rounded-circle" style="width: 70px; height: 70px;">
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" [routerLink]="['/lawyer', lawyerId]">Profile</a></li>
+          <li><a class="dropdown-item" href="#logout" (click)="onLogout()">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="sidebar px-4 py-4 py-md-5 me-0">
+  <div class="d-flex flex-column h-100">
+    <a class="mb-0 brand-icon">
+    <span class="logo-icon">
+    <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png" style="width: 200px; height:150px;" />
+
+</span>
+
+
+    </a>
+    <ul class="menu-list flex-grow-1 mt-3">
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
+          <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
+          <i class="icofont-briefcase"></i> <mat-icon>people</mat-icon> <span>Clients</span>
+        </a>
+      </li>
+
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
+          <i class="icofont-ticket"></i><mat-icon>gavel</mat-icon> <span>Cases</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
+          <i class="icofont-ticket"></i><mat-icon>event</mat-icon> <span>Consultations</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
+          <i class="icofont-users-alt-5"></i> <mat-icon>group</mat-icon> <span>Assistant</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+    </ul>
+    <button class="btn btn-danger" (click)="onLogout()">Logout
+      <span class="ms-2"> <mat-icon>exit_to_app</mat-icon>
+</span>
+    </button>
+  </div>
+</div>
+
+<div class="container-xl px-4 mt-4">
+  <!-- Account page navigation-->
+  <hr class="mt-0 mb-4">
+  <div class="row">
+    <!-- Profile Details card -->
+    <div class="profile-section">
+      <div class="card mb-4 profile-details-card">
+        <div class="card-header">Profile Details</div>
+        <div class="card-body text-center">
+          <div class="profile-picture-container">
+            <img *ngIf="imageUrl" [src]="imageUrl" alt="Profile Picture" class="img-account-profile">
+          </div>
+        </div>
+        <div class="card-details">
+          <h2 class="profile-name">{{lawyer?.firstName}} {{lawyer?.familyName}}</h2>
+          <p class="profile-info">{{lawyer?.email}}</p>
+          <p class="profile-info">{{lawyer?.phoneNumber}}</p>
+          <p class="profile-info">{{lawyer?.office_adress}}</p>
+        </div>
+        <div class="text-center mt-3">
+          <a [routerLink]="['/edit/lawyer', lawyerId]" class="btn btn-primary">Edit Profile</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consultation Cards -->
+    <div class="consultation-section">
+      <div class="grid">
+        <h2>Recent Consultations</h2>
+        <div class="cardes" *ngFor="let con of consultations">
+          <div class="content">
+            <p class="title">{{con.title}}</p>
+            <h1 class="date">{{ con.start | date:'fullDate' }} {{ con.start | date:'shortTime' }}</h1>
+            <p class="description">{{con.description}}</p>
+            <a [routerLink]="['/lawyer', lawyerId, 'consultations']" class="read-more" >See Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container mx-auto flex">
+    <div class="carde">
+      <p class="title">Recent Clients</p>
+      <div class="user__container">
+        <div *ngFor="let client of clients | slice:0:3" class="user">
+          <div class="image">
+            <img [src]="client.image || 'http://bootdey.com/img/Content/avatar/avatar1.png'" alt="Client Image" class="client-image">
+
+          </div>
+          <div class="user__content">
+            <div class="text">
+              <span class="name">{{ client.firstName }} {{ client.familyName }}</span>
+              <p class="username">{{ client.adress }}</p>
+            </div>
+            <button class="follow">Details</button>
+          </div>
+        </div>
+      </div>
+      <a class="more" [routerLink]="['/lawyer', lawyerId, 'clients']">See more</a>
+    </div>
+    <div class="my-files-card">
+      <div class="cardee">
+        <div class="header">
+          <h2>Recent Cases</h2>
+          <a href="#" class="link">See all</a>
+        </div>
+        <div class="item" *ngFor="let case of cases | slice:0:3">
+          <div class="icon-wrapper yellow">
+            <img src="assets/an-le.jpg" alt="Case Image">
+          </div>
+          <div>
+            <h3>Type: {{case.caseType}}</h3>
+            <p>Status: {{case.caseStatus}}</p>
+          </div>
+          <p>{{case.start}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

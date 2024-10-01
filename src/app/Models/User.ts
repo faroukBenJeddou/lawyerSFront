@@ -1,3 +1,5 @@
+import {Role} from "./Role";
+
 export class User{
   id !: string;
   firstName !:string;
@@ -6,5 +8,9 @@ export class User{
   email !:string;
   password !:string;
   photo !:string;
+  image !:string;
   birthdate !:string;
+  role!: {
+    role: string;
+  };
 }

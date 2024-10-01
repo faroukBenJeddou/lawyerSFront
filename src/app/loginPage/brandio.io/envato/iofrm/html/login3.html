@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from brandio.io/envato/iofrm/html/login1.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 25 Sep 2024 16:25:22 GMT -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iofrm</title>
+
+</head>
+<body>
+<div class="form-body">
+  <div class="website-logo">
+    <a href="index.html">
+      <div class="logo">
+        <img class="logo-size" src="images/logo-light.svg" alt="">
+      </div>
+    </a>
+  </div>
+  <div class="iofrm-layout">
+    <div class="img-holder">
+      <div class="bg"></div>
+      <div class="info-holder">
+
+      </div>
+    </div>
+    <div class="form-holder">
+      <div class="form-content">
+
+        <div class="form-items" >
+          <div class="logo-container mb-5">
+            <img src="./assets/lawyersoft-high-resolution-logo-transparent.png" alt="Logo" style="width: 200px; transform: translateX(30px)" />
+          </div>
+          <h3>Get more things done with Loggin platform.</h3>
+          <p>Access to the most powerfull tool in the entire design and web industry.</p>
+
+          <form [formGroup]="resetPasswordForm" (ngSubmit)="onSubmit()">
+            <div *ngIf="errorMessage" class="error-message alert alert-danger">
+              {{ errorMessage }}
+            </div>
+            <label for="password">New Password</label>
+
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              class="form-control"
+              placeholder="New Password"
+              [ngClass]="{'is-invalid': resetPasswordForm.get('password')?.invalid && resetPasswordForm.get('password')?.touched}"
+            />
+            <div *ngIf="resetPasswordForm.get('password')?.invalid && resetPasswordForm.get('password')?.touched" class="invalid-feedback">
+              Password is required and must be at least 6 characters.
+            </div>
+            <label for="confirmPassword">Confirm New Password</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              formControlName="confirmPassword"
+              placeholder="confirm Password"
+              class="form-control"
+              [ngClass]="{'is-invalid': (resetPasswordForm.get('confirmPassword')?.invalid && resetPasswordForm.get('confirmPassword')?.touched) || confirmPasswordMismatch}"
+            />
+            <div *ngIf="resetPasswordForm.get('confirmPassword')?.invalid && resetPasswordForm.get('confirmPassword')?.touched" class="invalid-feedback">
+              Please confirm your password.
+            </div>
+            <div *ngIf="confirmPasswordMismatch" class="error-message alert alert-danger">
+              Passwords do not match.
+            </div>
+            <div class="form-button">
+              <button id="submit" type="submit" class="ibtn"  [disabled]="isSubmitting"> {{ isSubmitting ? 'Submitting...' : 'Reset Password' }}</button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+
+<!-- Mirrored from brandio.io/envato/iofrm/html/login1.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 25 Sep 2024 16:25:23 GMT -->
+</html>

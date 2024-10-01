@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lawyer Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/icofont/1.0.0/css/icofont.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+  <style>
+    .add-consultation-btn {
+      margin-bottom: 20px;
+      /* Adjust as needed */
+    }
+
+    .btn-delete-assigned {
+      background-color: #f8d7da; /* Light red for assigned client */
+      color: #721c24; /* Dark red text for assigned client */
+    }
+  </style>
+</head>
+<body>
+<header style="background-color: #4c3575;" class="header fixed top-0 z-10 left-0 right-0 flex items-stretch shrink-0 bg-[--tw-page-bg] dark:bg-[--tw-page-bg-dark]" data-sticky="true" data-sticky-class="shadow-sm" data-sticky-name="header" id="header">
+  <!-- Container -->
+  <div class="container-fixed flex justify-between items-stretch lg:gap-4" id="header_container"style="border: none; /* Remove any border */
+  outline: none;margin-right: -10px /* Remove any outline */">
+    <!-- Mobile Logo -->
+    <div class="flex gap-1 lg:hidden items-center -ml-1"  style="margin-left: 200px">
+      <a class="shrink-0" href="https://keenthemes.com/metronic/tailwind/demo1/" >
+        <img class="max-h-[25px] w-full" [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'"/>
+      </a>
+      <div class="flex items-center">
+        <button class="btn btn-icon btn-light btn-clear btn-sm" data-drawer-toggle="#sidebar">
+          <i class="ki-filled ki-menu">
+          </i>
+        </button>
+      </div>
+    </div>
+    <!-- End of Mobile Logo -->
+    <!-- Breadcrumbs -->
+    <div class="flex [.header_&amp;]:below-lg:hidden items-center gap-1.25 text-xs lg:text-sm font-medium mb-2.5 lg:mb-0" data-reparent="true" data-reparent-mode="prepend|lg:prepend" data-reparent-target="#content_container|lg:#header_container" >
+       <span class="text-gray-700">
+
+       </span>
+
+      <span class="text-gray-700">
+       </span>
+    </div>
+    <!-- End of Breadcrumbs -->
+    <div *ngIf="alertVisible" [ngClass]="{'alert-success': alertType === 'success', 'alert-danger': alertType === 'error'}" class="alert" role="alert">
+      {{ alertMessage }}
+    </div>
+
+    <!-- Topbar -->
+    <div class="flex items-center gap-2 lg:gap-3.5" >
+      <!-- Notification Button -->
+      <div class="relative">
+        <a
+          class="nav-link dropdown-toggle"
+          href="#"
+          id="notificationsDropdown"
+          role="button"
+          (click)="markNotificationsAsViewed()"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="ki-filled ki-notification-on"></i>
+
+          <!-- Removed the "Notifications" text -->
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+          <!-- Check if there are no notifications -->
+          <li *ngIf="notifications.length === 0" class="dropdown-item text-center">
+            No new notifications
+          </li>
+
+          <!-- Iterate through notifications if available -->
+          <li *ngFor="let notification of notifications" class="notification-item">
+            <a class="dropdown-item" href="#">
+              <div class="notification-content">
+                <strong>{{ notification.client.firstName }} {{ notification.client.familyName }}</strong>
+                <p class="notification-details">
+                  Title: {{ notification.title }}<br />
+                  Day: {{ notification.start | date: 'fullDate' }}<br />
+                  Time: {{ notification.start | date: 'shortTime' }}
+                  <span class="notification-time">{{ getTimeAgo(notification.start) }}</span>
+                </p>
+                <span class="notification-time">{{ notification.time }}</span>
+              </div>
+            </a>
+            <!-- Accept and Decline Buttons -->
+            <div class="d-flex justify-content-between mt-2 px-2">
+              <button class="btn btn-success btn-sm" (click)="acceptRequest(notification.requestId)">Accept</button>
+              <button class="btn btn-danger btn-sm" (click)="declineRequest(notification.requestId)">Decline</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+
+
+
+
+      <!-- Profile Dropdown -->
+      <div class="relative" (click)="toggleDropdown()">
+        <div class="cursor-pointer">
+          <img alt="Profile" class=" rounded-full border-2 border-success shrink-0" style="width: 70px;  /* Adjust to your desired size */
+  height: 70px; /* Adjust to your desired size */"
+               [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'">
+        </div>
+
+        <!-- Dropdown Menu -->
+        <div *ngIf="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
+          <div class="px-4 py-3">
+            <p class="text-sm font-semibold">{{lawyer?.firstName}} {{lawyer?.familyName}}</p>
+            <p class="text-xs text-gray-600">{{lawyer?.email}}</p>
+          </div>
+          <div class="border-t border-gray-200"></div>
+          <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+          <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
+          <a (click)="onLogout()" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a>
+        </div>
+      </div>
+    </div>
+    <!-- End of Topbar -->
+  </div>
+  <!-- End of Container -->
+</header>
+
+<div class="sidebar px-4 py-4 py-md-5 me-0">
+  <div class="d-flex flex-column h-100">
+    <a class="mb-0 brand-icon">
+    <span class="logo-icon">
+    <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png" style="width: 200px; height:150px; " />
+
+</span>
+
+
+    </a>
+    <ul class="menu-list flex-grow-1 mt-3">
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
+          <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
+          <i class="icofont-briefcase"></i> <mat-icon>people</mat-icon> <span>Clients</span>
+        </a>
+      </li>
+
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
+          <i class="icofont-ticket"></i><mat-icon>gavel</mat-icon> <span>Cases</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
+          <i class="icofont-ticket"></i><mat-icon>event</mat-icon> <span>Consultations</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
+          <i class="icofont-users-alt-5"></i> <mat-icon>group</mat-icon> <span>Assistant</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+
+    </ul>
+    <!-- Notification Dropdown -->
+    <!-- Notification Bell -->
+
+    <button class="btn btn-danger" (click)="onLogout()">Logout
+      <span class="ms-2"> <mat-icon>exit_to_app</mat-icon>
+</span>
+    </button>
+  </div>
+</div>
+<!-- Add Consultation Modal -->
+<div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true" [ngClass]="{'show': isModalOpen}" [ngStyle]="{'display': isModalOpen ? 'block' : 'none'}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="documentModalLabel">Add Consultation</h4>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="addConsultation()" >
+          <div class="mb-3">
+            <label for="documentDate" class="form-label">Date</label>
+            <input type="datetime-local" class="form-control" id="documentDate" [(ngModel)]="newConsultation.start" name="start" required>
+
+          </div>
+          <div class="mb-3">
+            <label for="documentContent" class="form-label">Content</label>
+            <textarea class="form-control" id="documentContent" [(ngModel)]="newConsultation.title" name="content" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Consultation</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Assign Client Modal -->
+<div class="modal fade" id="assignClientModal" tabindex="-1" role="dialog" aria-labelledby="assignClientLabel" aria-hidden="true" [ngClass]="{'show': isAssignClientModalOpen}" [ngStyle]="{'display': isAssignClientModalOpen ? 'block' : 'none'}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="assignClientLabel">Assign Client to Consultation</h4>
+        <button type="button" class="btn-close" (click)="closeAssignClientModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="assignClientToConsultation()">
+          <div class="mb-3">
+            <label for="client" class="form-label">Client</label>
+            <select class="form-select" id="client" [(ngModel)]="selectedClientId" name="clientId" required>
+              <option value="" disabled>Select a client</option>
+              <option *ngFor="let client of clients" [value]="client.id">
+                {{ client.firstName }} {{ client.familyName }}
+              </option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Assign Client</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeAssignClientModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="d-flex" style="margin-top: 100px;">
+  <!-- Calendar Container -->
+  <div class="calendar-container" style="flex: 1; padding-right: 20px;">
+    <app-calendar></app-calendar>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" style="flex: 2;">
+    <div class="container">
+      <!-- Add Consultation Button -->
+      <button class="btn custom-btn add-consultation-btn" (click)="openModal(consultationId)">Add Consultation</button>
+      <button class="btn custom-btn add-consultation-btn" (click)="loadDocuments()">Show Consultations</button>
+
+
+      <div class="container d-flex justify-content-center align-items-center flex-wrap full-height">
+        <div class="blog-card" *ngFor="let c of consultations">
+          <div class="banner">
+            <img src="../../../../assets/tingey-injury-law-firm-nSpj-Z12lX0-unsplash.jpg" alt="Consultation Image" class="consultation-image">
+          </div>
+          <div class="card-body">
+            <h2 class="name">Consultation</h2>
+            <div class="title">Details</div>
+            <div class="divider"></div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="info-row">
+                  <span class="info-label">Day:</span>
+                  <span class="info-value">{{ c.start | date:'fullDate' }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Time:</span>
+                  <span class="info-value">{{ c.start | date:'shortTime' }}</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-row">
+                  <span class="info-label">Days Left:</span>
+                  <span class="info-value"><i class="fa fa-heart"></i>{{ getDaysLeftMessage(c) }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Client:</span>
+                  <span class="info-value">{{ c.client ? (c.client.firstName + ' ' + c.client.familyName) : 'None' }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="follow-btn d-flex justify-content-between">
+              <button class="btn btn-success" (click)="openAssignClientModal(c.idConsultation)" *ngIf="!c.client">Assign Client</button>
+              <button class="btn btn-danger btn-delete-assigned" (click)="deleteConsultation(c.idConsultation)" [ngClass]="{'btn-delete-assigned': c.client}">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -11,36 +11,30 @@ import {MessageService} from "primeng/api";
 import {Role} from "../../Models/Role";
 import {LoginPayload} from "../../LoginPayload";
 import Swal from 'sweetalert2';
-import {GoogleSigninButtonModule, SocialAuthService, SocialUser} from "@abacritt/angularx-social-login";  // Import Swal from SweetAlert2
+import {GoogleSigninButtonModule, SocialAuthService, SocialUser,SocialAuthServiceConfig} from "@abacritt/angularx-social-login";
+import jwtDecode from "jwt-decode";
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [
-    CardModule,
-    Button,
-    ReactiveFormsModule,
-    MatLabel,
-    MatFormField,
-    MatInput,
-    NgOptimizedImage,
-    RouterLink,
-    NgIf,
-    GoogleSigninButtonModule
-  ],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+
+  providers: [MessageService,SocialAuthService],
+  templateUrl: '../../loginPage/brandio.io/envato/iofrm/html/login1.html',
+  styleUrl: '../../loginPage/brandio.io/envato/iofrm/html/css/iofrm-style.css'
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent implements OnInit {
   user: any
   loggedIn: any
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)])
   });
-  constructor(private fb: FormBuilder,private authService: AuthService,private router:Router
-  ,private messageServ:MessageService,private authServ:SocialAuthService) {}
+
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router
+    , private messageServ: MessageService, private authServ: SocialAuthService) {
+  }
+
   ngOnInit() {
+    console.log("here")
     this.authServ.authState.subscribe((user) => {
       this.user = user;
       this.loggedIn = (user != null);
@@ -51,24 +45,48 @@ export class LoginComponent implements OnInit{
   onSubmit(): void {
     if (this.loginForm.valid) {
       const loginPayload = {
-        email: this.loginForm.value.email as string,  // Type assertion
-        password: this.loginForm.value.password as string // Type assertion
+        email: this.loginForm.value.email as string,
+        password: this.loginForm.value.password as string
       };
+
 
       this.authService.login(loginPayload).subscribe(
         response => {
-          // Handle successful login
-          Swal.fire({
-            title: 'Login Successful',
-            icon: 'success',
-            text: 'You have logged in successfully!',
-            confirmButtonText: 'OK'
-          });
-          // Optionally navigate to another route or perform other actions
-          this.router.navigate(['/home'])
+          const token = response?.token;
+          const lawyerId = response?.lawyerId; // Extract lawyerId from response
+          const clientId=response?.id;
+          console.log(response);
+          if (token) {
+            localStorage.setItem('authToken', token); // Save token
+            const decodedToken: any = jwtDecode(token);
+            const userRole = decodedToken?.role;
+
+            Swal.fire({
+              title: 'Login Successful',
+              icon: 'success',
+              text: 'You have logged in successfully!',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              if (userRole === 'admin') {
+                this.router.navigate(['/admin']);
+              } else if (userRole === 'Lawyer' || userRole === 'assistant') {
+                this.router.navigate([`/lawyer/${lawyerId}`]);
+              } else if (userRole === 'Client') {
+                this.router.navigate([`/client/${clientId}`]);
+              } else {
+                this.router.navigate(['/home']);
+              }
+            });
+          } else {
+            Swal.fire({
+              title: 'Login Failed',
+              icon: 'error',
+              text: 'Invalid email or password!',
+              confirmButtonText: 'OK'
+            });
+          }
         },
         error => {
-          // Handle login error
           Swal.fire({
             title: 'Login Failed',
             icon: 'error',
@@ -77,14 +95,26 @@ export class LoginComponent implements OnInit{
           });
         }
       );
-    } else {
-      // Handle form validation errors
-      Swal.fire({
-        title: 'Validation Error',
-        icon: 'error',
-        text: 'Please fill in all required fields!',
-        confirmButtonText: 'OK'
-      });
+    }
+  }
+  private setLogoutTimer() {
+    // Set timeout for 1 hour (3600000 milliseconds)
+    setTimeout(() => {
+      this.authService.logout(); // Call logout method to handle token removal
+      this.router.navigate(['/login']); // Redirect to login page
+    }, 3600000); // 1 hour
+  }
+  private checkTokenExpiry() {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      const expiryTime = decodedToken?.exp * 1000; // Convert to milliseconds
+      const currentTime = new Date().getTime();
+
+      if (currentTime > expiryTime) {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+      }
     }
   }
 }

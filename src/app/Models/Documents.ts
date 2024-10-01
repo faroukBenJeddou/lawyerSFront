@@ -1,5 +1,10 @@
 export class Documents{
-  idConsultation !:string;
-  date !:string;
-  sujet !:string;
+  id !:string;
+  content :string;
+  title :string;
+  constructor(title: string, content: string, date: string) {
+    this.title = title;
+    this.content = content;
+
+  }
 }

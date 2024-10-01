@@ -1,0 +1,421 @@
+/* General Styles */
+body {
+  color: #797979;
+  background: #f1f2f7;
+  font-family: 'Open Sans', sans-serif;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: #4c3575;
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.brand-icon {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo-icon img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.menu-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.menu-list li {
+  margin-bottom: 1rem;
+}
+
+.menu-list .m-link {
+  color: #fff;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.menu-list .m-link:hover {
+  background-color: #3b2763;
+}
+
+.menu-list .m-link.active {
+  background-color: #3b2763;
+}
+
+.menu-list .m-link .arrow {
+  margin-left: auto;
+}
+
+.menu-list .sub-menu {
+  list-style-type: none;
+  padding-left: 1rem;
+  display: none;
+}
+
+.menu-list .sub-menu .ms-link {
+  color: #ddd;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.menu-list .sub-menu.show {
+  display: block;
+}
+
+.sidebar-mini-btn {
+  margin-top: auto;
+  align-self: flex-start;
+  color: #fff;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-mini-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Profile Container */
+.container.bootstrap.snippets.bootdey {
+  display: flex;
+  flex-direction: row; /* Align items in a row */
+  height: 100vh;
+
+}
+
+
+.row {
+  flex: 1;
+  display: flex;
+
+}
+
+/* Profile Navigation */
+.profile-nav {
+  width: 400px; /* Increase width if needed */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: #f4f4f4; /* Adjust background color if necessary */
+  transform:translateY(10px);
+
+}
+.profile-nav .user-heading {
+  color: #000000;
+  border-radius: 4px 4px 0 0 ;
+  padding: 30px;
+  text-align: center;
+  font-size: 70px;
+
+}
+
+.profile-nav .user-heading a img {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+
+
+}
+
+.profile-nav .user-heading h1 {
+  font-size: 22px;
+  font-weight: 300;
+  margin-bottom: 5px;
+
+}
+
+.profile-nav .user-heading p {
+  font-size: 17px;
+
+}
+
+
+.profile-nav ul {
+  margin-top: 1px;
+
+}
+
+.profile-nav ul > li {
+  border-bottom: 1px solid #ebeae6;
+  margin-top: 0;
+  line-height: 30px;
+
+}
+
+.profile-nav ul > li:last-child {
+  border-bottom: none;
+
+}
+
+.profile-nav ul > li > a {
+  border-radius: 0;
+  color: #89817f;
+  border-left: 5px solid #fff;
+
+}
+
+.profile-nav ul > li > a:hover, .profile-nav ul > li > a:focus, .profile-nav ul li.active a {
+  background: #f8f7f5 !important;
+  border-left: 5px solid #fbc02d;
+  color: #89817f !important;
+
+}
+
+.profile-nav ul > li:last-child > a:last-child {
+  border-radius: 0 0 4px 4px;
+
+}
+
+.profile-nav ul > li > a > i {
+  font-size: 16px;
+  padding-right: 10px;
+  color: #bcb3aa;
+
+}
+
+.r-activity {
+  margin: 6px 0 0;
+  font-size: 12px;
+
+}
+
+/* Profile Info */
+.profile-info {
+  flex: 1;
+  margin: 30px 0;
+
+}
+
+.profile-info .panel {
+  background-color: #ffffff;
+  border: 1px solid #0366b0;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+}
+
+.profile-info .panel-body {
+
+  padding: 20px;
+}
+
+.bio-graph-heading {
+  background: #fbc02d;
+  color: #fff;
+  text-align: center;
+  font-style: italic;
+  padding: 20px;
+  border-radius: 4px 4px 0 0;
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.profile-info {
+  margin: 30px 0;
+  flex: 1; /* Allow it to grow to fill the remaining space */
+}
+
+
+.bio-graph-info h1 {
+  font-size: 22px;
+  font-weight: 300;
+  margin: 0 0 20px;
+}
+
+.bio-row {
+  margin-bottom: 10px;
+  padding: 0 15px;
+}
+
+.bio-row p span {
+  width: 100px;
+  display: inline-block;
+}
+
+.profile-info .panel-footer {
+  background-color: #f8f7f5;
+  border-top: 1px solid #e7ebee;
+
+}
+
+/* Project Cards */
+.panel {
+  border: 1px solid #0366b0;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #ffffff;
+
+}
+.card {
+  overflow: hidden; /* Hide any content that overflows the card */
+  width: 100%; /* Ensure the card takes up the full width of its container */
+}
+.img-account-profile {
+  width: 150px;  /* Adjust width as needed */
+  height: 150px; /* Adjust height as needed */
+  object-fit: cover; /* Ensure the image fits within the dimensions */
+  border-radius: 50%; /* Maintain circular shape */
+  display: block; /* Ensure it's a block element to respect its dimensions */
+  margin: 0 auto; /* Center the image horizontally within its container */
+}
+
+.panel-body {
+  padding: 20px;
+}
+
+.bio-chart {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.bio-chart .knob {
+  width: 100px;
+  height: 100px;
+}
+
+.bio-desk {
+  text-align: center;
+}
+
+.bio-desk h4 {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.bio-desk p {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Color Styles for Project Cards */
+.bio-desk h4.red {
+  color: #e26b7f;
+}
+
+.bio-desk h4.terques {
+  color: #4CC5CD;
+}
+
+.bio-desk h4.green {
+  color: #97be4b;
+}
+
+.bio-desk h4.purple {
+  color: #caa3da;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .profile-nav {
+    width: 100%; /* Full width on small screens */
+    height: auto; /* Adjust height */
+  }
+
+  .profile-nav {
+    padding: 10px;
+  }
+
+  .profile-nav .user-heading {
+    color: #000000;
+    border-radius: 4px 4px 0 0;
+    padding: 30px;
+    text-align: center;
+    font-size: 70px;
+    position: relative; /* Added to help with z-index */
+    z-index: 10; /* Ensure it stays on top */
+  }
+
+  .profile-nav .user-heading a img {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    position: relative; /* Added to ensure it positions correctly */
+    z-index: 20; /* Ensure it stays on top */
+    display: block;
+    margin: 0 auto;
+  }
+
+  .profile-info .panel {
+    margin: 10px 0;
+  }
+
+  .bio-row {
+    width: 100%;
+    float: none;
+    padding: 0;
+  }
+
+  .bio-chart, .bio-desk {
+    float: none;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+
+                                                     /* CSS */
+                                                   .button-54 {
+                                                     font-family: "Open Sans", sans-serif;
+                                                     font-size: 16px;
+                                                     letter-spacing: 2px;
+                                                     text-decoration: none;
+                                                     text-transform: uppercase;
+                                                     color: #000;
+                                                     cursor: pointer;
+                                                     border: 3px solid;
+                                                     padding: 0.25em 0.5em;
+                                                     box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
+                                                     position: relative;
+                                                     user-select: none;
+                                                     -webkit-user-select: none;
+                                                     touch-action: manipulation;
+                                                   }
+
+.button-54:active {
+  box-shadow: 0px 0px 0px 0px;
+  top: 5px;
+  left: 5px;
+}
+
+@media (min-width: 768px) {
+  .button-54 {
+    padding: 0.25em 0.75em;
+  }
+}

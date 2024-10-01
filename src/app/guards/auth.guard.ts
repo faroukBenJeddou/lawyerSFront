@@ -1,5 +1,42 @@
-import { CanActivateFn } from '@angular/router';
+import {CanActivateFn, Router} from '@angular/router';
+import {AuthService} from "../services/auth.service";
+import {inject} from "@angular/core";
+import jwtDecode from "jwt-decode";
 
 export const authGuard: CanActivateFn = (route, state) => {
-  return true;
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  const token = localStorage.getItem('authToken');
+  if (token) {
+    try {
+      const decodedToken: any = jwtDecode(token);
+      console.log('Decoded Token:', decodedToken);
+
+      // Access the role directly from the token
+      const userRole = decodedToken?.role; // No need to access role.role
+
+      console.log('User Role:', userRole);
+
+      // Allow access based on role
+      if (state.url.includes('/admin') && userRole === 'admin') {
+        return true;
+      } else if ((state.url.includes('/lawyer') && (userRole === 'Lawyer' || userRole === 'assistant')) ||
+        (state.url.includes('/client') && userRole === 'Client')) {
+        return true;
+      } else {
+        // Redirect unauthorized access to the appropriate page
+        router.navigate(['/notFound']);
+        return false;
+      }
+    } catch (error) {
+      console.error('Token decoding error:', error);
+      router.navigate(['/notFound']);
+      return false;
+    }
+  } else {
+    // Not logged in or token expired, redirect to login page
+    router.navigate(['/login']);
+    return false;
+  }
 };

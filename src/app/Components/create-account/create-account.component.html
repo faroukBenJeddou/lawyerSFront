@@ -1,1 +1,118 @@
-<p>create-account works!</p>
+<!DOCTYPE html>
+<!-- Designined by CodingLab - youtube.com/codinglabyt -->
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <title> Responsive Registration Form | CodingLab </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<div class="container">
+  <div class="logo-container mb-5">
+    <img src="../../../assets/lawyersoft-high-resolution-logo-transparent.png" alt="Logo" style="width: 200px; margin-left: 200px" />
+  </div>
+  <div class="title">Registration</div>
+  <div class="content">
+    <div *ngIf="showAlert" class="alert alert-success" role="alert">
+      Account created successfully!
+    </div>
+
+    <!-- Your existing form and content here -->
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="user-details">
+        <div class="input-box">
+          <span class="details">First Name</span>
+          <input type="text" id="firstName" formControlName="firstName" placeholder="Enter your name" required>
+          <label class="form-label" for="firstName" style="font-size: 20px"></label>
+          <div *ngIf="registerForm.get('firstName')?.invalid && (registerForm.get('firstName')?.dirty || registerForm.get('firstName')?.touched)" class="block p-error">
+            <div *ngIf="registerForm.get('firstName')?.errors?.['required']">First Name is required</div>
+            <div *ngIf="registerForm.get('firstName')?.errors?.['minlength']">Password must be at least 4 characters long</div>
+          </div>
+        </div>
+        <div class="input-box">
+          <span class="details">Family Name</span>
+          <input type="text" id="familyName" formControlName="familyName" placeholder="Enter your username" required>
+          <div *ngIf="registerForm.get('familyName')?.invalid && (registerForm.get('firstName')?.dirty || registerForm.get('familyName')?.touched)" class="block p-error">
+            <div *ngIf="registerForm.get('familyName')?.errors?.['required']">Family Name is required</div>
+            <div *ngIf="registerForm.get('familyName')?.errors?.['minlength']">Family Name must be at least 4 characters long</div>
+          </div>
+        </div>
+        <div class="input-box" >
+          <span class="details">Email</span>
+          <input type="email" id="email" formControlName="email" placeholder="Enter your email" required>
+          <div *ngIf="registerForm.get('email')?.invalid && (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)" class="block p-error">
+            <div *ngIf="registerForm.get('email')?.errors?.['required']">Email is required</div>
+            <div *ngIf="registerForm.get('email')?.errors?.['email']">Email should be valid</div>
+          </div>
+        </div>
+        <div class="input-box">
+          <span class="details">Phone Number</span>
+          <input type="text" id="phoneNumber" formControlName="phoneNumber" placeholder="Enter your number" required>
+          <div *ngIf="registerForm.get('phoneNumber')?.invalid && (registerForm.get('phoneNumber')?.dirty || registerForm.get('phoneNumber')?.touched)" class="block p-error">
+            <div *ngIf="registerForm.get('phoneNumber')?.errors?.['required']">Phone Number is required</div>
+            <div *ngIf="registerForm.get('phoneNumber')?.errors?.['minlength']">Phone Number must be at least 8 characters long</div>
+          </div>
+        </div>
+        <div class="input-box">
+          <span class="details">Password</span>
+          <input type="password" id="password" formControlName="password" placeholder="Enter your password" required>
+          <div *ngIf="registerForm.get('password')?.invalid && (registerForm.get('password')?.dirty || registerForm.get('password')?.touched)" class="block p-error">
+            <div *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</div>
+            <div *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters long</div>
+          </div>
+        </div>
+        <div class="input-box">
+          <span class="details">Birthdate</span>
+          <input type="text" id="birthdate" formControlName="birthdate" placeholder="Enter your Birthdate" required>
+          <div *ngIf="registerForm.get('birthdate')?.invalid && (registerForm.get('birthdate')?.dirty || registerForm.get('birthdate')?.touched)" class="block p-error">
+            <div *ngIf="registerForm.get('birthdate')?.errors?.['required']">Birthdate is required</div>
+          </div>
+        </div>
+
+
+        <div class="input-box">
+          <span class="details">Adress</span>
+          <input type="text" id="adress" formControlName="adress" placeholder="Enter your Adress" required>
+          <div *ngIf="registerForm.get('adress')?.invalid && (registerForm.get('adress')?.dirty || registerForm.get('adress')?.touched)" class="block p-error">
+            <div *ngIf="registerForm.get('adress')?.errors?.['adress']">Birthdate is required</div>
+
+          </div>
+        </div>
+
+      </div>
+      <div class="form-outline mb-4">
+        <span class="form-label" style="font-size: 20px">Gender</span>
+
+        <select id="gender" formControlName="gender" class="form-control form-control-lg" style="font-size: 20px">
+          <option value="" disabled selected>Choose your gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+        <div *ngIf="registerForm.get('gender')?.invalid && (registerForm.get('gender')?.dirty || registerForm.get('gender')?.touched)" class="block p-error">
+          <div *ngIf="registerForm.get('gender')?.errors?.['required']">Gender is required</div>
+        </div>
+      </div>
+      <div class="form-outline mb-4">
+        <span class="form-label"  style="font-size: 20px">Role</span>
+
+        <select id="role" formControlName="role" class="form-control form-control-lg" style="font-size: 20px">
+          <option value="" disabled selected>Choose your Role</option>
+          <option value="Client">Client</option>
+          <option value="Lawyer">Lawyer</option>
+          <option value="Assistant">Assistant</option>
+        </select>
+        <div *ngIf="registerForm.get('role')?.invalid && (registerForm.get('role')?.dirty || registerForm.get('role')?.touched)" class="block p-error">
+          <div *ngIf="registerForm.get('role')?.errors?.['required']">Role is required</div>
+        </div>
+      </div>
+      <div class="button">
+        <p-button label="Create Account" styleClass="w-full" [disabled]="registerForm.invalid" type="submit"></p-button>
+      </div>
+      <p>You have an Account? <a routerLink="/login" class="link-info">Back to Login</a></p>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
