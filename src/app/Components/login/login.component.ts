@@ -49,24 +49,28 @@ export class LoginComponent implements OnInit {
         password: this.loginForm.value.password as string
       };
 
-
       this.authService.login(loginPayload).subscribe(
         response => {
           const token = response?.token;
           const lawyerId = response?.lawyerId; // Extract lawyerId from response
-          const clientId=response?.id;
+          const clientId = response?.id;
           console.log(response);
+
           if (token) {
-            localStorage.setItem('authToken', token); // Save token
+            // Save the token in localStorage
+            localStorage.setItem('authToken', token);
             const decodedToken: any = jwtDecode(token);
             const userRole = decodedToken?.role;
 
+            // SweetAlert with auto-close after 2 seconds (2000 milliseconds)
             Swal.fire({
               title: 'Login Successful',
               icon: 'success',
               text: 'You have logged in successfully!',
-              confirmButtonText: 'OK'
+              showConfirmButton: false, // Hide the confirm button since we don't need it
+              timer: 2000 // Automatically close the alert after 2 seconds
             }).then(() => {
+              // Navigate to the appropriate page based on the user's role
               if (userRole === 'admin') {
                 this.router.navigate(['/admin']);
               } else if (userRole === 'Lawyer' || userRole === 'assistant') {
@@ -77,7 +81,9 @@ export class LoginComponent implements OnInit {
                 this.router.navigate(['/home']);
               }
             });
+
           } else {
+            // SweetAlert for failed login
             Swal.fire({
               title: 'Login Failed',
               icon: 'error',
@@ -87,6 +93,7 @@ export class LoginComponent implements OnInit {
           }
         },
         error => {
+          // SweetAlert for server or network error
           Swal.fire({
             title: 'Login Failed',
             icon: 'error',

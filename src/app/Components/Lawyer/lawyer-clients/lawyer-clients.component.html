@@ -204,7 +204,7 @@
                 type="button"
                 class="btn btn-dark w-sm-100 custom-button"
                 (click)="openModal()"
-                style="display: block;  auto; background-color:  #4c3575; margin-right: 300px ;margin-top:800px">
+                style="display: block;  auto ; background-color:  #4c3575; margin-right: 300px ;margin-top:-30px">
               <mat-icon class="me-2">add</mat-icon> Add Client
               </button>
             </div>
@@ -272,14 +272,13 @@
 
       <!-- Clients Section -->
       <div class="container d-flex justify-content-center align-items-center flex-wrap full-height">
-        <div class="card" *ngFor="let client of filteredClients" style="border: 2px solid  #464545; /* Blue border */ border-radius: 8px; /* Optional: round corners */ margin: 10px; /* Optional: space between cards */">
+        <div class="card" *ngFor="let client of filteredClients" style="border: 2px solid  #464545; border-radius: 8px; margin: 10px;">
           <div class="banner" style="display: flex; justify-content: center; align-items: center; height: 150px;">
-            <!-- Placeholder image for lawyer -->
             <img [src]="client.image || 'http://bootdey.com/img/Content/avatar/avatar1.png'" alt="Client Image" class="client-image" style="width: 150px; object-fit: cover;">
           </div>
 
           <div class="card-body">
-            <h2 class="name" style="font-size:medium">{{ client.firstName }} {{ client.familyName }}</h2>
+            <h2 class="name" style="font-size: medium">{{ client.firstName }} {{ client.familyName }}</h2>
             <div class="title">Client</div>
             <div class="divider"></div>
             <div class="row">
@@ -308,8 +307,9 @@
                 </div>
               </div>
             </div>
-            <div class="follow-btn">
+            <div class="follow-btn d-flex justify-content-between">
               <button class="btn-remove" (click)="confirmRemoveClient(client.id)">Remove</button>
+              <button class="btn-view-profile" (click)="redirectToProfile(client.id)">Show Profile</button>
             </div>
           </div>
         </div>

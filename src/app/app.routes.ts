@@ -20,6 +20,8 @@ import {CaseDetailsClientComponent} from "./Components/Client/case-details-clien
 import {ForgotPasswordComponent} from "./Components/forgot-password/forgot-password.component";
 import {ResetPasswordComponent} from "./Components/reset-password/reset-password.component";
 import {EditProfileLawyerComponent} from "./Components/Lawyer/edit-profile-lawyer/edit-profile-lawyer.component";
+import {EditClientProfileComponent} from "./Components/Client/edit-client-profile/edit-client-profile.component";
+import {AllprofilesComponent} from "./Components/allprofiles/allprofiles.component";
 
 export const routes: Routes = [
   {path:'login', component: LoginComponent},
@@ -27,6 +29,7 @@ export const routes: Routes = [
   {path:'client/:id',component:ClientViewComponent, canActivate: [authGuard], data: { role: 'Client' }},
   {path:'lawyer/:id',component:LawyerViewComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
   {path:'edit/lawyer/:id',component:EditProfileLawyerComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
+  {path:'client/edit/:id',component:EditClientProfileComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
   {path:'lawyer/:id/calendar',component:CalendarComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
   {path:'lawyer/:id/clients',component:LawyerClientsComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
   {path:'lawyer/:id/cases',component:CasesComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
@@ -40,10 +43,11 @@ export const routes: Routes = [
   {path:'client/:id/case/:caseId',component:CaseDetailsClientComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
   {path:'forgotPassword',component:ForgotPasswordComponent},
   { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'profile/:id', component: AllprofilesComponent },
 
   { path: 'home', component: HomeComponent },
 
-
+  { path: 'notFound', component: NotFoundComponent }, // Ensure this component exists
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/notFound' }
 ];

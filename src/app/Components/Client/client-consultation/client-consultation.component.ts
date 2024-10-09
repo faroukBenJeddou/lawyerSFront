@@ -39,6 +39,14 @@ export class ClientConsultationComponent implements OnInit{
   lawyerId!: string;
   lawyer!: Lawyer;
   notifications: Requests[] = []; // Array to hold notifications
+  isDropdownOpen = false;
+  isNotificationDropdownOpen = false; // Track the state of the notification dropdown
+  isProfileDropdownOpen = false; // Track the state of the profile dropdown
+  alertMessage: string | null = null; // For displaying alert messages
+  alertVisible = false; // For controlling the alert visibility
+  // Function to toggle dropdown visibility
+  alertType: 'success' | 'error' | null = null; // To determine the alert type
+  imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
 
   constructor(private http:HttpClient,private authService:AuthService,private lawyerServ:LawyerServiceService,private route:ActivatedRoute,
               private consultationServ:ConsultationService,private clientServ:ClientService,private requestServ:RequestService) {
@@ -47,6 +55,9 @@ export class ClientConsultationComponent implements OnInit{
 
   }
 
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
 
   openModal(caseId: string) {
     this.consultationId = caseId; // Set the current caseId
@@ -83,6 +94,7 @@ export class ClientConsultationComponent implements OnInit{
     this.clientId = this.route.snapshot.paramMap.get('id') || '';
     this.getClient(); // Load the client details
     this.getNotifications(); // Load notifications
+    this.loadProfileImage(this.clientId);
 
     // Fetch the lawyerId first, then fetch the consultations for that lawyer
     this.clientServ.getLawyers(this.clientId).pipe(
@@ -100,7 +112,19 @@ export class ClientConsultationComponent implements OnInit{
       }
     });
   }
-getLawyer(){
+  loadProfileImage(clientId: string): void {
+    this.clientServ.getImageById(clientId).subscribe(blob => {
+      if (blob) {
+        this.imageUrl = URL.createObjectURL(blob);
+      } else {
+        console.error('No image data received');
+      }
+    }, error => {
+      console.error('Error fetching image', error);
+    });
+  }
+
+  getLawyer(){
     this.clientServ.getLawyers(this.clientId).subscribe({
       next:(data:Lawyer)=>{
         this.lawyerId=data.id;

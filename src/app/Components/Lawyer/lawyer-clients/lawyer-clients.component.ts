@@ -6,7 +6,7 @@ import {User} from "../../../Models/User";
 import {Client} from "../../../Models/Client";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {DatePipe, NgClass, NgForOf, NgIf, NgStyle} from "@angular/common";
-import {ActivatedRoute, RouterLink} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Router, RouterLink} from "@angular/router";
 import {MatIcon} from "@angular/material/icon";
 import {ClientService} from "../../../services/ClientService/client.service";
 import {error} from "@angular/compiler-cli/src/transformers/util";
@@ -59,8 +59,12 @@ export class LawyerClientsComponent implements OnInit {
   // Function to toggle dropdown visibility
   alertType: 'success' | 'error' | null = null; // To determine the alert type
   constructor(private fb: FormBuilder, private Http: HttpClient, private lawyerServ: LawyerServiceService, private authService: AuthService, private route: ActivatedRoute
-    , private clientServ: ClientService, private requestService: RequestService, private cdr: ChangeDetectorRef, private consultationServ: ConsultationService) {
-
+    , private clientServ: ClientService, private requestService: RequestService, private cdr: ChangeDetectorRef, private consultationServ: ConsultationService,private router: Router) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        console.log('Navigated to:', event.url);
+      }
+    });
   }
 
 
@@ -93,6 +97,17 @@ export class LawyerClientsComponent implements OnInit {
       console.error('Error fetching image', error);
     });
   }
+  redirectToProfile(clientId: string) {
+    console.log('Navigating to Profile with clientId:', clientId);
+    this.router.navigate(['/profile', clientId], { queryParams: { lawyerId: this.lawyerId } })
+      .then(success => console.log('Navigation successful:', success))
+      .catch(err => console.error('Navigation error:', err));
+  }
+
+
+
+
+
 
   loadProfileImageLawyer(lawyer: Lawyer): void {
     if (lawyer && lawyer.id) {
@@ -326,7 +341,8 @@ export class LawyerClientsComponent implements OnInit {
         this.showAlert('Failed to handle request.', 'error'); // Show error alert if needed
       }
     });
-  }  deleteRequest(requestId: string) {
+  }
+  deleteRequest(requestId: string) {
     this.requestService.deleteRequest(requestId).subscribe();
   }
 

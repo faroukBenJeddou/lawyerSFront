@@ -16,6 +16,8 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {DocumentsService} from "../../../services/documents/documents.service";
 import {MatIcon} from "@angular/material/icon";
 import {CaseStatus} from "../../../Models/CaseStatus";
+import {ClientService} from "../../../services/ClientService/client.service";
+import {Client} from "../../../Models/Client";
 
 @Component({
   selector: 'app-case-details-client',
@@ -51,8 +53,16 @@ export class CaseDetailsClientComponent implements OnInit{
   isHearingModalOpen = false; // New property for hearing modal
   currentPhase!: CaseStatus;
   progressPercentage: number = 33; // Starting progress
-
-
+  errorMessage: string | null = null; // Variable to hold error messages
+  isDropdownOpen = false;
+  isNotificationDropdownOpen = false; // Track the state of the notification dropdown
+  isProfileDropdownOpen = false; // Track the state of the profile dropdown
+  alertMessage: string | null = null; // For displaying alert messages
+  alertVisible = false; // For controlling the alert visibility
+  // Function to toggle dropdown visibility
+  alertType: 'success' | 'error' | null = null; // To determine the alert type
+  imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
+  client!:Client
   setPhase() {
     if (this.case?.caseStatus) {
       this.currentPhase = this.case.caseStatus;
@@ -75,7 +85,7 @@ export class CaseDetailsClientComponent implements OnInit{
     }
   }
   constructor(private http: HttpClient, private authService: AuthService, private fb: FormBuilder, private invoiceServ: InvoiceService,private hearingServ:HearingsService,
-              private route: ActivatedRoute, private caseService: CaseService,private modalService:NgbModal,private docServ:DocumentsService) {
+              private route: ActivatedRoute, private caseService: CaseService,private modalService:NgbModal,private docServ:DocumentsService,private clientServ:ClientService) {
   }
   openHearingModal(caseId: string) {
     this.caseId = caseId; // Set the current caseId
@@ -152,6 +162,18 @@ export class CaseDetailsClientComponent implements OnInit{
     this.caseId = this.route.snapshot.paramMap.get('caseId') || '';
 
     if (this.clientId) {
+      // Fetch the client information and assign it
+      this.clientServ.getClientById(this.clientId).subscribe({
+        next: (client: Client) => {
+          this.client = client; // Assign client to this.client
+          console.log('Fetched client:', this.client); // Log fetched client
+        },
+        error: (error) => {
+          console.error('Error fetching client:', error);
+        }
+      });
+
+      // Fetch case information
       this.caseService.getCase(this.caseId).subscribe({
         next: (data: Case) => {
           this.case = data;
@@ -294,5 +316,20 @@ export class CaseDetailsClientComponent implements OnInit{
     } else {
       console.error('Invalid document ID');
     }
+  }
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  loadProfileImage(clientId: string): void {
+    this.clientServ.getImageById(clientId).subscribe(blob => {
+      if (blob) {
+        this.imageUrl = URL.createObjectURL(blob);
+      } else {
+        console.error('No image data received');
+      }
+    }, error => {
+      console.error('Error fetching image', error);
+    });
   }
 }

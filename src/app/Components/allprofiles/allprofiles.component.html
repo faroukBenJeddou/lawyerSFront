@@ -1,0 +1,93 @@
+<div class="col-span-1">
+  <div class="grid gap-5 lg:gap-7.5">
+    <div class="card min-w-full" style="background-color: #e5e0f2;" >
+      <div class="card-header" style="background-color: #4c3575; color:#f0f8ff">
+        <h3 class="card-title">
+          Personal Info
+        </h3>
+      </div>
+      <div class="card-table scrollable-x-auto pb-3" >
+        <table class="table align-middle text-sm text-gray-500">
+          <tr>
+            <td class="py-2 min-w-28 text-gray-600 font-normal">
+              Photo
+            </td>
+            <td class="py-2 text-gray700 font-normal min-w-32 text-2sm">
+
+            </td>
+            <td class="py-2 text-center">
+              <div class="flex justify-center items-center" style="border: none; /* Remove any border */
+  outline: none; /* Remove any outline */">
+                <img
+                  class="rounded-full border-2 border-success profile-pic"
+                  [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'"
+                  alt="Profile Picture"
+                  style="width:90px"
+                >
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="py-2 text-gray-600 font-normal">
+              Name
+            </td>
+            <td class="py-2 text-gray-800 font-normaltext-sm">
+              {{lawyer?.firstName}} {{lawyer?.familyName}}
+            </td>
+            <td class="py-2 text-center">
+
+            </td>
+          </tr>
+          <tr>
+            <td class="py-3 text-gray-600 font-normal">
+              Phone Number
+            </td>
+            <td class="py-3 text-gray-700 text-sm font-normal">
+              {{lawyer?.phoneNumber}}
+            </td>
+            <td class="py-3 text-center">
+
+
+            </td>
+          </tr>
+          <tr>
+            <td class="py-3 text-gray-600 font-normal">
+              Birthday
+            </td>
+            <td class="py-3 text-gray-700 text-sm font-normal">
+              {{lawyer?.birthdate}}
+            </td>
+            <td class="py-3 text-center">
+
+            </td>
+          </tr>
+          <tr>
+            <td class="py-3 text-gray-600 font-normal">
+              Email
+            </td>
+            <td class="py-3 text-gray-700 text-sm font-normal">
+              {{lawyer?.email}}
+            </td>
+            <td class="py-3 text-center">
+
+            </td>
+          </tr>
+          <tr>
+            <td class="py-3">
+              Office Address
+            </td>
+            <td class="py-3 text-gray-700 text-2sm font-normal">
+              {{lawyer?.office_adress}}
+            </td>
+            <td class="py-3 text-center">
+
+            </td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

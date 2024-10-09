@@ -26,5 +26,11 @@ export class AssistantService {
 
     return this.http.put<Assistant>(`${this.baseUrl}/update/${id}`, assistant, { headers });
   }
-
+  getAssistantById(id: string) {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<Assistant>(`/api/assistants/${id}`, { headers }); // Adjust API endpoint accordingly
+  }
 }

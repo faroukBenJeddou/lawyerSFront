@@ -61,6 +61,7 @@ import {MatCard, MatCardContent} from "@angular/material/card";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {ToastrModule} from "ngx-toastr";
 import {LawyerViewComponent} from "./Components/Lawyer/lawyer-view/lawyer-view.component";
+import {AllprofilesComponent} from "./Components/allprofiles/allprofiles.component";
 const appProviders = [
   provideRouter(routes),
   provideAnimationsAsync(),
@@ -103,7 +104,7 @@ const appProviders = [
 ];
 @NgModule({
     declarations: [AppComponent, CalendarComponent,LoginComponent,ConsultationsComponent,ClientViewComponent,ClientLawyerComponent,
-      ClientConsultationComponent,LawyerViewComponent],
+      ClientConsultationComponent,LawyerViewComponent,AllprofilesComponent],
   imports: [
     FormsModule,
     MatIcon,
@@ -203,7 +204,7 @@ const appProviders = [
     providers: appProviders,
     bootstrap: [AppComponent],
     exports: [
-        CalendarComponent,LoginComponent,ClientViewComponent,ClientLawyerComponent,ClientConsultationComponent,LawyerViewComponent
+        CalendarComponent,LoginComponent,ClientViewComponent,ClientLawyerComponent,ClientConsultationComponent,LawyerViewComponent,AllprofilesComponent
     ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // Add this line
 })

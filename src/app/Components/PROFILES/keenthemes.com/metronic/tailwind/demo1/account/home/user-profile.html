@@ -1,0 +1,394 @@
+<!--
+Product: Metronic is a toolkit of UI components built with Tailwind CSS for developing scalable web applications quickly and efficiently
+Version: v9.0.6
+Author: Keenthemes
+Contact: support keenthemes.com
+Website: https://www.keenthemes.com
+Support: https://devs.keenthemes.com
+Follow: https://www.twitter.com/keenthemes
+License: https://keenthemes.com/metronic/tailwind/docs/getting-started/license
+-->
+<!DOCTYPE html>
+<html class="h-full" data-theme="true" data-theme-mode="light" lang="en">
+
+<!-- Mirrored from keenthemes.com/metronic/tailwind/demo1/account/home/user-profile by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 26 Sep 2024 22:53:09 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  <title>
+    Metronic - Tailwind CSS User Profile
+  </title>
+  <meta charset="utf-8"/>
+  <meta content="follow, index" name="robots"/>
+  <link href="user-profile.html" rel="canonical"/>
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+  <meta content="User profile page, powered by Tailwind CSS" name="description"/>
+  <meta content=" keenthemes" name="twitter:site"/>
+  <meta content=" keenthemes" name="twitter:creator"/>
+  <meta content="summary_large_image" name="twitter:card"/>
+  <meta content="Metronic - Tailwind CSS User Profile" name="twitter:title"/>
+  <meta content="User profile page, powered by Tailwind CSS" name="twitter:description"/>
+  <meta content="/static/metronic/tailwind/dist/assets/media/app/og-image.png" name="twitter:image"/>
+  <meta content="https://keenthemes.com/metronic/tailwind/demo1/account/home/user-profile" property="og:url"/>
+  <meta content="en_US" property="og:locale"/>
+  <meta content="website" property="og:type"/>
+  <meta content=" keenthemes" property="og:site_name"/>
+  <meta content="Metronic - Tailwind CSS User Profile" property="og:title"/>
+  <meta content="User profile page, powered by Tailwind CSS" property="og:description"/>
+  <meta content="/static/metronic/tailwind/dist/assets/media/app/og-image.png" property="og:image"/>
+  <link href="../../../../../static/metronic/tailwind/dist/assets/media/app/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+  <link href="../../../../../static/metronic/tailwind/dist/assets/media/app/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+  <link href="../../../../../static/metronic/tailwind/dist/assets/media/app/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+  <link href="https://keenthemes.com/static/metronic/tailwind/dist/assets/media/app/favicon.ico" rel="shortcut icon"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght 400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <!-- Google tag (gtag.js) -->
+  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-52YZ3XGZJ6">
+
+  </script>
+  <script>
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+      const dropdown = this.nextElementSibling;
+      dropdown.classList.toggle('hidden');
+    });
+
+  </script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-52YZ3XGZJ6');
+  </script>
+</head>
+<div class="page-container" style="margin-right:200px">
+  <body class="antialiased flex h-full text-base text-gray-700 [--tw-page-bg:#fefefe] [--tw-page-bg-dark:var(--tw-coal-500)] demo1 sidebar-fixed header-fixed bg-[--tw-page-bg] dark:bg-[--tw-page-bg-dark]">
+  <!-- Theme Mode -->
+  <script>
+    const defaultThemeMode = 'light'; // light|dark|system
+    let themeMode;
+
+    if ( document.documentElement ) {
+      if ( localStorage.getItem('theme')) {
+        themeMode = localStorage.getItem('theme');
+      } else if ( document.documentElement.hasAttribute('data-theme-mode')) {
+        themeMode = document.documentElement.getAttribute('data-theme-mode');
+      } else {
+        themeMode = defaultThemeMode;
+      }
+
+      if (themeMode === 'system') {
+        themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      document.documentElement.classList.add(themeMode);
+    }
+  </script>
+  <!-- End of Theme Mode -->
+  <!-- Page -->
+  <!-- Main -->
+  <div class="flex grow">
+    <!-- Sidebar -->
+    <div class="sidebar px-4 py-4 py-md-5 me-0">
+      <div class="d-flex flex-column h-100">
+        <a class="mb-0 brand-icon">
+    <span class="logo-icon">
+    <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png" style="width: 200px; height:150px;" />
+
+</span>
+
+
+        </a>
+        <ul class="menu-list flex-grow-1 mt-3">
+          <li>
+            <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
+              <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
+              <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+            </a>
+
+          </li>
+          <li>
+            <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
+              <i class="icofont-briefcase"></i> <mat-icon>people</mat-icon> <span>Clients</span>
+            </a>
+          </li>
+
+          <li>
+            <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
+              <i class="icofont-ticket"></i><mat-icon>gavel</mat-icon> <span>Cases</span>
+              <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+            </a>
+          </li>
+
+          <li>
+            <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
+              <i class="icofont-ticket"></i><mat-icon>event</mat-icon> <span>Consultations</span>
+              <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+            </a>
+          </li>
+          <li>
+            <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
+              <i class="icofont-users-alt-5"></i> <mat-icon>group</mat-icon> <span>Assistant</span>
+              <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+            </a>
+          </li>
+        </ul>
+        <button class="btn btn-danger" (click)="onLogout()">Logout
+          <span class="ms-2"> <mat-icon>exit_to_app</mat-icon>
+</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- End of Sidebar -->
+    <!-- Wrapper -->
+    <div class="wrapper flex grow flex-col">
+      <!-- Header -->
+      <header style="background-color: #4c3575;" class="header fixed top-0 z-10 left-0 right-0 flex items-stretch shrink-0 bg-[--tw-page-bg] dark:bg-[--tw-page-bg-dark]" data-sticky="true" data-sticky-class="shadow-sm" data-sticky-name="header" id="header">
+        <!-- Container -->
+        <div class="container-fixed flex justify-between items-stretch lg:gap-4" id="header_container"style="border: none; /* Remove any border */
+  outline: none;margin-right: -10px /* Remove any outline */">
+          <!-- Mobile Logo -->
+          <div class="flex gap-1 lg:hidden items-center -ml-1"  style="margin-left: 200px">
+            <a class="shrink-0" href="https://keenthemes.com/metronic/tailwind/demo1/" >
+              <img class="max-h-[25px] w-full" [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'"/>
+            </a>
+            <div class="flex items-center">
+              <button class="btn btn-icon btn-light btn-clear btn-sm" data-drawer-toggle="#sidebar">
+                <i class="ki-filled ki-menu">
+                </i>
+              </button>
+            </div>
+          </div>
+          <!-- End of Mobile Logo -->
+          <!-- Breadcrumbs -->
+          <div class="flex [.header_&amp;]:below-lg:hidden items-center gap-1.25 text-xs lg:text-sm font-medium mb-2.5 lg:mb-0" data-reparent="true" data-reparent-mode="prepend|lg:prepend" data-reparent-target="#content_container|lg:#header_container" >
+       <span class="text-gray-700">
+
+       </span>
+
+            <span class="text-gray-700">
+       </span>
+          </div>
+          <!-- End of Breadcrumbs -->
+          <div *ngIf="alertVisible" [ngClass]="{'alert-success': alertType === 'success', 'alert-danger': alertType === 'error'}" class="alert" role="alert">
+            {{ alertMessage }}
+          </div>
+
+          <!-- Topbar -->
+          <div class="flex items-center gap-2 lg:gap-3.5" >
+            <!-- Notification Button -->
+            <div class="relative">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="notificationsDropdown"
+                role="button"
+                (click)="markNotificationsAsViewed()"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="ki-filled ki-notification-on"></i>
+
+                <!-- Removed the "Notifications" text -->
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                <!-- Check if there are no notifications -->
+                <li *ngIf="notifications.length === 0" class="dropdown-item text-center">
+                  No new notifications
+                </li>
+
+                <!-- Iterate through notifications if available -->
+                <li *ngFor="let notification of notifications" class="notification-item">
+                  <a class="dropdown-item" href="#">
+                    <div class="notification-content">
+                      <strong>{{ notification.client.firstName }} {{ notification.client.familyName }}</strong>
+                      <p class="notification-details">
+                        Title: {{ notification.title }}<br />
+                        Day: {{ notification.start | date: 'fullDate' }}<br />
+                        Time: {{ notification.start | date: 'shortTime' }}
+                        <span class="notification-time">{{ getTimeAgo(notification.start) }}</span>
+                      </p>
+                      <span class="notification-time">{{ notification.time }}</span>
+                    </div>
+                  </a>
+                  <!-- Accept and Decline Buttons -->
+                  <div class="d-flex justify-content-between mt-2 px-2">
+                    <button class="btn btn-success btn-sm" (click)="acceptRequest(notification.requestId)">Accept</button>
+                    <button class="btn btn-danger btn-sm" (click)="declineRequest(notification.requestId)">Decline</button>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+
+
+
+
+            <!-- Profile Dropdown -->
+            <div class="relative" (click)="toggleDropdown()">
+              <div class="cursor-pointer">
+                <img alt="Profile" class=" rounded-full border-2 border-success shrink-0" style="width: 70px;  /* Adjust to your desired size */
+  height: 70px; /* Adjust to your desired size */"
+                     [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'">
+              </div>
+
+              <!-- Dropdown Menu -->
+              <div *ngIf="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
+                <div class="px-4 py-3">
+                  <p class="text-sm font-semibold">{{lawyer?.firstName}} {{lawyer?.familyName}}</p>
+                  <p class="text-xs text-gray-600">{{lawyer?.email}}</p>
+                </div>
+                <div class="border-t border-gray-200"></div>
+                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
+                <a (click)="onLogout()" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a>
+              </div>
+            </div>
+          </div>
+          <!-- End of Topbar -->
+        </div>
+        <!-- End of Container -->
+      </header>
+      <!-- End of Header -->
+      <!-- Content -->
+      <div class="container" style="margin-top:150px;">
+        <div class="main-body">
+
+
+          <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+              <div class="card" style="border: 2px solid #868484; border-radius: 10px; padding: 20px;">
+                <div class="card-body">
+                  <div class="d-flex flex-column align-items-center text-center">
+                    <img [src]="profilePic || 'http://bootdey.com/img/Content/avatar/avatar1.png'" alt="Admin" class="rounded-circle" width="150">
+                    <div class="mt-3">
+                      <h4>{{userProfile.firstName}} {{userProfile.familyName}}</h4>
+                      <p class="text-secondary mb-1">Full Stack Developer</p>
+                      <p class="text-muted font-size-sm">Bay Area, San Francisco, CA</p>
+                      <button class="btn btn-primary" style="background-color:#0d5ba1">Follow</button>
+                      <button class="btn btn-outline-primary"style="background-color:#2c8d28">Message</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card mt-3">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe mr-2 icon-inline"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>Website</h6>
+                    <span class="text-secondary">https://bootdey.com</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github mr-2 icon-inline"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>Github</h6>
+                    <span class="text-secondary">bootdey</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter mr-2 icon-inline text-info"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>Twitter</h6>
+                    <span class="text-secondary">bootdey</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-instagram mr-2 icon-inline text-danger"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>Instagram</h6>
+                    <span class="text-secondary">bootdey</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-facebook mr-2 icon-inline text-primary"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>Facebook</h6>
+                    <span class="text-secondary">bootdey</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="card mb-3" style="border: 2px solid #868484; border-radius: 10px; padding: 20px;">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Full Name</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{userProfile.firstName}} {{userProfile.familyName}}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Email</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{userProfile.email}}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Phone</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{userProfile.phoneNumber}}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Birthdate</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{userProfile.birthdate}}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Address</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{userProfile.adress}}
+                    </div>
+                  </div>
+                  <hr>
+
+                </div>
+              </div>
+
+              <div class="row gutters-sm">
+                <div class="col-sm-6 mb-3">
+                  <div class="card h-100">
+                    <div class="card-body">
+
+                      <!-- If the user is a Lawyer, display case types -->
+                      <h6 class="d-flex align-items-center mb-3" *ngIf="userProfile?.role === 'Lawyer'">
+                        <i class="material-icons text-info mr-2">assignment</i>Case Types Handled
+                      </h6>
+                      <ul *ngIf="userProfile?.role === 'Lawyer'">
+                        <li *ngFor="let case of cases">
+                          <small>{{ case.caseType }}</small>
+                        </li>
+                      </ul>
+
+                      <!-- If the user is a Client, display Lawyer Information -->
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- End of Wrapper -->
+  </div>
+  <!-- End of Main -->
+
+  <!-- Scripts -->
+  <script src="../../../../../static/metronic/tailwind/dist/assets/js/core.bundle.js">
+  </script>
+  <script src="../../../../../static/metronic/tailwind/dist/assets/vendors/apexcharts/apexcharts.min.js">
+  </script>
+  <script src="../../../../../static/metronic/tailwind/dist/assets/js/layouts/demo1.js">
+  </script>
+  <!-- End of Scripts -->
+  </body>
+</div>><!-- Mirrored from keenthemes.com/metronic/tailwind/demo1/account/home/user-profile by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 26 Sep 2024 22:53:20 GMT -->
+</html>

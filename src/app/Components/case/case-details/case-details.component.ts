@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatIcon} from "@angular/material/icon";
 import {DatePipe, NgClass, NgForOf, NgIf, NgStyle} from "@angular/common";
@@ -25,6 +25,8 @@ import Swal from "sweetalert2";
 import {RequestService} from "../../../services/Request/request.service";
 import {ClientService} from "../../../services/ClientService/client.service";
 import {ConsultationService} from "../../../services/Consultation/consultation.service";
+import {Lawyer} from "../../../Models/Lawyer";
+import {Client} from "../../../Models/Client";
 
 @Component({
   selector: 'app-case-details',
@@ -54,6 +56,7 @@ export class CaseDetailsComponent implements OnInit {
     title: ''
   };
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
+  lawyer: Lawyer | null = null;
 
   isModalOpen = false;
   title: string | null = null;
@@ -69,7 +72,13 @@ export class CaseDetailsComponent implements OnInit {
   notifications: any[] = []; // Adjust type based on your Request model
   hasNewNotifications: boolean = false;
   notifications$: Observable<Requests[]> = new BehaviorSubject([]);
-
+  isDropdownOpen = false;
+  isNotificationDropdownOpen = false; // Track the state of the notification dropdown
+  isProfileDropdownOpen = false; // Track the state of the profile dropdown
+  alertMessage: string | null = null; // For displaying alert messages
+  alertVisible = false; // For controlling the alert visibility
+  // Function to toggle dropdown visibility
+  alertType: 'success' | 'error' | null = null; // To determine the alert type
   setPhase() {
     if (this.case?.caseStatus) {
       this.currentPhase = this.case.caseStatus;
@@ -185,6 +194,18 @@ export class CaseDetailsComponent implements OnInit {
     this.caseId = this.route.snapshot.paramMap.get('caseId') || '';
 
     if (this.lawyerId) {
+      // Fetch the lawyer by ID and load the profile image
+      this.lawyerServ.getLawyerById(this.lawyerId).subscribe(
+        (data: Lawyer) => {
+          this.lawyer = data;
+          this.loadProfileImage(this.lawyerId);  // Add this part to load the profile image
+        },
+        (error) => {
+          console.error('Error fetching lawyer:', error);
+        }
+      );
+
+      // Fetch the case data if the lawyer ID is present
       this.caseService.getCase(this.caseId).subscribe({
         next: (data: Case) => {
           this.case = data;
@@ -199,6 +220,17 @@ export class CaseDetailsComponent implements OnInit {
         }
       });
     }
+  }
+  loadProfileImage(lawyerId: string): void {
+    this.lawyerServ.getImageById(lawyerId).subscribe(blob => {
+      if (blob) {
+        this.imageUrl = URL.createObjectURL(blob);
+      } else {
+        console.error('No image data received');
+      }
+    }, error => {
+      console.error('Error fetching image', error);
+    });
   }
 
   loadCase() {
@@ -358,6 +390,51 @@ export class CaseDetailsComponent implements OnInit {
     // Implement the method to fetch Client by ID
     return this.clientServ.getClientById(clientId);
   }
+
+
+  getTimeAgo(date: Date): string {
+    return formatDistanceToNow(new Date(date), {addSuffix: true});
+  }
+  markNotificationsAsViewed(): void {
+    // Mark notifications as viewed
+    if (this.hasNewNotifications) {
+      this.hasNewNotifications = false;
+      // You may also need to update the server to mark notifications as read if applicable
+    }
+  }
+  declineRequest(requestId: string) {
+    this.deleteRequest(requestId); // Call backend service to decline the request
+    this.showAlert('Request declined.', 'error'); // Show red alert message
+
+    // Load notifications again after declining
+    this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
+  }
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+  showAlert(message: string, type: 'success' | 'error'): void {
+    this.alertMessage = message; // Set the alert message
+    this.alertVisible = true; // Show the alert
+    this.alertType = type; // Set the alert type
+
+    setTimeout(() => {
+      this.alertVisible = false; // Hide the alert after 2 seconds
+    }, 2000);
+  }
+  toggleNotificationDropdown() {
+    this.isNotificationDropdownOpen = !this.isNotificationDropdownOpen;
+    this.isProfileDropdownOpen = false; // Close profile dropdown if open
+    console.log('Notification dropdown toggled:', this.isNotificationDropdownOpen);
+  }
+// Close dropdowns when clicking outside
+  @HostListener('document:click', ['$event'])
+  closeDropdowns(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.relative')) {
+      this.isNotificationDropdownOpen = false;
+      this.isDropdownOpen = false;
+    }
+  }
   acceptRequest(requestId: string) {
     this.getRequestById(requestId).pipe(
       switchMap(request =>
@@ -370,23 +447,17 @@ export class CaseDetailsComponent implements OnInit {
                   start: request.start,
                   end: addHours(new Date(), 1),
                 };
-                console.log("testId" + request.client.id);
-                // Pass the request's lawyer and client IDs to the createConsultation method
+
                 return this.consultationServ.createConsultation(newConsultation, request.client.id, request.lawyer.id).pipe(
                   switchMap(() =>
                     this.requestService.deleteRequest(requestId).pipe(
-                      switchMap(() =>
-                        this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '')
-                      )
+                      tap(() => {
+                        this.showAlert('Request accepted.', 'success'); // Show green alert message
+                        // Load notifications again after accepting
+                        this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
+                      })
                     )
-                  ),
-                  tap(() => {
-                    // Show success alert after the consultation is created and request is deleted
-                    Swal.fire('Success', 'Request accepted successfully.', 'success').then(() => {
-                      // Optionally close the notification dropdown here if you have a method or flag for it
-
-                    });
-                  })
+                  )
                 );
               })
             )
@@ -394,37 +465,13 @@ export class CaseDetailsComponent implements OnInit {
         )
       )
     ).subscribe({
-      next: notifications => {
-        this.notifications$ = of(notifications);
-
-        console.log('Notifications updated');
-      },
       error: err => {
         console.error('Error handling request', err);
-        Swal.fire('Error', 'Failed to handle request.', 'error');
-
+        this.showAlert('Failed to handle request.', 'error'); // Show error alert if needed
       }
     });
   }
   deleteRequest(requestId: string) {
     this.requestService.deleteRequest(requestId).subscribe();
   }
-  declineRequest(requestId: string) {
-    this.deleteRequest(requestId);   // Call backend service to decline the request
-    Swal.fire('Declined', 'You have declined the request.', 'error');
-    this.cdr.detectChanges(); // Trigger change detection
-    this.notifications$ = this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
-
-  }
-  getTimeAgo(date: Date): string {
-    return formatDistanceToNow(new Date(date), {addSuffix: true});
-  }
-  markNotificationsAsViewed(): void {
-    // Mark notifications as viewed
-    if (this.hasNewNotifications) {
-      this.hasNewNotifications = false;
-      // You may also need to update the server to mark notifications as read if applicable
-    }
-  }
-
 }

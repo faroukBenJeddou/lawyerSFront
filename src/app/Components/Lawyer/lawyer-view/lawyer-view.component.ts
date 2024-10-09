@@ -153,16 +153,18 @@ export class LawyerViewComponent implements OnInit{
                 password: '',
                 image:this.lawyer.image
               });
-
+              this.hearingServ.getHearingsForCase(this.lawyerId).subscribe((hearings: Hearing[]) => {
+                this.hearings = hearings;
+                this.getClosestHearing(); // Call the method to find the closest hearing
+              });
 
               // Navigate to the URL with lawyerId
               this.router.navigate([`/lawyer/${this.lawyerId}`]);
               this.loadProfileImage(this.lawyerId);
               this.loadClients(this.lawyerId);
               this.loadCases(this.lawyerId);
-              this.loadConsultations(this.lawyerId);
+              this.fetchConsultations();
               this.getClosestConsultation();
-              this.getHearingsForLawyer(this.lawyerId)
               this.loadNotifications(this.lawyerId);
             } else {
               this.errorMessage = 'Lawyer ID is missing!';
@@ -208,6 +210,12 @@ export class LawyerViewComponent implements OnInit{
     }
   }
 
+  redirectToProfile(clientId: string) {
+    console.log('Navigating to Profile with clientId:', clientId);
+    this.router.navigate(['/profile', clientId], { queryParams: { lawyerId: this.lawyerId } })
+      .then(success => console.log('Navigation successful:', success))
+      .catch(err => console.error('Navigation error:', err));
+  }
 
 
   loadProfileImage(lawyerId: string): void {
@@ -324,6 +332,7 @@ export class LawyerViewComponent implements OnInit{
     // Implement the method to fetch Client by ID
     return this.clientServ.getClientById(clientId);
   }
+
   acceptRequest(requestId: string) {
     this.getRequestById(requestId).pipe(
       switchMap(request =>
@@ -391,29 +400,74 @@ export class LawyerViewComponent implements OnInit{
     });
   }
   loadCases(lawyerId: string): void {
-    this.lawyerService.getCases(lawyerId).subscribe({
+    this.caseServ.getCasesForLawyer(lawyerId).subscribe({
       next: (cases) => {
         this.cases = cases;
+        this.loadHearingsForCases(cases); // Fetch hearings for each case
       },
       error: (error) => {
-        console.error('Error fetching cases', error);
-        this.errorMessage = 'Error fetching cases.';
+        console.error('Error fetching cases:', error);
       }
     });
   }
-  loadConsultations(lawyerId: string): void {
-    this.lawyerService.getConsultations(lawyerId).subscribe({
-      next: (consultations) => {
+  async fetchConsultations() {
+    this.consultationServ.getAll().subscribe(
+      (consultations: Consultation[]) => {
         this.consultations = consultations;
-        this.getClosestConsultation(); // Call here to update closest consultation
 
+        console.log("Fetched Consultations:", this.consultations);
+
+        // Proceed to filter for future consultations
+        const now = new Date();
+        console.log("Current Date:", now.toISOString());
+
+        const futureConsultations = this.consultations.filter(consultation => {
+          const startDate = new Date(consultation.start);
+          console.log(`Comparing: ${startDate.toISOString()} > ${now.toISOString()}?`, startDate > now);
+          return startDate > now;
+        });
+
+        console.log("Future Consultations:", futureConsultations);
+
+        // Find the closest upcoming consultation
+        if (futureConsultations.length > 0) {
+          this.closestConsultation = futureConsultations.reduce((prev, curr) => {
+            return new Date(prev.start) < new Date(curr.start) ? prev : curr;
+          });
+        } else {
+          this.closestConsultation = null; // No future consultations found
+        }
+
+        console.log("Closest Consultation:", this.closestConsultation);
       },
-      error: (error) => {
-        console.error('Error fetching consultations', error);
-        this.errorMessage = 'Error fetching consultations.';
+      (error) => {
+        console.error("Error fetching consultations:", error);
       }
-    });
+    );
   }
+
+
+
+  findClosestConsultation() {
+    const now = new Date();
+    const futureConsultations = this.consultations.filter(consultation => {
+      const startDate = new Date(consultation.start);
+      return startDate > now;
+    });
+
+    console.log("Future Consultations:", futureConsultations);
+
+    // If there are future consultations, find the closest one
+    if (futureConsultations.length > 0) {
+      this.closestConsultation = futureConsultations[0]; // Just for initial testing
+    } else {
+      this.closestConsultation = null;
+    }
+
+    console.log('Closest Consultation:', this.closestConsultation);
+  }
+
+
   redirectToEdit(lawyerId: string | undefined) {
     this.router.navigate([`/edit/lawyer/${lawyerId}`]);
   }
@@ -452,78 +506,31 @@ export class LawyerViewComponent implements OnInit{
     // this.cdr.detectChanges();
   }
 
-  getHearingsForLawyer(lawyerId: string) {
-    console.log('Fetching hearings for Lawyer ID:', lawyerId);
+  loadHearingsForCases(cases: Case[]): void {
+    const hearingsRequests = cases.map(c => this.hearingServ.getHearingsForCase(c.caseId));
 
-    if (lawyerId) {
-      this.caseServ.getCasesForLawyer(lawyerId).subscribe({
-        next: (cases: Case[]) => {
-          if (Array.isArray(cases)) {
-            const hearingsObservables = cases.map(caseItem =>
-              this.hearingServ.getHearingsForCase(caseItem.caseId)
-            );
-
-            // Fetch all hearings for all cases and store in hearings property
-            forkJoin(hearingsObservables).subscribe((hearingsArrays) => {
-              this.hearings = hearingsArrays.flat(); // Flatten the array of arrays into a single array
-              console.log('All Hearings:', this.hearings);
-
-              // Filter out past hearings
-              const now = new Date();
-              const upcomingHearings = this.hearings.filter(hearing => new Date(hearing.start) > now);
-
-              // Sort by date (earliest first)
-              upcomingHearings.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
-
-              // Get the 3 closest hearings
-              this.closestHearings = upcomingHearings.slice(0, 3);
-              console.log('Closest 3 Hearings:', this.closestHearings);
-            });
-          } else {
-            console.warn('No cases found for the lawyer');
-          }
-        },
-        error: (error) => {
-          this.errorMessage = 'Error fetching cases';
-          console.error('Error fetching cases:', error);
-        }
-      });
-    } else {
-      console.error('No valid lawyer ID provided');
-    }
+    forkJoin(hearingsRequests).subscribe({
+      next: (allHearings) => {
+        this.hearings = allHearings.flat(); // Combine all the hearings into one array
+        this.getClosestHearing(); // Call your logic to get the closest hearings
+      },
+      error: (error) => {
+        console.error('Error fetching hearings:', error);
+      }
+    });
   }
   getClosestHearing(): void {
-    // Check if hearings exist
-    if (!this.hearings || this.hearings.length === 0) {
-      this.closestHearing = null;
-      console.log('Closest Hearing Date: No upcoming hearings');
-      return;
-    }
+    const now = new Date();
+    const upcomingHearings = this.hearings.filter(hearing => new Date(hearing.start) > now);
 
-    const nowUTC = new Date().getTime(); // Current time in milliseconds
+    // Sort by start date to find the nearest one
+    upcomingHearings.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 
-    // Filter out past hearings
-    const upcomingHearings = this.hearings.filter(hearing => {
-      const hearingDate = new Date(hearing.start).getTime(); // Assuming 'date' is the property of Hearing
-      console.log('Hearing Date:', hearingDate, new Date(hearing.start));
-      return hearingDate > nowUTC; // Only include upcoming hearings
-    });
-
-    // If there are no upcoming hearings, set closestHearing to null
-    if (upcomingHearings.length === 0) {
-      this.closestHearing = null;
-      console.log('Closest Hearing Date: No upcoming hearings');
-      return;
-    }
-
-    // Find the hearing with the earliest date
-    this.closestHearing = upcomingHearings.reduce((prev, curr) =>
-      new Date(prev.start).getTime() < new Date(curr.start).getTime() ? prev : curr
-    );
-
-    console.log('Closest Hearing:', this.closestHearing);
-
-    // If you need to trigger change detection, uncomment the next line
-    // this.cdr.detectChanges();
+    // Get the closest hearing
+    this.closestHearing = upcomingHearings.length > 0 ? upcomingHearings[0] : null;
+    console.log('Closest Hearing:', this.closestHearing); // For debugging
   }
+
+
 }
+

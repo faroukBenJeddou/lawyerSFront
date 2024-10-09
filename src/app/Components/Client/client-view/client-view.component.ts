@@ -19,10 +19,11 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {AppModule} from "../../../app.module";
 import Swal from "sweetalert2";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {C} from "@angular/cdk/keycodes";
 @Component({
   selector: 'app-client-view',
-  templateUrl: './client-view.component.html',
-  styleUrl: './client-view.component.css'
+  templateUrl: '../aaaa/keenthemes.com/metronic/tailwind/demo1/account/home/user-profile.html',
+  styleUrl: '../aaaa/keenthemes.com/static/metronic/tailwind/dist/assets/css/styles.css'
 })
 export class ClientViewComponent implements OnInit{
   isLoggedIn = false; // This will be updated based on actual authentication state
@@ -45,6 +46,15 @@ export class ClientViewComponent implements OnInit{
   nearestConsultation: Consultation | null = null; // Variable for the nearest consultation
   nearestHearing: Hearing| null = null;
   isModalOpen = false;
+  isDropdownOpen = false;
+  isNotificationDropdownOpen = false; // Track the state of the notification dropdown
+  isProfileDropdownOpen = false; // Track the state of the profile dropdown
+  alertMessage: string | null = null; // For displaying alert messages
+  alertVisible = false; // For controlling the alert visibility
+  // Function to toggle dropdown visibility
+  alertType: 'success' | 'error' | null = null; // To determine the alert type
+  closestHearings: Hearing[] = []; // To store the 3 closest hearings
+
   constructor(private authService: AuthService, private router: Router,private clientService:ClientService,private route:ActivatedRoute,
               private modalService:NgbModal,  private fb: FormBuilder,private changeDetector: ChangeDetectorRef,private hearingServ:HearingsService,
               private caseService:CaseService
@@ -115,6 +125,7 @@ export class ClientViewComponent implements OnInit{
               this.loadProfileImage(this.ClientId);
               this.loadCases(this.ClientId);
               this.loadConsultations(this.ClientId);
+              this.getClosestConsultation();
             } else {
               this.errorMessage = 'Lawyer ID is missing!';
             }
@@ -236,20 +247,54 @@ export class ClientViewComponent implements OnInit{
   onLogout(): void {
     this.authService.logout();
   }
-  loadConsultations(clientId: string) {
+  loadConsultations(clientId: string): void {
     this.clientService.getConsultations(clientId).subscribe({
-      next: (data: Consultation[]) => {
-        this.consultations = data;
-        // Find the nearest consultation
-        this.nearestConsultation = this.consultations
-          .filter(c => new Date(c.start) > new Date()) // Filter out past consultations
-          .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())[0] || null;
+      next: (consultations) => {
+        this.consultations = consultations;
+        this.getClosestConsultation(); // Call here to update closest consultation
+
       },
       error: (error) => {
+        console.error('Error fetching consultations', error);
         this.errorMessage = 'Error fetching consultations.';
       }
     });
   }
+  getClosestConsultation(): void {
+    // Check if consultations exist
+    if (!this.consultations || this.consultations.length === 0) {
+      this.nearestConsultation = null;
+      console.log('Closest Consultation Date: No upcoming consultations');
+      return;
+    }
+
+    const nowUTC = new Date().getTime(); // Current time in milliseconds
+
+    // Filter out past consultations
+    const upcomingConsultations = this.consultations.filter(consultation => {
+      const consultationDate = new Date(consultation.start).getTime(); // Ensure start is a valid date
+      console.log('Consultation Date:', consultationDate, new Date(consultation.start));
+      return consultationDate > nowUTC; // Only include upcoming consultations
+    });
+
+    // If there are no upcoming consultations, set closestConsultation to null
+    if (upcomingConsultations.length === 0) {
+      this.nearestConsultation = null;
+      console.log('Closest Consultation Date: No upcoming consultations');
+      return;
+    }
+
+    // Find the consultation with the earliest date
+    this.nearestConsultation = upcomingConsultations.reduce((prev, curr) =>
+      new Date(prev.start).getTime() < new Date(curr.start).getTime() ? prev : curr
+    );
+
+    console.log('Closest Consultation:', this.nearestConsultation);
+
+    // If you need to trigger change detection, uncomment the next line
+    // this.cdr.detectChanges();
+  }
+
   loadCases(clientId: string): void {
     this.clientService.getCases(clientId).subscribe({
       next: (cases) => {
@@ -281,18 +326,34 @@ export class ClientViewComponent implements OnInit{
   }
   loadHearings(clientId: string) {
     if (clientId) {
+      // Fetch all hearings for the client
       this.hearingServ.getHearingsForCase(clientId).subscribe({
         next: (hearings: Hearing[]) => {
+          // Store all hearings
           this.hearings = hearings;
-          // Find the nearest hearing
-          this.nearestHearing = this.hearings
-            .filter(h => new Date(h.start) > new Date()) // Filter out past hearings
-            .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())[0] || null;
+          console.log('All Hearings:', this.hearings);
+
+          // Filter out past hearings
+          const now = new Date();
+          const upcomingHearings = this.hearings.filter(h => new Date(h.start) > now);
+
+          // Sort by date (earliest first)
+          upcomingHearings.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+
+          // Get the nearest hearing
+          this.nearestHearing = upcomingHearings[0] || null;
+          console.log('Nearest Hearing:', this.nearestHearing);
+
+          // Optionally, if you want to limit the number of closest hearings (e.g., top 3 closest):
+          this.closestHearings = upcomingHearings.slice(0, 3);
+          console.log('Closest 3 Hearings:', this.closestHearings);
         },
         error: (error) => {
           console.error('Error fetching hearings:', error);
         }
       });
+    } else {
+      console.error('No valid client ID provided');
     }
   }
   loadDocuments() {
@@ -307,5 +368,9 @@ export class ClientViewComponent implements OnInit{
       });
     }
   }
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
 
+  protected readonly C = C;
 }
