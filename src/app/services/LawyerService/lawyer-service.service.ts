@@ -97,7 +97,8 @@ export class LawyerServiceService {
   updateLawyer(id: string, lawyer: Lawyer): Observable<Lawyer> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
 
 

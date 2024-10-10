@@ -229,7 +229,7 @@
                   <input  type="datetime-local" class="form-control" id="start" formControlName="start" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary">{{ caseId ? 'Update Case' : 'Add Case' }}</button>
+                <button type="submit" class="btn btn-primary" style="background-color:blue">{{ caseId ? 'Update Case' : 'Add Case' }}</button>
               </form>
             </div>
 
@@ -249,7 +249,7 @@
             <!-- Modal Header -->
             <div class="modal-header">
               <h4 class="modal-title" id="assignClientLabel">Assign Client to Case</h4>
-              <button type="button" class="btn-close" (click)="closeAssignClientModal()" aria-label="Close"></button>
+              <button type="button" class="btn-close" (click)="closeAssignClientModal()"  aria-label="Close"></button>
             </div>
             <!-- Modal Body -->
             <div class="modal-body">
@@ -263,7 +263,7 @@
                     </option>
                   </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Assign Client</button>
+                <button type="submit" class="btn btn-primary" style="background-color:blue">Assign Client</button>
               </form>
             </div>
             <!-- Modal Footer -->
@@ -327,7 +327,7 @@
       <!-- Modal Header -->
       <div class="modal-header">
         <h4 class="modal-title" id="invoiceModalLabel">Create Invoice</h4>
-        <button type="button" class="btn-close" (click)="closeInvoiceModal()" aria-label="Close"></button>
+        <button type="button" class="btn-close" (click)="closeInvoiceModal()" style="color:red;font-size:25px;" aria-label="Close">x</button>
       </div>
       <!-- Modal Body -->
       <div class="modal-body">
@@ -344,12 +344,12 @@
             <label for="date" class="form-label">Date</label>
             <input type="date" class="form-control" id="date" [(ngModel)]="date" name="date" required>
           </div>
-          <button type="submit" class="btn btn-primary">Create Invoice</button>
+          <button type="submit" class="btn btn-primary" style="background-color:blue">Create Invoice</button>
         </form>
       </div>
       <!-- Modal Footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeInvoiceModal()">Close</button>
+        <button type="button" class="btn btn-secondary" (click)="closeInvoiceModal()" >Close</button>
       </div>
     </div>
   </div>

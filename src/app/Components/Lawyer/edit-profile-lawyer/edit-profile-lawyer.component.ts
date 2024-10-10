@@ -69,7 +69,6 @@ export class EditProfileLawyerComponent implements OnInit{
       office_adress: [''],
       password: [''],
       email: [''],
-      image: [null],// Form control for profile picture
     });
   }
   toggleDropdown() {
@@ -136,7 +135,6 @@ export class EditProfileLawyerComponent implements OnInit{
                 office_adress: this.lawyer.office_adress || '',
                 email: this.lawyer.email || '',
                 password: '',
-                image:this.lawyer.image
               });
 
 
