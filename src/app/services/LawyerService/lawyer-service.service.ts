@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
-import {catchError, Observable, throwError} from "rxjs";
+import {catchError, Observable, of, throwError} from "rxjs";
 import {Lawyer} from "../../Models/Lawyer";
 import {AuthService} from "../auth.service";
 import {Client} from "../../Models/Client";
@@ -13,6 +13,7 @@ import {Assistant} from "../../Models/Assistant";
 })
 export class LawyerServiceService {
   private baseUrl='http://localhost:8081/lawyer'
+  errorMessage: string = ''; // Declare the errorMessage property
 
   constructor(private http:HttpClient,private authService:AuthService) {
 
@@ -45,9 +46,19 @@ export class LawyerServiceService {
     if (!token) {
       throw new Error('Token is missing');
     }
+
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<Client[]>(`${this.baseUrl}/${id}/clients`, { headers });
+
+    return this.http.get<Client[]>(`${this.baseUrl}/${id}/clients`, { headers }).pipe(
+      catchError((error) => {
+        // Handle errors here, in case the server returns an error
+        console.error('Error fetching clients:', error);
+        this.errorMessage = 'Unable to load clients, please try again later.';
+        return of([]); // Return an empty array in case of error
+      })
+    );
   }
+
   getCases(id: string): Observable<Case[]> {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -127,7 +138,8 @@ export class LawyerServiceService {
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.post(`${this.baseUrl}/${lawyerId}/upload-photo`, formData, {
+    console.log('Sending request to upload image...');
+    return this.http.post<any>(`${this.baseUrl}/${lawyerId}/upload-photo`, formData, {
       headers,
       reportProgress: true,
       observe: 'events'

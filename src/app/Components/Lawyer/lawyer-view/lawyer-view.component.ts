@@ -28,8 +28,10 @@ import {Hearing} from "../../../Models/Hearing";
 @Component({
   selector: 'app-lawyer-view',
 
-  templateUrl: '../aaaa/keenthemes.com/metronic/tailwind/demo1/account/home/user-profile.html',
-  styleUrl: '../aaaa/keenthemes.com/static/metronic/tailwind/dist/assets/css/styles.css'
+  templateUrl: 'lawyer-view.component.html',
+  styleUrls: [
+
+  ]
 })
 export class LawyerViewComponent implements OnInit{
   notifications: any[] = []; // Adjust type based on your Request model
@@ -391,7 +393,13 @@ export class LawyerViewComponent implements OnInit{
   loadClients(lawyerId: string): void {
     this.lawyerService.getClients(lawyerId).subscribe({
       next: (clients) => {
-        this.clients = clients;
+        // Check if there are no clients
+        if (clients.length === 0) {
+          this.errorMessage = 'This lawyer has no clients.';
+        } else {
+          // Only slice if there are more than 3 clients
+          this.clients = clients.length > 3 ? clients.slice(-3) : clients;
+        }
       },
       error: (error) => {
         console.error('Error fetching clients', error);
@@ -399,6 +407,8 @@ export class LawyerViewComponent implements OnInit{
       }
     });
   }
+
+
   loadCases(lawyerId: string): void {
     this.caseServ.getCasesForLawyer(lawyerId).subscribe({
       next: (cases) => {

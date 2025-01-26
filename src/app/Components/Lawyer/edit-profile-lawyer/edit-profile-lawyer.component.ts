@@ -16,6 +16,7 @@ import {ConsultationService} from "../../../services/Consultation/consultation.s
 import jwtDecode from "jwt-decode";
 import Swal from "sweetalert2";
 import {addHours, formatDistanceToNow} from "date-fns";
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-edit-profile-lawyer',
@@ -31,7 +32,11 @@ import {addHours, formatDistanceToNow} from "date-fns";
     NgClass
   ],
   templateUrl: './edit-profile-lawyer.component.html',
-  styleUrl: '../aaaa/keenthemes.com/static/metronic/tailwind/dist/assets/css/styles.css'
+  styleUrls: ['../aaaa/keenthemes.com/static/metronic/tailwind/dist/assets/css/styles.css',
+              '../lawyer-view/css/bootstrap-icons.css',
+              '../lawyer-view/css/apexcharts.css',
+    '../lawyer-view/css/tooplate-mini-finance.css',
+  ]
 })
 export class EditProfileLawyerComponent implements OnInit{
   notifications: any[] = []; // Adjust type based on your Request model
@@ -57,7 +62,7 @@ export class EditProfileLawyerComponent implements OnInit{
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
   constructor(private authService: AuthService, private router: Router,private lawyerService:LawyerServiceService,private route:ActivatedRoute,
               private modalService:NgbModal,  private fb: FormBuilder,private changeDetector: ChangeDetectorRef, private requestService:RequestService,
-              private lawyerServ:LawyerServiceService,private clientServ:ClientService,private consultationServ:ConsultationService, private cdr: ChangeDetectorRef
+              private lawyerServ:LawyerServiceService,private clientServ:ClientService,private consultationServ:ConsultationService, private cdr: ChangeDetectorRef,private location: Location
   ) {
     this.currentUser = this.authService.getCurrentUser()!;
     this.lawyerId = this.currentUser ? this.currentUser.id : null;
@@ -91,6 +96,32 @@ export class EditProfileLawyerComponent implements OnInit{
       this.isDropdownOpen = false;
     }
   }
+  onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.uploadPhoto(file);
+    }
+  }
+
+  uploadPhoto(file: File) {
+    const lawyerId = this.lawyerId; // Get this from your context, route, or form
+    if (lawyerId) {
+      this.lawyerServ.uploadProfilePicture(lawyerId, file).subscribe(
+        (response) => {
+          console.log('File uploaded successfully!', response);
+          // Trigger a "soft" refresh by navigating to the current route
+          window.location.reload();
+        },
+        (error) => {
+          console.error('File upload failed!', error);
+        }
+      );
+    } else {
+      console.error('Lawyer ID is null or undefined');
+    }
+  }
+
+
 
   onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
@@ -135,6 +166,8 @@ export class EditProfileLawyerComponent implements OnInit{
                 office_adress: this.lawyer.office_adress || '',
                 email: this.lawyer.email || '',
                 password: '',
+                image: [null]  // Initialize the image form control
+
               });
 
 

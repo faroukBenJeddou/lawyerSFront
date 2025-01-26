@@ -15,6 +15,53 @@
   padding: 0; /* Remove any padding */
   margin: 0; /* Remove any margin */
 }
+.sidebar {
+  background: #6f4a91;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  padding: 58px 0 0;
+  color: white;
+}
+
+.sidebar-sticky {
+  height: calc(100vh - 58px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+}
+
+.menu-list li {
+  margin-bottom: 20px; /* Increase the space between sidebar items */
+}
+
+.menu-list li a {
+  font-size: 18px; /* Increase the font size of the text */
+  display: flex;
+  align-items: center;
+}
+
+.menu-list li i, .menu-list li mat-icon {
+  font-size: 24px; /* Increase the size of the icons */
+  margin-right: 10px; /* Add some space between icon and text */
+}
+
+.btn {
+  font-size: 18px; /* Increase the font size of the Logout button */
+  padding: 10px 20px; /* Increase padding for a larger button */
+}
+
+.btn i, .btn mat-icon {
+  font-size: 20px; /* Increase the size of the icon inside the button */
+}
+
+.logo-icon img {
+  width: 200px; /* Keep the logo size the same */
+  height: 150px;
+  margin-bottom: 30px; /* Add some space under the logo */
+}
 
 
 

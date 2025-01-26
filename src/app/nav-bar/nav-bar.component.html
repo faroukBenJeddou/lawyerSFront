@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navbar and Sidebar</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    .navbar {
+      width: 100vw; /* Ensure the navbar is full width */
+      background-color: #f8f9fa;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      border-bottom: 1px solid #ddd;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: #333;
+      padding: 10px 15px;
+      transition: background 0.3s;
+    }
+
+    .navbar a:hover {
+      background-color: #ddd;
+    }
+
+    /* Navbar Items */
+    .navbar .nav-items {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    /* Dropdown */
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      display: none;
+      flex-direction: column;
+      min-width: 200px;
+      z-index: 1000;
+    }
+
+    .dropdown-menu a {
+      padding: 10px 15px;
+      color: #333;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Show dropdown on hover */
+    .dropdown:hover .dropdown-menu {
+      display: flex;
+    }
+
+    /* Profile Picture Dropdown */
+    .profile {
+      position: relative;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #ddd;
+    }
+
+    .profile-menu {
+      position: absolute;
+      top: 60px; /* Below the profile picture */
+      right: 0;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      display: none;
+      flex-direction: column;
+      min-width: 150px;
+      z-index: 1000;
+    }
+
+    .profile-menu a {
+      padding: 10px 15px;
+      color: #333;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .profile-menu a:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Show profile dropdown on click */
+    .profile.active .profile-menu {
+      display: flex;
+    }
+
+    /* Align profile section to the right */
+    .navbar .profile-section {
+      display: flex;
+      align-items: center;
+    }
+
+    /* Make sure navbar spans the full width of the page */
+    .navbar .navbar-brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    /* Content below navbar to prevent overlap */
+    body {
+      padding-top: 70px; /* Prevent content from being hidden behind navbar */
+    }
+    /* Sidebar */
+    /* Sidebar Styles */
+    .sidebar {
+      background-color: #4c3575;
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 60px; /* Adjusted to create space below the navbar */
+      left: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      z-index: 1050;
+    }
+
+    .brand-icon {
+      margin-top: 20px; /* Add margin top to logo if needed */
+      margin-bottom: 20px; /* Optional: add some space after logo */
+    }
+
+    .menu-list {
+      margin-top: 20px; /* Ensures there’s space between the logo and menu items */
+    }
+
+    .btn {
+      margin-top: auto; /* Ensure the logout button stays at the bottom */
+    }
+
+    /* Ensure the logo size doesn't stretch or break layout */
+    .logo-icon img {
+      width: 200px;
+      height: 150px;
+
+    }
+
+    /* Sidebar links */
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #6f4a91; /* Lighter shade for hover effect */
+    }
+
+    /* Content */
+    .content {
+      margin-left: 250px; /* Ensures content starts after the sidebar */
+      padding: 20px;
+      padding-top: 70px; /* Adds padding to prevent content overlap with navbar */
+      width: calc(100% - 250px); /* Takes up the remaining space after sidebar */
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <!-- Navbar Left -->
+
+  <ul class="nav-items" style="padding-left:400px;">
+    <li><a href="#">Home</a></li>
+    <li class="dropdown">
+      <a href="#">Reports</a>
+      <div class="dropdown-menu">
+        <a href="#">Daily Report</a>
+        <a href="#">Weekly Report</a>
+        <a href="#">Yearly Report</a>
+      </div>
+    </li>
+    <li><a href="#">Products</a></li>
+    <li><a href="#">Accounts</a></li>
+    <li class="dropdown">
+      <a href="#">Settings</a>
+      <div class="dropdown-menu">
+        <a href="#">Profile</a>
+        <a href="#">Billing</a>
+        <a href="#">Customize</a>
+      </div>
+    </li>
+  </ul>
+
+  <!-- Profile Picture Dropdown (aligned right) -->
+  <div class="profile-section">
+    <div class="profile" onclick="this.classList.toggle('active')">
+      <!-- Profile picture here -->
+      <img src="https://via.placeholder.com/40" alt="Profile Picture" onerror="this.src='https://www.w3schools.com/howto/img_avatar.png';">
+      <div class="profile-menu">
+        <a href="#">View Profile</a>
+        <a href="#">Settings</a>
+        <a href="#">Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Sidebar -->
+
+
+
+
+</body>
+</html>
