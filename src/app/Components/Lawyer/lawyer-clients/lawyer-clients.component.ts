@@ -33,7 +33,7 @@ import {ConsultationService} from "../../../services/Consultation/consultation.s
     DatePipe
   ],
   templateUrl: './lawyer-clients.component.html',
-  styleUrl: './lawyer-clients.component.css'
+  styleUrls: []
 })
 export class LawyerClientsComponent implements OnInit {
   isModalOpen = false;
@@ -58,6 +58,8 @@ export class LawyerClientsComponent implements OnInit {
   alertVisible = false; // For controlling the alert visibility
   // Function to toggle dropdown visibility
   alertType: 'success' | 'error' | null = null; // To determine the alert type
+  sortByLabel: string = 'Newest';  // Initialize sortByLabel variable
+  sortOrder: string = 'newest';  // Default sorting order
   constructor(private fb: FormBuilder, private Http: HttpClient, private lawyerServ: LawyerServiceService, private authService: AuthService, private route: ActivatedRoute
     , private clientServ: ClientService, private requestService: RequestService, private cdr: ChangeDetectorRef, private consultationServ: ConsultationService,private router: Router) {
     this.router.events.subscribe(event => {
@@ -76,6 +78,7 @@ export class LawyerClientsComponent implements OnInit {
         () => {
           console.log('Client added successfully');
           this.closeModal();
+          window.location.reload();
         },
         (error) => {
           console.error('Error adding client:', error);
@@ -83,7 +86,16 @@ export class LawyerClientsComponent implements OnInit {
       );
     }
   }
+  sortClientsByDate(order: string): void {
+    this.sortOrder = order;
+    this.sortByLabel = order === 'newest' ? 'Newest' : 'Oldest';  // Update dropdown button label
 
+    if (order === 'newest') {
+      this.clients.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
+    } else {
+      this.clients.sort((a, b) => new Date(a.creationDate).getTime() - new Date(b.creationDate).getTime());
+    }
+  }
 
 
   loadProfileImage(client: Client): void {
@@ -145,7 +157,9 @@ export class LawyerClientsComponent implements OnInit {
       gender: ['', Validators.required],
       photo: [null],
       adress: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
+      job: ['', [Validators.required]]
+
     });
 
     this.lawyerId = this.route.snapshot.paramMap.get('id') || '';
@@ -193,13 +207,16 @@ export class LawyerClientsComponent implements OnInit {
     });
   }
 
-  searchClient(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const searchTerm = input.value.trim();
-    this.searchTerms.next(searchTerm); // Trigger search
+  searchClient(event: any): void {
+    const searchTerm = event.target.value.toLowerCase();
+
+    // Filter clients based on the input
+    this.clients = this.clients.filter(client =>
+      client.firstName.toLowerCase().includes(searchTerm)
+    );
+
+    console.log(this.clients); // For debugging
   }
-
-
 
 
 

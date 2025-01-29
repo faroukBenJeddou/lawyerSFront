@@ -10,7 +10,9 @@ export class Client extends User{
   }
   adress!: string; // Ensure spelling matches
   gender !: Gender;
+  job!: string;
   lawyers!: Lawyer;
   cases!: Case[];
   consultations!:Consultation[];
+  creationDate!:Date;
 }

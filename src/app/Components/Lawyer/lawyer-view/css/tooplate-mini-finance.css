@@ -627,6 +627,35 @@ strong {
   margin-top: 200px; /* Adds space above the container without affecting internal padding */
   padding-top: 0; /* Remove inline padding-top */
 }
+/* Modal Styles */
+.modal-content {
+  border-radius: 8px;
+}
+
+.modal-header, .modal-footer {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header {
+  background-color: #4c3575;
+  color:white;
+}
+
+.modal-footer {
+  background-color: #f8f9fa;
+}
+
+.modal-body {
+  padding: 1rem;
+}
+
+.modal-body .form-label {
+  font-weight: bold;
+}
+
+.modal-body .form-control {
+  margin-bottom: 0.75rem;
+}
 
 
 .custom-block h2,

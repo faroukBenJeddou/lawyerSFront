@@ -1,130 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lawyer Profile</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Add IcoFont CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Gotto Job Listing</title>
+
+  <!-- CSS FILES -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100;300;400;600;700&display=swap" rel="stylesheet">
+
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="css/bootstrap-icons.css" rel="stylesheet">
+
+  <link href="css/owl.carousel.min.css" rel="stylesheet">
+
+  <link href="css/owl.theme.default.min.css" rel="stylesheet">
+
+  <link href="css/tooplate-gotto-job.css" rel="stylesheet">
+
+
+  <!--
+
+  Tooplate 2134 Gotto Job
+
+  https://www.tooplate.com/view/2134-gotto-job
+
+  Bootstrap 5 HTML CSS Template
+
+  -->
 
 </head>
-<body>
 
-
-<header style="background-color: #4c3575;" class="header fixed top-0 z-10 left-0 right-0 flex items-stretch shrink-0 bg-[--tw-page-bg] dark:bg-[--tw-page-bg-dark]" data-sticky="true" data-sticky-class="shadow-sm" data-sticky-name="header" id="header">
-  <!-- Container -->
-  <div class="container-fixed flex justify-between items-stretch lg:gap-4" id="header_container"style="border: none; /* Remove any border */
-  outline: none;margin-right: -10px /* Remove any outline */">
-    <!-- Mobile Logo -->
-    <div class="flex gap-1 lg:hidden items-center -ml-1"  style="margin-left: 200px">
-      <a class="shrink-0" href="https://keenthemes.com/metronic/tailwind/demo1/" >
-        <img class="max-h-[25px] w-full" [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'"/>
-      </a>
-      <div class="flex items-center">
-        <button class="btn btn-icon btn-light btn-clear btn-sm" data-drawer-toggle="#sidebar">
-          <i class="ki-filled ki-menu">
-          </i>
-        </button>
-      </div>
-    </div>
-    <!-- End of Mobile Logo -->
-    <!-- Breadcrumbs -->
-    <div class="flex [.header_&amp;]:below-lg:hidden items-center gap-1.25 text-xs lg:text-sm font-medium mb-2.5 lg:mb-0" data-reparent="true" data-reparent-mode="prepend|lg:prepend" data-reparent-target="#content_container|lg:#header_container" >
-       <span class="text-gray-700">
-
-       </span>
-
-      <span class="text-gray-700">
-       </span>
-    </div>
-    <!-- End of Breadcrumbs -->
-    <div *ngIf="alertVisible" [ngClass]="{'alert-success': alertType === 'success', 'alert-danger': alertType === 'error'}" class="alert" role="alert">
-      {{ alertMessage }}
-    </div>
-
-    <!-- Topbar -->
-    <div class="flex items-center gap-2 lg:gap-3.5" >
-      <!-- Notification Button -->
-      <div class="relative">
-        <a
-          class="nav-link dropdown-toggle"
-          href="#"
-          id="notificationsDropdown"
-          role="button"
-          (click)="markNotificationsAsViewed()"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <i class="ki-filled ki-notification-on"></i>
-
-          <!-- Removed the "Notifications" text -->
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
-          <!-- Check if there are no notifications -->
-          <li *ngIf="notifications.length === 0" class="dropdown-item text-center">
-            No new notifications
-          </li>
-
-          <!-- Iterate through notifications if available -->
-          <li *ngFor="let notification of notifications" class="notification-item">
-            <a class="dropdown-item" href="#">
-              <div class="notification-content">
-                <strong>{{ notification.client.firstName }} {{ notification.client.familyName }}</strong>
-                <p class="notification-details">
-                  Title: {{ notification.title }}<br />
-                  Day: {{ notification.start | date: 'fullDate' }}<br />
-                  Time: {{ notification.start | date: 'shortTime' }}
-                  <span class="notification-time">{{ getTimeAgo(notification.start) }}</span>
-                </p>
-                <span class="notification-time">{{ notification.time }}</span>
-              </div>
-            </a>
-            <!-- Accept and Decline Buttons -->
-            <div class="d-flex justify-content-between mt-2 px-2">
-              <button class="btn btn-success btn-sm" (click)="acceptRequest(notification.requestId)">Accept</button>
-              <button class="btn btn-danger btn-sm" (click)="declineRequest(notification.requestId)">Decline</button>
-            </div>
-          </li>
-        </ul>
-      </div>
-
-
-
-
-
-      <!-- Profile Dropdown -->
-      <div class="relative" (click)="toggleDropdown()">
-        <div class="cursor-pointer">
-          <img alt="Profile" class=" rounded-full border-2 border-success shrink-0" style="width: 70px;  /* Adjust to your desired size */
-  height: 70px; /* Adjust to your desired size */"
-               [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'">
-        </div>
-
-        <!-- Dropdown Menu -->
-        <div *ngIf="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
-          <div class="px-4 py-3">
-            <p class="text-sm font-semibold">{{lawyer?.firstName}} {{lawyer?.familyName}}</p>
-            <p class="text-xs text-gray-600">{{lawyer?.email}}</p>
-          </div>
-          <div class="border-t border-gray-200"></div>
-          <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
-          <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
-          <a (click)="onLogout()" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a>
-        </div>
-      </div>
-    </div>
-    <!-- End of Topbar -->
-  </div>
-  <!-- End of Container -->
-</header>
-
-
-
-
+<body class="job-listings-page" id="top">
 <div class="sidebar px-4 py-4 py-md-5 me-0"
 
 
@@ -173,157 +88,387 @@
         </a>
       </li>
     </ul>
-    <button class="btn btn-danger" (click)="onLogout()">Logout
-      <span class="ms-2"> <mat-icon>exit_to_app</mat-icon>
-</span>
+    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
+      Logout
+      <span class="ms-2">
+    <mat-icon style="vertical-align: middle;">exit_to_app</mat-icon>
+  </span>
     </button>
+
   </div>
 </div>
-<div class="container d-flex justify-content-center align-items-center flex-wrap full-height" style="margin-top: 70px;margin-right:800px">
-  <div class="body d-flex py-lg-3 py-md-2">
-    <div class="row mb-3"   style="margin-left:50px;">
-      <div class="col-12">
-        <h1  style="font-size: 30px">Clients</h1>
-      </div>
-    </div>
-    <div class="container-xxl">
-      <!-- Add Client Button -->
-      <div class="row align-items-center">
-        <div class="" style="width:50px;">
-          <div class="card-header p-0 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-            <div class="d-flex py-2 project-tab flex-wrap w-sm-100 me-3">
-              <div class="wrap">
-                <div class="search">
-                  <input type="text" class="searchTerm" placeholder="Search By Client Name" (input)="searchClient($event)">
-                  <button type="submit" class="searchButton">
-                    <i class="fa fa-search"></i>
-                  </button>
-                </div>
+
+<header class="navbar sticky-top flex-md-nowrap">
+  <div class="col-md-3 col-lg-3 me-0 px-3 fs-6">
+  </div>
+
+  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="navbar-nav me-lg-2">
+    <div class="nav-item text-nowrap d-flex align-items-center">
+      <div class="dropdown ps-3 position-relative">
+        <a class="nav-link dropdown-toggle text-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="navbarLightDropdownMenuLink">
+          <i class="bi-bell"></i>
+          <span class="position-absolute start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+            <span class="visually-hidden">New alerts</span>
+          </span>
+        </a>
+
+        <!-- Dropdown menu with max-width and overflow control -->
+        <ul class="dropdown-menu dropdown-menu-lg-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" style="max-width: 300px; width: auto; padding: 10px 0; overflow-x: hidden;">
+          <small>Notifications</small>
+
+          <li class="notifications-block border-bottom pb-2 mb-2" style="padding: 8px 16px;">
+            <a class="dropdown-item d-flex align-items-center" href="#">
+              <div class="notifications-icon-wrap bg-success" style="width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
+                <i class="notifications-icon bi-check-circle-fill"></i>
               </div>
 
-            </div>
-            <div class="d-flex py-2 project-tab flex-wrap w-sm-100" >
-              <button
+              <div>
+                <span>Your account has been created successfully.</span>
+                <p>12 days ago</p>
+              </div>
+            </a>
+          </li>
 
-                type="button"
-                class="btn btn-dark w-sm-100 custom-button"
-                (click)="openModal()"
-                style="display: block;  auto ; background-color:  #4c3575; margin-right: 300px ;margin-top:-30px">
-              <mat-icon class="me-2">add</mat-icon> Add Client
-              </button>
-            </div>
+          <li class="notifications-block border-bottom pb-2 mb-2" style="padding: 8px 16px;">
+            <a class="dropdown-item d-flex align-items-center" href="#">
+              <div class="notifications-icon-wrap bg-info" style="width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
+                <i class="notifications-icon bi-folder"></i>
+              </div>
 
-          </div>
-        </div>
+              <div>
+                <span>Please check. We have sent a Daily report.</span>
+                <p>10 days ago</p>
+              </div>
+            </a>
+          </li>
+
+          <li class="notifications-block" style="padding: 8px 16px;">
+            <a class="dropdown-item d-flex align-items-center" href="#">
+              <div class="notifications-icon-wrap bg-danger" style="width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
+                <i class="notifications-icon bi-question-circle"></i>
+              </div>
+
+              <div>
+                <span>Account verification failed.</span>
+                <p>1 hour ago</p>
+              </div>
+            </a>
+          </li>
+        </ul>
       </div>
 
+      <div class="dropdown px-3 position-relative">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image img-fluid" alt="" style="width: 40px; height: 40px; object-fit: cover;">
+        </a>
 
-      <!-- The Modal -->
-      <div class="modal fade" style="display: none; overflow: hidden;" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" [ngClass]="{'show': isModalOpen}" [ngStyle]="{'display': isModalOpen ? 'block' : 'none'}">
-        <div class="modal-dialog" style="position: relative; width: auto; margin: 1.75rem auto;">
-          <div class="modal-content" style="border-radius: 0.5rem; box-shadow: 0px 1px 3px rgba(0,0,0,0.2); background-clip: padding-box; border: 1px solid #dee2e6; background-color: #fff;">
-            <!-- Modal Header -->
-            <div class="modal-header" style="border-bottom: 1px solid #dee2e6; background-color: #4c3575; color: white;">
-              <h4 class="modal-title" id="exampleModalLabel">Add Client</h4>
-              <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        <!-- Dropdown menu with max-width and overflow control -->
+        <ul class="dropdown-menu dropdown-menu-end bg-white shadow" style="max-width: 250px; width: auto; padding: 10px 0; overflow-x: hidden;">
+          <li>
+            <div class="dropdown-menu-profile-thumb d-flex" style="padding: 8px;">
+              <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image img-fluid me-3" alt="" style="width: 40px; height: 40px; object-fit: cover;">
+              <div class="d-flex flex-column">
+                <small>{{ lawyer?.firstName }}</small>
+                <a href="#">{{lawyer?.email}}</a>
+              </div>
             </div>
-            <!-- Modal Body -->
-            <div class="modal-body" style="padding: 2rem;">
-              <form [formGroup]="clientForm" (ngSubmit)="addClient()">
-                <div class="mb-3">
-                  <label for="firstName" class="form-label">First Name</label>
-                  <input type="text" class="form-control" id="firstName" formControlName="firstName" required>
-                </div>
-                <div class="mb-3">
-                  <label for="familyName" class="form-label">Family Name</label>
-                  <input type="text" class="form-control" id="familyName" formControlName="familyName" required>
-                </div>
-                <div class="mb-3">
-                  <label for="phoneNumber" class="form-label">Phone Number</label>
-                  <input type="tel" class="form-control" id="phoneNumber" formControlName="phoneNumber" required>
-                </div>
-                <div class="mb-3">
-                  <label for="birthdate" class="form-label">Birthdate</label>
-                  <input type="date" class="form-control" id="birthdate" formControlName="birthdate" required>
-                </div>
-                <div class="mb-3">
-                  <label for="gender" class="form-label">Gender</label>
-                  <select class="form-select" id="gender" formControlName="gender" required>
-                    <option value="" disabled>Select gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="adress" class="form-label">Address</label>
-                  <input type="text" class="form-control" id="adress" formControlName="adress" required>
-                </div>
-                <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
-                  <input type="email" class="form-control" id="email" formControlName="email" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="background-color:#313175">Add Client</button>
-              </form>
-            </div>
-            <!-- Modal Footer -->
-            <div class="modal-footer" style="border-top: 1px solid #dee2e6; background-color: #4c3575;">
-              <button type="button" class="btn btn-secondary" style="background-color: red" (click)="closeModal()">Close</button>
-            </div>
+          </li>
+
+          <li>
+            <a class="dropdown-item" [routerLink]="['/lawyer', lawyerId]">
+              <i class="bi-person me-2"></i>
+              Profile
+            </a>
+          </li>
+
+          <li>
+            <a class="dropdown-item" href="setting.html">
+              <i class="bi-gear me-2"></i>
+              Settings
+            </a>
+          </li>
+
+          <li>
+            <a class="dropdown-item" href="help-center.html">
+              <i class="bi-question-circle me-2"></i>
+              Help
+            </a>
+          </li>
+
+          <li class="border-top mt-3 pt-2 mx-4">
+            <a class="dropdown-item ms-0 me-0" (click)="onLogout()">
+              <i class="bi-box-arrow-left me-2"></i>
+              Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <header class="site-header">
+    <div class="section-overlay"></div>
+
+  </header>
+
+  <section class="hero-section d-flex justify-content-center align-items-center" style="background-image: url('../../../../assets/still-life-with-scales-justice.jpg'); background-size: cover; background-position: center center; height: 100vh;">
+    <!-- Optional overlay with semi-transparent background -->
+    <div class="section-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 col-12" style="padding:-200px;padding-right:1100px; text-align:center;">
+          <a (click)="openModal()" class="btn btn-lg btn-success" style="border-radius:10px; background-color:#433b86; color:white; font-size:18px; padding:10px 30px; text-decoration:none;">
+            Add New Client
+          </a>
+        </div>
+        <!-- Left Column (Text Section) -->
+        <div class="col-lg-6 col-12 mb-5 mb-lg-0">
+          <div class="hero-section-text mt-5">
+            <h6 class="text-white">Looking to manage your clients?</h6>
+            <h1 class="hero-title text-white mt-4 mb-4">Search or Add Clients Easily</h1>
+            <p class="text-white" style="font-size: 18px; color: #e0e0e0;">
+              Manage clients efficiently. Use the form below to search for a client or click the button to add a new client.
+            </p>
           </div>
         </div>
-      </div>
 
-
-      <!-- Clients Section -->
-      <div class="container d-flex justify-content-center align-items-center flex-wrap full-height">
-        <div class="card" *ngFor="let client of filteredClients" style="border: 2px solid  #464545; border-radius: 8px; margin: 10px;">
-          <div class="banner" style="display: flex; justify-content: center; align-items: center; height: 150px;">
-            <img [src]="client.image || 'http://bootdey.com/img/Content/avatar/avatar1.png'" alt="Client Image" class="client-image" style="width: 150px; object-fit: cover;">
-          </div>
-
-          <div class="card-body">
-            <h2 class="name" style="font-size: medium">{{ client.firstName }} {{ client.familyName }}</h2>
-            <div class="title">Client</div>
-            <div class="divider"></div>
+        <!-- Right Column (Form) -->
+        <div class="col-lg-6 col-12">
+          <form class="custom-form hero-form" action="#" method="get" role="form" style="background-color:#7F73EBFF;border-radius:3%;padding:40px; height:350px;width:600px;">
+            <h3 class="text-white mb-3" style="font-size: 36px; font-weight: 700; text-align: center; color: #fff;">
+              Search for Client
+            </h3>
             <div class="row">
-              <div class="col-md-6">
-                <div class="info-row">
-                  <span class="material-icons info-icon">home</span>
-                  <span class="info-label">Address:</span>
-                  <span class="info-value">{{ client.adress }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="material-icons info-icon">phone</span>
-                  <span class="info-label">Phone Number:</span>
-                  <span>{{ client.phoneNumber }}</span>
+              <!-- Input Field for Client Name -->
+              <div class="col-lg-6 col-md-6 col-12">
+                <div class="input-group">
+        <span class="input-group-text" id="basic-addon1">
+          <i class="bi-person custom-icon" style="color:white; font-size:35px;"></i>
+        </span>
+                  <input (input)="searchClient($event)" type="text" name="client-name" id="client-name" class="form-control" placeholder="Client Name" required style="background-color:white;border-radius:10px;">
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="info-row">
-                  <span class="material-icons info-icon">wc</span>
-                  <span class="info-label">Gender:</span>
-                  <span>{{ client.gender }}</span>
+
+              <!-- Input Field for Client Email -->
+              <div class="col-lg-6 col-md-6 col-12">
+                <div class="input-group">
+                  <span class="input-group-text" id="basic-addon2"></span>
                 </div>
-                <div class="info-row">
-                  <span class="material-icons info-icon">cake</span>
-                  <span class="info-label">Birthdate:</span>
-                  <span>{{ client.birthdate }}</span>
-                </div>
+              </div>
+
+              <!-- Button to Search Client -->
+              <div class="col-lg-12 col-12" style="padding-top:60px;">
+                <button type="submit" class="form-control submit-btn" style="border-radius:10px;background-color:#433b86;color:white;font-size:20px; padding:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                  Search Client
+                </button>
               </div>
             </div>
-            <div class="follow-btn d-flex justify-content-between">
-              <button class="btn-remove" (click)="confirmRemoveClient(client.id)">Remove</button>
-              <button class="btn-view-profile" (click)="redirectToProfile(client.id)">Show Profile</button>
+          </form>
+
+          <!-- Display the Clients -->
+          
+
+
+          <!-- Button to Add Client -->
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+
+  <section class="job-section section-padding">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 col-12 mb-lg-4">
+          <h3 style="font-size:24px; font-weight:bold;">Results of {{clients.length}}</h3>
+        </div>
+
+
+        <div class="col-lg-4 col-12 d-flex align-items-center ms-auto mb-5 mb-lg-4">
+          <p class="mb-0 ms-lg-auto" style="font-size:25px; color:#cccccc">Sort by:</p>
+          <div class="dropdown dropdown-sorting ms-3 me-4">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownSortingButton" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:20px;">
+              {{ sortByLabel }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownSortingButton">
+              <li><a class="dropdown-item" style="font-size:20px;" (click)="sortClientsByDate('newest')">Newest</a></li>
+              <li><a class="dropdown-item"  style="font-size:20px;" (click)="sortClientsByDate('oldest')">Oldest</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Start of Card Grid -->
+      <div class="rowa" style="">
+        <div class="col-lg-4 col-md-6 col-12" *ngFor="let client of clients">
+          <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; margin-bottom: 20px;"
+               class="job-thumb job-thumb-box">
+            <div class="job-image-box-wrap" style="position: relative; height: 50%; width: 100%; overflow: hidden;">
+              <a href="job-details.html"></a>
+              <div class="job-image-box-wrap-info d-flex align-items-center">
+                <p class="mb-0"><a href="job-listings.html" class="badge badge-level">Internship</a></p>
+                <p class="mb-0"><a href="job-listings.html" class="badge">Freelance</a></p>
+              </div>
+            </div>
+
+            <div class="job-body" style="padding: 15px;">
+              <h4 class="job-title" style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">
+                <a href="job-details.html" class="job-title-link" style="color: #333; text-decoration: none; transition: color 0.3s ease;">{{ client.job }}</a>
+              </h4>
+
+              <div class="d-flex align-items-center">
+                <div style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                  <img [src]="client.image || 'http://bootdey.com/img/Content/avatar/avatar1.png'" alt="" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center">
+                <p class="job-price mb-0" style="font-weight: 500; color: #007bff;">
+                  <i class="custom-icon bi-person me-1" style="font-size:30px"></i>{{ client.firstName }} {{client.familyName}}
+                </p>
+              </div>
+
+              <div class="d-flex align-items-center border-top pt-3" style="font-size: 18px; font-weight: 500;">
+                <!-- View Profile Button -->
+                <a href="profile-details.html" class="custom-btn btn me-2"
+                   style="background-color: #28a745; color: #fff; padding: 8px 16px; font-size: 14px; border-radius: 8px; text-decoration: none; transition: background-color 0.3s ease;">
+                  View Profile
+                </a>
+
+                <!-- Delete Button -->
+                <button class="custom-btn btn" (click)="removeClient(client.id)"
+                        style="background-color: #dc3545; color: #fff; padding: 8px 16px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; transition: background-color 0.3s ease;">
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <!-- End of Card Grid -->
+    </div>
+  </section>
 
+  <!-- Hover effect for 'Apply now' button -->
+  <style>
+    .custom-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .custom-btn.btn:hover {
+      background-color: #0056b3;
+    }
+
+    .custom-btn.btn.me-2:hover {
+      background-color: #218838; /* Green for View Profile */
+    }
+
+    .custom-btn.btn:hover {
+      background-color: #c82333; /* Red for Delete */
+    }
+  </style>
+
+
+  <section class="cta-section">
+    <div class="section-overlay"></div>
+
+    <div class="container">
+      <div class="row">
+
+        <div class="col-lg-6 col-10">
+          <h2 class="text-white mb-2">Over 10k opening jobs</h2>
+
+          <p class="text-white">Gotto Job is a free HTML CSS template for job hunting related websites. This layout is based on the famous Bootstrap 5 CSS framework. Thank you for visiting Tooplate website.</p>
+        </div>
+
+
+
+      </div>
+    </div>
+  </section>
+  <!-- The Modal -->
+  <div class="modal fade" style="display: none; overflow: hidden;" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" [ngClass]="{'show': isModalOpen}" [ngStyle]="{'display': isModalOpen ? 'block' : 'none'}">
+    <div class="modal-dialog" style="position: relative; width: auto; margin: 1.75rem auto;">
+      <div class="modal-content" style="border-radius: 1rem; box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3); border: none;">
+        <!-- Modal Header -->
+        <div class="modal-header" style="border-bottom: 1px solid #dee2e6; background-color: #433b86; color: white; padding: 1.5rem;">
+          <h4 class="modal-title" id="exampleModalLabel" style="margin: 0; font-size: 1.5rem; font-weight: bold;">Add Client</h4>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close" style="background-color: transparent; border: none; font-size: 1.2rem; color: white; opacity: 0.7;"></button>
+        </div>
+        <!-- Modal Body -->
+        <div class="modal-body" style="padding: 2rem;">
+          <form [formGroup]="clientForm" (ngSubmit)="addClient()" style="font-family: Arial, sans-serif; font-size: 0.9rem;">
+            <div class="mb-3">
+              <label for="firstName" class="form-label" style="font-weight: 500;">First Name</label>
+              <input type="text" class="form-control" id="firstName" formControlName="firstName" required style="padding: 0.8rem; border-radius: 0.5rem; border: 1px solid #ced4da;">
+            </div>
+            <div class="mb-3">
+              <label for="familyName" class="form-label" style="font-weight: 500;">Family Name</label>
+              <input type="text" class="form-control" id="familyName" formControlName="familyName" required style="padding: 0.8rem; border-radius: 0.5rem; border: 1px solid #ced4da;">
+            </div>
+            <div class="mb-3">
+              <label for="phoneNumber" class="form-label" style="font-weight: 500;">Phone Number</label>
+              <input type="tel" class="form-control" id="phoneNumber" formControlName="phoneNumber" required style="padding: 0.8rem; border-radius: 0.5rem; border: 1px solid #ced4da;">
+            </div>
+            <div class="mb-3">
+              <label for="job" class="form-label" style="font-weight: 500;">Phone Number</label>
+              <input type="tel" class="form-control" id="job" formControlName="job" required style="padding: 0.8rem; border-radius: 0.5rem; border: 1px solid #ced4da;">
+            </div>
+            <div class="mb-3">
+              <label for="birthdate" class="form-label" style="font-weight: 500;">Birthdate</label>
+              <input type="date" class="form-control" id="birthdate" formControlName="birthdate" required style="padding: 0.8rem; border-radius: 0.5rem; border: 1px solid #ced4da;">
+            </div>
+            <div class="mb-3">
+              <label for="gender" class="form-label" style="font-weight: 500;">Gender</label>
+              <select class="form-select" id="gender" formControlName="gender" required style="padding: 0.8rem; border-radius: 0.5rem; border: 1px solid #ced4da;">
+                <option value="" disabled>Select gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="adress" class="form-label" style="font-weight: 500;">Address</label>
+              <input type="text" class="form-control" id="adress" formControlName="adress" required style="padding: 0.8rem; border-radius: 0.5rem; border: 1px solid #ced4da;">
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label" style="font-weight: 500;">Email</label>
+              <input type="email" class="form-control" id="email" formControlName="email" required style="padding: 0.8rem; border-radius: 0.5rem; border: 1px solid #ced4da;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="background-color:#313175; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 500; border-radius: 0.5rem;">Add Client</button>
+          </form>
+        </div>
+        <!-- Modal Footer -->
+        <div class="modal-footer" style="border-top: 1px solid #dee2e6; background-color: #433b86;">
+          <button type="button" class="btn btn-secondary" style="background-color: red; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 500; border-radius: 0.5rem;" (click)="closeModal()">Close</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</main>
+
+
+<!-- JAVASCRIPT FILES -->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/counter.js"></script>
+<script src="js/custom.js"></script>
+
 </body>
 </html>

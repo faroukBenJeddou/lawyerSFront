@@ -47,6 +47,10 @@ import {Lawyer} from "../../../Models/Lawyer";
 export class CasesComponent implements OnInit{
     cases: Case[]=[];
 lawyer!:Lawyer;
+  currentPage: number = 1;
+  casesPerPage: number = 5; // Adjust according to your needs
+  totalPages: number = 0;
+  pages: number[] = [];
   lawyerId!: string;
   isModalOpen = false;
   updateCaseForm: FormGroup;
@@ -85,7 +89,10 @@ lawyer!:Lawyer;
     }
   ngOnInit(): void {
     this.lawyerId = this.route.snapshot.paramMap.get('id') || '';
+    this.totalPages = Math.ceil(this.cases.length / this.casesPerPage);
+    this.cases.forEach(cas => console.log('Client for case:', cas.client));
 
+    this.updatePages();
     // Fetch lawyer details
     this.lawyerServ.getLawyerById(this.lawyerId).subscribe(
       (data: Lawyer) => {
@@ -122,7 +129,24 @@ lawyer!:Lawyer;
       }
     );
   }
+  updatePages() {
+    this.pages = Array.from({ length: this.totalPages }, (_, index) => index + 1);
+  }
 
+  changePage(page: number) {
+    if (page < 1 || page > this.totalPages) return; // Prevent out-of-range pages
+
+    this.currentPage = page;
+    this.updatePages(); // Update page numbers after changing the page
+    // Fetch new cases for the selected page (implement your logic to paginate cases here)
+  }
+
+  // Fetch or filter cases based on the current page
+  getPaginatedCases() {
+    const start = (this.currentPage - 1) * this.casesPerPage;
+    const end = start + this.casesPerPage;
+    return this.cases.slice(start, end);
+  }
   loadProfileImageLawyer(lawyer: Lawyer): void {
     if (lawyer && lawyer.id) {
       this.lawyerServ.getImageById(lawyer.id).subscribe(blob => {

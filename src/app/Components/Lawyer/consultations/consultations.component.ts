@@ -47,7 +47,6 @@ import {addHours, formatDistanceToNow} from "date-fns";
   changeDetection: ChangeDetectionStrategy.OnPush,
 
   templateUrl: './consultations.component.html',
-  styleUrl: './consultations.component.css'
 })
 export class ConsultationsComponent implements OnInit{
   consultations: Consultation[]=[];
@@ -73,7 +72,7 @@ export class ConsultationsComponent implements OnInit{
   isModalOpen = false;
   consultationId !: string;
   newConsultation: {
-    title: string; start: Date } = { title: '', start: new Date() };
+    title: string; start: Date ; description: any} = { title: '', start: new Date() ,description:''};
   isConsultationsModalOpen = false;
   isAssignClientModalOpen = false;
   selectedClientId!: string;
@@ -82,6 +81,12 @@ export class ConsultationsComponent implements OnInit{
   clientId!:string;
   hasNewNotifications: boolean = false;
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
+  selectedConsultation: Consultation | null = null;
+
+
+  selectConsultation(con: any) {
+    this.selectedConsultation = con;
+  }
 
   constructor(private http:HttpClient,private authService:AuthService,private lawyerServ:LawyerServiceService,private route:ActivatedRoute,
               private consultationServ:ConsultationService,private clientServ:ClientService,private cdRef: ChangeDetectorRef,
@@ -126,6 +131,7 @@ export class ConsultationsComponent implements OnInit{
     this.lawyerId = this.route.snapshot.paramMap.get('id') || '';
     this.loadNotifications();
     console.log(this.notifications);
+    this.selectedConsultation = this.consultations[0];
 
     if (this.lawyerId) {
       // Fetch lawyer details
@@ -133,21 +139,22 @@ export class ConsultationsComponent implements OnInit{
         (data: Lawyer) => {
           this.lawyer = data;
           this.loadProfileImageLawyer(this.lawyer);
-
-          // Fetch consultations for the lawyer
-          this.consultationServ.getConsultationsForLawyer(this.lawyerId).subscribe((data: Consultation[]) => {
-            this.consultations = data;
-          });
         },
         (error) => {
           console.error('Error fetching lawyer details:', error);
         }
       );
 
+      // Fetch consultations for the lawyer
+      this.consultationServ.getConsultationsForLawyer(this.lawyerId).subscribe((data: Consultation[]) => {
+        this.consultations = data;
+        this.cdRef.detectChanges(); // Force change detection after updating consultations
+      });
+
       // Fetch clients for the dropdown
       this.lawyerServ.getClients(this.lawyerId).subscribe({
         next: (data: Client[]) => {
-          console.log('Fetched clients for dropdown:', data); // Log clients for dropdown
+          console.log('Fetched clients for dropdown:', data);
           this.clients = data;
         },
         error: (error) => {
@@ -158,11 +165,9 @@ export class ConsultationsComponent implements OnInit{
       // Subscribe to notifications
       this.notifications$.subscribe(notifications => {
         this.notificationCount = notifications.length;
+        this.cdRef.detectChanges(); // Detect changes if necessary
       });
     }
-
-    // Trigger change detection if necessary
-    this.cdRef.detectChanges(); // Force change detection
   }
 
 
@@ -184,7 +189,6 @@ export class ConsultationsComponent implements OnInit{
     }
   }
 
-
   onLogout(): void {
     this.authService.logout();
   }
@@ -194,6 +198,7 @@ export class ConsultationsComponent implements OnInit{
       const consultation = {
         start: this.newConsultation.start,
         title: this.newConsultation.title,
+        description:this.newConsultation.description
       };
 
       this.consultationServ.createSolo(consultation).subscribe(response => {
@@ -208,6 +213,7 @@ export class ConsultationsComponent implements OnInit{
               console.log('Consultation assigned to lawyer successfully');
               this.loadDocuments(); // Reload documents to reflect changes
               this.closeConsultationModal(); // Close the consultation modal
+              window.location.reload();
             },
             error: (error) => {
               console.error('Error assigning consultation to lawyer:', error);
@@ -263,6 +269,7 @@ export class ConsultationsComponent implements OnInit{
           console.log('Client assigned to case successfully');
           this.closeAssignClientModal(); // Optionally close the modal after assignment
           this.loadDocuments(); // Reload cases to reflect changes
+          window.location.reload();
         },
         error => {
           console.error('Error assigning client to case:', error);
