@@ -15,7 +15,7 @@ export class Case{
   start !: string;
   endDate !: string;
   client?: Client; // Optional, ensure this field exists
-  lawyer !:Lawyer[];
+  lawyer !:Lawyer;
   documents !: Documents[];
   hearings !:Hearing[];
   invoice !:Invoice;

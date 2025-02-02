@@ -25,6 +25,8 @@ import {Requests} from "../../../Models/Requests";
 export class ClientConsultationComponent implements OnInit{
   consultations: Consultation[]=[];
   consultation !:Consultation;
+  selectedConsultation: Consultation | null = null;
+
   clients: Client[] = []; // Array to hold clients
   currentDate: Date = new Date();
   lawyers: Lawyer[] = []; // Array to hold clients
@@ -47,7 +49,9 @@ export class ClientConsultationComponent implements OnInit{
   // Function to toggle dropdown visibility
   alertType: 'success' | 'error' | null = null; // To determine the alert type
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
-
+  selectConsultation(con: any) {
+    this.selectedConsultation = con;
+  }
   constructor(private http:HttpClient,private authService:AuthService,private lawyerServ:LawyerServiceService,private route:ActivatedRoute,
               private consultationServ:ConsultationService,private clientServ:ClientService,private requestServ:RequestService) {
     this.clientId = this.route.snapshot.paramMap.get('id') || '';

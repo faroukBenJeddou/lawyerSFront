@@ -22,7 +22,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {C} from "@angular/cdk/keycodes";
 @Component({
   selector: 'app-client-view',
-  templateUrl: '../aaaa/keenthemes.com/metronic/tailwind/demo1/account/home/user-profile.html',
+  templateUrl: 'client-view.component.html',
   styleUrl: '../aaaa/keenthemes.com/static/metronic/tailwind/dist/assets/css/styles.css'
 })
 export class ClientViewComponent implements OnInit{
@@ -30,6 +30,8 @@ export class ClientViewComponent implements OnInit{
   authLinkText = 'Log In';
   currentUser!: User;
   clients: Client[] = [];
+  notifications: any[] = []; // Adjust type based on your Request model
+  hasNewNotifications: boolean = false;
   client: Client | null = null;
   ClientId: string | null = null;
   errorMessage: string | null = null; // Variable to hold error messages
@@ -125,6 +127,7 @@ export class ClientViewComponent implements OnInit{
               this.loadProfileImage(this.ClientId);
               this.loadCases(this.ClientId);
               this.loadConsultations(this.ClientId);
+
               this.getClosestConsultation();
             } else {
               this.errorMessage = 'Lawyer ID is missing!';
@@ -299,6 +302,7 @@ export class ClientViewComponent implements OnInit{
     this.clientService.getCases(clientId).subscribe({
       next: (cases) => {
         this.cases = cases;
+        console.log(cases);
       },
       error: (error) => {
         this.errorMessage = 'Error fetching cases.';
@@ -373,4 +377,5 @@ export class ClientViewComponent implements OnInit{
   }
 
   protected readonly C = C;
+
 }

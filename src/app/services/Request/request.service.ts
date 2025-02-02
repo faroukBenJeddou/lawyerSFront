@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {AuthService} from "../auth.service";
-import {Observable} from "rxjs";
+import {catchError, Observable, tap, throwError} from "rxjs";
 import {Requests} from "../../Models/Requests";
 import {ConsultationStatus} from "../../Models/ConsultationStatus";
 import {Lawyer} from "../../Models/Lawyer";
@@ -54,35 +54,59 @@ export class RequestService {
     return this.http.get<Requests[]>(`${this.baseUrl}/ClientNotifications/${clientId}`, { headers });
   }
 
-  updateRequestStatus(requestId: string, status: 'ACCEPTED' | 'DECLINED'): Observable<void> {
+  updateRequestStatus(id: string, status: 'ACCEPTED' | 'DECLINED'): Observable<void> {
     const token = this.authService.getToken();
+    if (!token) {
+      throw new Error('Token is missing');
+    }
+
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
 
-    const params = new HttpParams().set('status', status);
-    return this.http.post<void>(`${this.baseUrl}/requests/${requestId}/respond`, null, { headers, params });
+    // Send status as a query parameter
+    return this.http.post<void>(`${this.baseUrl}/${id}/respond?status=${status}`, {}, { headers });
   }
 
 
 
+
   getRequestById(id: string): Observable<Requests> {
+    console.log(`Fetching request with ID: ${id}`);
     const token = localStorage.getItem('authToken');
     if (!token) {
       throw new Error('Token is missing');
     }
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<Requests>(`${this.baseUrl}/get/${id}`, { headers });
+    return this.http.get<Requests>(`${this.baseUrl}/get/${id}`, { headers }).pipe(
+      tap(response => {
+        console.log('Fetched request data:', response);
+      }),
+      catchError(err => {
+        console.error('Error fetching request:', err);
+        return throwError(() => new Error('Failed to fetch request'));
+      })
+    );
   }
-  deleteRequest(requestId: string): Observable<void> {
+  updateNotification(request: any): Observable<any> {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      throw new Error('Token is missing');
+    }
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.put(`${this.baseUrl}/update/${request.id}`, request, { headers });
+  }
+
+
+  deleteRequest(id: string): Observable<void> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
 
-    return this.http.delete<void>(`${this.baseUrl}/delete/${requestId}`, { headers });
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`, { headers });
   }
 
 }

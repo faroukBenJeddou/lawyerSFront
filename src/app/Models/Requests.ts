@@ -8,6 +8,7 @@ export class Requests {
   start!: string; // ISO Date string for start time
   end!: string; // ISO Date string for end time
   title!: string;
+
   lawyer: {
     id: string;
   };
@@ -25,7 +26,8 @@ export class Requests {
     status: ConsultationStatus,
     lawyer: Lawyer,
     client: Client,
-    consultation:Consultation[]
+    accepted: boolean,
+  consultation:Consultation[]
   ) {
     this.start = start;
     this.end = end;

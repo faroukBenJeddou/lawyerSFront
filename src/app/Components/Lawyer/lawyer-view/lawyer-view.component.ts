@@ -24,6 +24,7 @@ import {CalendarEvent} from "angular-calendar";
 import {HearingsService} from "../../../services/hearings/hearings.service";
 import {CaseService} from "../../../services/CaseService/case.service";
 import {Hearing} from "../../../Models/Hearing";
+import {ConsultationStatus} from "../../../Models/ConsultationStatus";
 
 @Component({
   selector: 'app-lawyer-view',
@@ -109,23 +110,8 @@ export class LawyerViewComponent implements OnInit{
     });
   }
 
-  onFileSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      // Store the selected file for later upload
-      this.lawyerForm.patchValue({
-        image: file
-      });
-
-      // Optionally, preview the image here
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imageUrl = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
   ngOnInit(): void {
+    console.log(this.notifications);  // Check if each notification has the 'id' property
 
     this.isLoggedIn = this.authService.isLoggedIn();
     this.updateAuthLink();
@@ -163,7 +149,16 @@ export class LawyerViewComponent implements OnInit{
               // Navigate to the URL with lawyerId
               this.router.navigate([`/lawyer/${this.lawyerId}`]);
               this.loadProfileImage(this.lawyerId);
-              this.loadClients(this.lawyerId);
+              this.lawyerServ.getClients(this.lawyerId).subscribe(
+                (data: any) => {
+                  this.clients = Array.isArray(data) ? data : [];
+                  console.log('Fetched clients:', this.clients);
+                  this.clients.forEach(client => this.loadProfileImageC(client));
+                },
+                error => {
+                  console.error('Error fetching clients:', error);
+                }
+              );
               this.loadCases(this.lawyerId);
               this.fetchConsultations();
               this.getClosestConsultation();
@@ -184,33 +179,6 @@ export class LawyerViewComponent implements OnInit{
     }
   }
 
-  updateProfile() {
-    if (this.lawyerForm.valid && this.lawyerId) {
-      const updatedLawyer = { ...this.lawyerForm.value };  // Copy form data
-
-      // Remove the photo field if you're not updating it
-      if (!this.lawyerForm.get('photo')?.value) {
-        delete updatedLawyer.photo;
-      }
-
-      // Remove the password field if it's empty
-      if (updatedLawyer.password === '') {
-        delete updatedLawyer.password;
-      }
-
-      // Call the updateLawyer service with updated lawyer data
-      this.lawyerService.updateLawyer(this.lawyerId, updatedLawyer).subscribe({
-        next: (response) => {
-          console.log('Profile updated:', response);
-        },
-        error: (error) => {
-          this.errorMessage = 'Error updating profile.';
-        }
-      });
-    } else {
-      this.errorMessage = 'Please fill out the form correctly or ID is missing.';
-    }
-  }
 
   redirectToProfile(clientId: string) {
     console.log('Navigating to Profile with clientId:', clientId);
@@ -219,7 +187,17 @@ export class LawyerViewComponent implements OnInit{
       .catch(err => console.error('Navigation error:', err));
   }
 
-
+  loadProfileImageC(client: Client): void {
+    this.clientServ.getImageById(client.id).subscribe(blob => {
+      if (blob) {
+        client.image = URL.createObjectURL(blob);
+      } else {
+        console.error('No image data received');
+      }
+    }, error => {
+      console.error('Error fetching image', error);
+    });
+  }
   loadProfileImage(lawyerId: string): void {
     this.lawyerService.getImageById(lawyerId).subscribe(blob => {
       if (blob) {
@@ -232,72 +210,7 @@ export class LawyerViewComponent implements OnInit{
     });
   }
 
-  uploadProfilePic(): void {
-    console.log('Upload button clicked');
-    if (this.lawyerId) {
-      const fileInput = this.lawyerForm.get('image')?.value;
 
-      if (fileInput && fileInput instanceof File) {
-        if (fileInput.size > this.MAX_FILE_SIZE) {
-          this.errorMessage = 'File size exceeds the maximum limit.';
-          return;
-        }
-
-        const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        if (!validTypes.includes(fileInput.type)) {
-          this.errorMessage = 'Invalid file type. Only JPEG, PNG, and GIF are allowed.';
-          return;
-        }
-
-        this.isLoading = true;
-
-        this.lawyerService.uploadProfilePicture(this.lawyerId, fileInput).subscribe({
-          next: (response) => {
-            console.log('Profile picture uploaded successfully.');
-            console.log('Showing SweetAlert');
-
-            Swal.fire({
-              icon: 'success',
-              title: 'Upload Successful',
-              text: 'Your profile picture has been uploaded successfully!',
-              confirmButtonText: 'OK'
-            }).then(() => {
-              console.log('SweetAlert closed');
-              this.lawyerForm.get('image')?.setValue(null);
-            });
-
-            this.isLoading = false;
-          },
-          error: (error) => {
-            console.error('Error uploading profile picture:', error);
-            this.errorMessage = 'Error uploading profile picture.';
-
-            Swal.fire({
-              icon: 'error',
-              title: 'Upload Failed',
-              text: 'There was an error uploading your profile picture.',
-              confirmButtonText: 'OK'
-            });
-
-            this.isLoading = false;
-          }
-        });
-      } else {
-        this.errorMessage = 'No file selected.';
-      }
-    }
-
-    this.changeDetector.detectChanges();
-  }
-
-  testAlert(): void {
-    Swal.fire({
-      title: 'Test Alert',
-      text: 'This is a test alert!',
-      icon: 'info',
-      confirmButtonText: 'OK'
-    });
-  }
 
   updateAuthLink(): void {
     this.authLinkText = this.isLoggedIn ? 'Log Out' : 'Log In';
@@ -312,6 +225,22 @@ export class LawyerViewComponent implements OnInit{
       (response: Requests[]) => {
         console.log('Notifications received:', response);
         this.notifications = response;
+
+        // Sort the notifications by status (PENDING first), then by date (newest first)
+        this.notifications.sort((a, b) => {
+          // Priority: PENDING first
+          if (a.status === 'PENDING' && b.status !== 'PENDING') {
+            return -1; // 'a' comes before 'b'
+          } else if (a.status !== 'PENDING' && b.status === 'PENDING') {
+            return 1; // 'b' comes before 'a'
+          } else {
+            // If both have the same status, sort by date (newest first)
+            const dateA = new Date(a.timestamp || a.start).getTime();
+            const dateB = new Date(b.timestamp || b.start).getTime();
+            return dateB - dateA; // Descending order (newest first)
+          }
+        });
+
         this.hasNewNotifications = this.notifications.length > 0;
       },
       (error) => {
@@ -335,78 +264,154 @@ export class LawyerViewComponent implements OnInit{
     return this.clientServ.getClientById(clientId);
   }
 
-  acceptRequest(requestId: string) {
-    this.getRequestById(requestId).pipe(
-      switchMap(request =>
-        this.getLawyer(request.lawyer.id).pipe(
-          switchMap(lawyer =>
-            this.getClient(request.client.id).pipe(
+  acceptRequest(id: string) {
+    console.log('Accepting request with ID:', id);  // Log the id to check it's being passed correctly.
+
+    this.getRequestById(id).pipe(
+      switchMap(request => {
+        if (!request || !request.id) {  // Ensure request has a valid 'id'
+          console.error('Request ID is missing:', request);
+          this.showAlert('Invalid request data.', 'error');
+          return of([]);  // Return an observable that emits an empty array
+        }
+
+        if (!request.lawyer) {
+          console.error('Lawyer is missing:', request);
+          this.showAlert('Invalid request data.', 'error');
+          return of([]);  // Return an observable that emits an empty array
+        }
+
+        return this.getLawyer(request.lawyer.id).pipe(
+          switchMap(lawyer => {
+            if (!lawyer) {
+              console.error('Lawyer not found:', lawyer);
+              this.showAlert('Lawyer not found.', 'error');
+              return of([]);  // Return an observable that emits an empty array
+            }
+
+            if (!request.client) {
+              console.error('Client not found:', request.client);
+              this.showAlert('Client not found.', 'error');
+              return of([]);  // Return an observable that emits an empty array
+            }
+
+            return this.getClient(request.client.id).pipe(
               switchMap(client => {
+                if (!client) {
+                  console.error('Client not found:', client);
+                  this.showAlert('Client not found.', 'error');
+                  return of([]);  // Return an observable that emits an empty array
+                }
+
                 const newConsultation = {
                   title: request.title,
                   start: request.start,
                   end: addHours(new Date(), 1),
                 };
 
+                // Create consultation
                 return this.consultationServ.createConsultation(newConsultation, request.client.id, request.lawyer.id).pipe(
-                  switchMap(() =>
-                    this.requestService.deleteRequest(requestId).pipe(
-                      tap(() => {
-                        this.showAlert('Request accepted.', 'success'); // Show green alert message
-                        // Load notifications again after accepting
-                        this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
-                      })
-                    )
-                  )
+                  switchMap(() => {
+                    // Now use the updateRequestStatus function to set the status
+                    console.log('Updating request status for request ID:', id);  // Log id for debugging.
+                    return this.requestService.updateRequestStatus(id, 'ACCEPTED');
+                  }),
+                  tap(() => {
+                    // Update the notification in the notifications array
+                    const updatedNotification = this.notifications.find(notification => notification.id === id); // Use notification.id
+                    if (updatedNotification) {
+                      updatedNotification.status = 'ACCEPTED';
+                    }
+
+                    this.showAlert('Request accepted.', 'success');
+                    this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
+                  })
                 );
               })
-            )
-          )
-        )
-      )
+            );
+          })
+        );
+      })
     ).subscribe({
       error: err => {
         console.error('Error handling request', err);
-        this.showAlert('Failed to handle request.', 'error'); // Show error alert if needed
+        this.showAlert('Failed to handle request.', 'error');
       }
     });
-  }  deleteRequest(requestId: string) {
-    this.requestService.deleteRequest(requestId).subscribe();
   }
-  declineRequest(requestId: string) {
-    this.deleteRequest(requestId); // Call backend service to decline the request
-    this.showAlert('Request declined.', 'error'); // Show red alert message
 
-    // Load notifications again after declining
-    this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
+
+
+
+  declineRequest(requestId: string) {
+    console.log('Declining request with ID:', requestId); // Log the id for debugging.
+
+    this.getRequestById(requestId).pipe(
+      switchMap(request => {
+        if (!request || !request.id) {
+          console.error('Request ID is missing:', request);
+          this.showAlert('Invalid request data.', 'error');
+          return of([]); // Return an observable that emits an empty array
+        }
+
+        if (!request.lawyer) {
+          console.error('Lawyer is missing:', request);
+          this.showAlert('Invalid request data.', 'error');
+          return of([]); // Return an observable that emits an empty array
+        }
+
+        return this.getLawyer(request.lawyer.id).pipe(
+          switchMap(lawyer => {
+            if (!lawyer) {
+              console.error('Lawyer not found:', lawyer);
+              this.showAlert('Lawyer not found.', 'error');
+              return of([]); // Return an observable that emits an empty array
+            }
+
+            if (!request.client) {
+              console.error('Client not found:', request.client);
+              this.showAlert('Client not found.', 'error');
+              return of([]); // Return an observable that emits an empty array
+            }
+
+            return this.getClient(request.client.id).pipe(
+              switchMap(client => {
+                if (!client) {
+                  console.error('Client not found:', client);
+                  this.showAlert('Client not found.', 'error');
+                  return of([]); // Return an observable that emits an empty array
+                }
+
+                // Update the request status to REJECTED
+                return this.requestService.updateRequestStatus(requestId, 'DECLINED').pipe(
+                  tap(() => {
+                    // Update the notification in the notifications array
+                    const updatedNotification = this.notifications.find(notification => notification.id === requestId);
+                    if (updatedNotification) {
+                      updatedNotification.status = 'REJECTED';
+                    }
+
+                    this.showAlert('Request declined.', 'error');
+                    // Refresh notifications after declining
+                    this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
+                  })
+                );
+              })
+            );
+          })
+        );
+      })
+    ).subscribe({
+      error: err => {
+        console.error('Error handling decline request', err);
+        this.showAlert('Failed to decline request.', 'error');
+      }
+    });
   }
   getTimeAgo(date: Date): string {
     return formatDistanceToNow(new Date(date), {addSuffix: true});
   }
-  markNotificationsAsViewed(): void {
-    // Mark notifications as viewed
-    if (this.hasNewNotifications) {
-      this.hasNewNotifications = false;
-      // You may also need to update the server to mark notifications as read if applicable
-    }
-  }
-  loadClients(lawyerId: string): void {
-    this.lawyerService.getClients(lawyerId).subscribe({
-      next: (clients) => {
-        // Check if there are no clients
-        if (clients.length === 0) {
-          this.errorMessage = 'This lawyer has no clients.';
-        } else {
-          // Only slice if there are more than 3 clients
-          this.clients = clients.length > 3 ? clients.slice(-3) : clients;
-        }
-      },
-      error: (error) => {
-        console.error('Error fetching clients', error);
-        this.errorMessage = 'Error fetching clients.';
-      }
-    });
-  }
+
 
 
   loadCases(lawyerId: string): void {
@@ -457,30 +462,6 @@ export class LawyerViewComponent implements OnInit{
   }
 
 
-
-  findClosestConsultation() {
-    const now = new Date();
-    const futureConsultations = this.consultations.filter(consultation => {
-      const startDate = new Date(consultation.start);
-      return startDate > now;
-    });
-
-    console.log("Future Consultations:", futureConsultations);
-
-    // If there are future consultations, find the closest one
-    if (futureConsultations.length > 0) {
-      this.closestConsultation = futureConsultations[0]; // Just for initial testing
-    } else {
-      this.closestConsultation = null;
-    }
-
-    console.log('Closest Consultation:', this.closestConsultation);
-  }
-
-
-  redirectToEdit(lawyerId: string | undefined) {
-    this.router.navigate([`/edit/lawyer/${lawyerId}`]);
-  }
   getClosestConsultation(): void {
     // Check if consultations exist
     if (!this.consultations || this.consultations.length === 0) {

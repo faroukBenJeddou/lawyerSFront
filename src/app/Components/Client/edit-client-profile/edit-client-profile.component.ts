@@ -68,7 +68,6 @@ export class EditClientProfileComponent implements OnInit{
       adress: [''], // Changed office_adress to adress
       password: [''],
       email: [''],
-      image: [null], // Form control for profile picture
     });
   }
   toggleDropdown() {
@@ -91,21 +90,10 @@ export class EditClientProfileComponent implements OnInit{
       this.isDropdownOpen = false;
     }
   }
-
-  onFileSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
+  onFileChange(event: any) {
+    const file = event.target.files[0];
     if (file) {
-      // Store the selected file for later upload
-      this.ClientForm.patchValue({
-        image: file
-      });
-
-      // Optionally, preview the image here
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imageUrl = reader.result as string;
-      };
-      reader.readAsDataURL(file);
+      this.uploadPhoto(file);
     }
   }
   ngOnInit(): void {
@@ -198,7 +186,6 @@ export class EditClientProfileComponent implements OnInit{
       console.error('Error fetching image', error);
     });
   }
-
   uploadProfilePic(): void {
     console.log('Upload button clicked');
     if (this.ClientId) {
@@ -255,6 +242,24 @@ export class EditClientProfileComponent implements OnInit{
     }
 
     this.changeDetector.detectChanges();
+  }
+
+  uploadPhoto(file: File) {
+    const lawyerId = this.ClientId; // Get this from your context, route, or form
+    if (lawyerId) {
+      this.ClientServ.uploadProfilePicture(lawyerId, file).subscribe(
+        (response) => {
+          console.log('File uploaded successfully!', response);
+          // Trigger a "soft" refresh by navigating to the current route
+          window.location.reload();
+        },
+        (error) => {
+          console.error('File upload failed!', error);
+        }
+      );
+    } else {
+      console.error('Lawyer ID is null or undefined');
+    }
   }
 
   testAlert(): void {

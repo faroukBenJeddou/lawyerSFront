@@ -168,7 +168,7 @@ export class LawyerClientsComponent implements OnInit {
         (data: Lawyer) => {
           this.lawyer = data;
           this.loadProfileImageLawyer(this.lawyer);
-
+          this.loadNotifications(this.lawyerId);
           this.lawyerServ.getClients(this.lawyerId).subscribe(
             (data: any) => {
               this.clients = Array.isArray(data) ? data : [];
@@ -290,13 +290,6 @@ export class LawyerClientsComponent implements OnInit {
 
 
 
-  declineRequest(requestId: string) {
-    this.deleteRequest(requestId); // Call backend service to decline the request
-    this.showAlert('Request declined.', 'error'); // Show red alert message
-
-    // Load notifications again after declining
-    this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
-  }
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
@@ -323,44 +316,151 @@ export class LawyerClientsComponent implements OnInit {
       this.isDropdownOpen = false;
     }
   }
-  acceptRequest(requestId: string) {
-    this.getRequestById(requestId).pipe(
-      switchMap(request =>
-        this.getLawyer(request.lawyer.id).pipe(
-          switchMap(lawyer =>
-            this.getClient(request.client.id).pipe(
+  acceptRequest(id: string) {
+    console.log('Accepting request with ID:', id);  // Log the id to check it's being passed correctly.
+
+    this.getRequestById(id).pipe(
+      switchMap(request => {
+        if (!request || !request.id) {  // Ensure request has a valid 'id'
+          console.error('Request ID is missing:', request);
+          this.showAlert('Invalid request data.', 'error');
+          return of([]);  // Return an observable that emits an empty array
+        }
+
+        if (!request.lawyer) {
+          console.error('Lawyer is missing:', request);
+          this.showAlert('Invalid request data.', 'error');
+          return of([]);  // Return an observable that emits an empty array
+        }
+
+        return this.getLawyer(request.lawyer.id).pipe(
+          switchMap(lawyer => {
+            if (!lawyer) {
+              console.error('Lawyer not found:', lawyer);
+              this.showAlert('Lawyer not found.', 'error');
+              return of([]);  // Return an observable that emits an empty array
+            }
+
+            if (!request.client) {
+              console.error('Client not found:', request.client);
+              this.showAlert('Client not found.', 'error');
+              return of([]);  // Return an observable that emits an empty array
+            }
+
+            return this.getClient(request.client.id).pipe(
               switchMap(client => {
+                if (!client) {
+                  console.error('Client not found:', client);
+                  this.showAlert('Client not found.', 'error');
+                  return of([]);  // Return an observable that emits an empty array
+                }
+
                 const newConsultation = {
                   title: request.title,
                   start: request.start,
                   end: addHours(new Date(), 1),
                 };
 
+                // Create consultation
                 return this.consultationServ.createConsultation(newConsultation, request.client.id, request.lawyer.id).pipe(
-                  switchMap(() =>
-                    this.requestService.deleteRequest(requestId).pipe(
-                      tap(() => {
-                        this.showAlert('Request accepted.', 'success'); // Show green alert message
-                        // Load notifications again after accepting
-                        this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
-                      })
-                    )
-                  )
+                  switchMap(() => {
+                    // Now use the updateRequestStatus function to set the status
+                    console.log('Updating request status for request ID:', id);  // Log id for debugging.
+                    return this.requestService.updateRequestStatus(id, 'ACCEPTED');
+                  }),
+                  tap(() => {
+                    // Update the notification in the notifications array
+                    const updatedNotification = this.notifications.find(notification => notification.id === id); // Use notification.id
+                    if (updatedNotification) {
+                      updatedNotification.status = 'ACCEPTED';
+                    }
+
+                    this.showAlert('Request accepted.', 'success');
+                    this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
+                  })
                 );
               })
-            )
-          )
-        )
-      )
+            );
+          })
+        );
+      })
     ).subscribe({
       error: err => {
         console.error('Error handling request', err);
-        this.showAlert('Failed to handle request.', 'error'); // Show error alert if needed
+        this.showAlert('Failed to handle request.', 'error');
       }
     });
   }
+
+
+
   deleteRequest(requestId: string) {
     this.requestService.deleteRequest(requestId).subscribe();
+  }
+  declineRequest(requestId: string) {
+    console.log('Declining request with ID:', requestId); // Log the id for debugging.
+
+    this.getRequestById(requestId).pipe(
+      switchMap(request => {
+        if (!request || !request.id) {
+          console.error('Request ID is missing:', request);
+          this.showAlert('Invalid request data.', 'error');
+          return of([]); // Return an observable that emits an empty array
+        }
+
+        if (!request.lawyer) {
+          console.error('Lawyer is missing:', request);
+          this.showAlert('Invalid request data.', 'error');
+          return of([]); // Return an observable that emits an empty array
+        }
+
+        return this.getLawyer(request.lawyer.id).pipe(
+          switchMap(lawyer => {
+            if (!lawyer) {
+              console.error('Lawyer not found:', lawyer);
+              this.showAlert('Lawyer not found.', 'error');
+              return of([]); // Return an observable that emits an empty array
+            }
+
+            if (!request.client) {
+              console.error('Client not found:', request.client);
+              this.showAlert('Client not found.', 'error');
+              return of([]); // Return an observable that emits an empty array
+            }
+
+            return this.getClient(request.client.id).pipe(
+              switchMap(client => {
+                if (!client) {
+                  console.error('Client not found:', client);
+                  this.showAlert('Client not found.', 'error');
+                  return of([]); // Return an observable that emits an empty array
+                }
+
+                // Update the request status to REJECTED
+                return this.requestService.updateRequestStatus(requestId, 'DECLINED').pipe(
+                  tap(() => {
+                    // Update the notification in the notifications array
+                    const updatedNotification = this.notifications.find(notification => notification.id === requestId);
+                    if (updatedNotification) {
+                      updatedNotification.status = 'REJECTED';
+                    }
+
+                    this.showAlert('Request declined.', 'error');
+                    // Refresh notifications after declining
+                    this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
+                  })
+                );
+              })
+            );
+          })
+        );
+      })
+    ).subscribe({
+      error: err => {
+        console.error('Error handling decline request', err);
+        this.showAlert('Failed to decline request.', 'error');
+      }
+    });
   }
 
 }

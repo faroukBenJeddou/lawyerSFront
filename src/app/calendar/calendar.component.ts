@@ -445,10 +445,43 @@ getAllConsultations(){
     this.activeDayIsOpen = false;
   }
   createRequest() {
+    console.log('Lawyer:', this.lawyer);
+    console.log('Client:', this.client);
+    console.log('Event:', this.event);
+
+    if (!this.lawyer || !this.lawyer.id) {
+      console.error('Lawyer is undefined or missing id');
+      Swal.fire({
+        icon: 'error',
+        title: 'Missing Lawyer',
+        text: 'No lawyer is selected. Please try again.',
+      });
+      return;
+    }
+
+    if (!this.client || !this.client.id) {
+      console.error('Client is undefined or missing id');
+      Swal.fire({
+        icon: 'error',
+        title: 'Missing Client',
+        text: 'No client is selected. Please try again.',
+      });
+      return;
+    }
+
+    if (!this.event || !this.event.start) {
+      console.error('Event is undefined or missing start date');
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Event',
+        text: 'Event details are missing. Please try again.',
+      });
+      return;
+    }
+
     const utcStart = new Date(this.event.start).toISOString();
     const utcEnd = addHours(new Date(this.event.start), 1).toISOString();
 
-    // Create request object with all required properties
     const request: Requests = {
       start: utcStart,
       end: utcEnd,
@@ -456,10 +489,9 @@ getAllConsultations(){
       lawyer: { id: this.lawyer.id },
       client: { id: this.client.id },
       status: ConsultationStatus.PENDING,
-      isRead: false, // Set default value
-      isNotification: true // Set default value
+      isRead: false,
+      isNotification: true
     };
-
 
     this.requestServ.createRequest(request, this.client.id, this.lawyer.id).subscribe({
       next: (response: Requests) => {
@@ -469,7 +501,7 @@ getAllConsultations(){
           showConfirmButton: false,
           timer: 1500
         });
-        this.getConsultationsForLawyer(this.lawyer.id); // Reload consultations
+        this.getConsultationsForLawyer(this.lawyer.id);
       },
       error: (error: any) => {
         if (error.error.message === 'A request is already scheduled within this hour.') {

@@ -70,8 +70,10 @@ export class ClientService {
   updateClient(id: string | null, client: Client): Observable<Client> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
+
 
     return this.http.put<Client>(`${this.baseUrl}/update/${id}`, client, {headers});
   }

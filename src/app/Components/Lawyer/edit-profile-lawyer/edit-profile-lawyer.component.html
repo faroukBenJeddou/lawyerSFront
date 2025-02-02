@@ -91,47 +91,40 @@
         <ul class="dropdown-menu dropdown-menu-lg-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" >
           <small>Notifications</small>
 
-          <li class="notifications-block border-bottom pb-2 mb-2">
-            <a class="dropdown-item d-flex  align-items-center" href="#">
-              <div class="notifications-icon-wrap bg-success">
-                <i class="notifications-icon bi-check-circle-fill"></i>
+          <li *ngFor="let notification of notifications" class="notifications-block border-bottom pb-2 mb-2">
+            <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);">
+              <div class="notifications-icon-wrap bg-warning">
+                <i class="notifications-icon bi-envelope-fill"></i>
               </div>
 
-              <div>
-                <span>Your account has been created successfuly.</span>
+              <div class="ms-2">
+                <span class="fw-bold">{{ notification.title }}</span>
+                <div class="text-muted">
+                  {{ notification.client.firstName }} {{ notification.client.familyName }}
+                  <br>
+                  {{ notification.start | date: 'fullDate' }} - {{ notification.start | date: 'shortTime' }}
+                </div>
+                <div class="mt-2">
+                  <!-- Show Accept and Decline buttons only if the request is PENDING -->
+                  <ng-container *ngIf="notification.status === 'PENDING'">
+                    <button class="btn btn-success btn-sm me-2" (click)="acceptRequest(notification.id)">Accept</button>
+                    <button class="btn btn-danger btn-sm" (click)="declineRequest(notification.id)">Decline</button>
+                  </ng-container>
 
-                <p>12 days ago</p>
-              </div>
-            </a>
-          </li>
+                  <!-- Show Accepted or Rejected status -->
+                  <ng-container *ngIf="notification.status === 'ACCEPTED'">
+                    <span class="text-success">Accepted</span>
+                  </ng-container>
 
-          <li class="notifications-block border-bottom pb-2 mb-2">
-            <a class="dropdown-item d-flex align-items-center" href="#">
-              <div class="notifications-icon-wrap bg-info">
-                <i class="notifications-icon bi-folder"></i>
-              </div>
-
-              <div>
-                <span>Please check. We have sent a Daily report.</span>
-
-                <p>10 days ago</p>
-              </div>
-            </a>
-          </li>
-
-          <li class="notifications-block">
-            <a class="dropdown-item d-flex align-items-center" href="#">
-              <div class="notifications-icon-wrap bg-danger">
-                <i class="notifications-icon bi-question-circle"></i>
-              </div>
-
-              <div>
-                <span>Account verification failed.</span>
-
-                <p>1 hour ago</p>
+                  <!-- Show Declined status -->
+                  <ng-container *ngIf="notification.status === 'DECLINED'">
+                    <span class="text-danger">Declined</span>
+                  </ng-container>
+                </div>
               </div>
             </a>
           </li>
+
         </ul>
       </div>
       <div class="dropdown px-3">
@@ -241,7 +234,7 @@
   </div>
 </div>
 
-<div class="container-fluid" style=" background:#ececec; padding-top:150px;">
+<div class="container-fluid" style=" background:#ececec; padding-top:150px; padding-left:500px;">
   <div class="container-xl px-4 mt-4"  >
     <!-- Account page navigation-->
     <hr class="mt-0 mb-4">

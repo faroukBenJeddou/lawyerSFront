@@ -18,6 +18,7 @@ import {MatIcon} from "@angular/material/icon";
 import {CaseStatus} from "../../../Models/CaseStatus";
 import {ClientService} from "../../../services/ClientService/client.service";
 import {Client} from "../../../Models/Client";
+import {Lawyer} from "../../../Models/Lawyer";
 
 @Component({
   selector: 'app-case-details-client',
@@ -63,6 +64,7 @@ export class CaseDetailsClientComponent implements OnInit{
   alertType: 'success' | 'error' | null = null; // To determine the alert type
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
   client!:Client
+  lawyer!: Lawyer;
   setPhase() {
     if (this.case?.caseStatus) {
       this.currentPhase = this.case.caseStatus;
@@ -173,6 +175,17 @@ export class CaseDetailsClientComponent implements OnInit{
         }
       });
 
+      // Fetch the lawyers associated with the client
+      this.clientServ.getLawyers(this.clientId).subscribe({
+        next: (lawyer: Lawyer) => {
+          this.lawyer = lawyer; // Assign lawyer to this.lawyer
+          console.log('Fetched lawyer:', this.lawyer); // Log fetched lawyer
+        },
+        error: (error) => {
+          console.error('Error fetching lawyer:', error);
+        }
+      });
+
       // Fetch case information
       this.caseService.getCase(this.caseId).subscribe({
         next: (data: Case) => {
@@ -182,6 +195,7 @@ export class CaseDetailsClientComponent implements OnInit{
           // Load documents and hearings here
           this.loadDocuments();
           this.loadHearings();
+          this.loadProfileImage(this.clientId);
         },
         error: (error) => {
           console.error('Error fetching case:', error);
@@ -189,7 +203,9 @@ export class CaseDetailsClientComponent implements OnInit{
       });
     }
   }
+loadLawyer(){
 
+}
   loadCase() {
     if (this.caseId) {
       this.caseService.getCase(this.caseId).subscribe({
