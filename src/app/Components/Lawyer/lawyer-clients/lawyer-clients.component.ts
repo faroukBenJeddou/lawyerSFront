@@ -37,7 +37,12 @@ import {ConsultationService} from "../../../services/Consultation/consultation.s
 })
 export class LawyerClientsComponent implements OnInit {
   isModalOpen = false;
+  isSearchModalOpen = false;
+  client: Client | null = null;  // Allow client to be null or a valid Client object
+isRequestSent=false;
   clients: Client[] = []; // Array to hold clients
+  isClientLinked: boolean = false; // Add this property to track client linkage
+
   lawyerId!: string;
   newClient: Client = new Client();
   clientForm!: FormGroup;
@@ -60,6 +65,8 @@ export class LawyerClientsComponent implements OnInit {
   alertType: 'success' | 'error' | null = null; // To determine the alert type
   sortByLabel: string = 'Newest';  // Initialize sortByLabel variable
   sortOrder: string = 'newest';  // Default sorting order
+  showSuccessMessage: boolean = false;
+  showErrorMessage: boolean = false;
   constructor(private fb: FormBuilder, private Http: HttpClient, private lawyerServ: LawyerServiceService, private authService: AuthService, private route: ActivatedRoute
     , private clientServ: ClientService, private requestService: RequestService, private cdr: ChangeDetectorRef, private consultationServ: ConsultationService,private router: Router) {
     this.router.events.subscribe(event => {
@@ -86,6 +93,73 @@ export class LawyerClientsComponent implements OnInit {
       );
     }
   }
+
+  getClientByEmail(email: string): void {
+    this.clientServ.getClientByEmail(email).subscribe(
+      (client: Client) => {
+        this.client = client;  // Store the client data
+        // Now check if the client is assigned to the lawyer by calling the backend API
+        this.checkClientLink(client.email);  // Check if the client is linked
+        this.openModal();  // Open the modal once the client is found
+        this.isModalOpen = false;
+      },
+      (error) => {
+        console.error('Error fetching client by email:', error);
+        this.client = null;  // Reset client data if not found
+        this.isClientLinked = false;  // Reset the linked status
+        this.openModal();  // Open the modal even if client is not found
+      }
+    );
+  }
+  checkClientLink(clientEmail: string): void {
+    // Call the method to check if client is linked
+    this.lawyerServ.isClientLinked(this.lawyerId, clientEmail).subscribe(
+      (isLinked: boolean) => {
+        this.isClientLinked = isLinked;  // Set the flag based on the response
+      },
+      (error) => {
+        console.error('Error checking client link status:', error);
+        this.isClientLinked = false;  // In case of error, assume not linked
+      }
+    );
+  }
+  sendFollowRequest(): void {
+    this.lawyerServ.sendFollowRequest(this.lawyerId, this.clientForm.value.email).subscribe(
+      (response) => {
+        // Success response: show success message
+        console.log('Follow request sent:', response);
+        this.showSuccessMessage = true;
+        this.showErrorMessage = false;
+
+        // Reset success message after 3 seconds
+        setTimeout(() => {
+          this.showSuccessMessage = false;
+        }, 3000);
+      },
+      (error) => {
+        // Error response: still show success message as the request was sent
+        console.log('Error sending follow request:', error);
+        this.showSuccessMessage = true;  // Keep success message even on error
+        this.showErrorMessage = false;
+        // Optionally handle specific error cases
+        if (error.status === 403) {
+          console.log('User not authorized, but request still sent.');
+        }
+
+        // Reset success message after 3 seconds
+        setTimeout(() => {
+          this.showSuccessMessage = false;
+          this.isSearchModalOpen = false;
+
+        }, 3000);
+      }
+    );
+  }
+
+
+
+
+
   sortClientsByDate(order: string): void {
     this.sortOrder = order;
     this.sortByLabel = order === 'newest' ? 'Newest' : 'Oldest';  // Update dropdown button label
@@ -145,7 +219,15 @@ export class LawyerClientsComponent implements OnInit {
     this.isModalOpen = false;
 
   }
+  openSearchModal() {
+    // Close client modal if open before opening the search modal
+    this.isModalOpen = false;
+    this.isSearchModalOpen = true;
+  }
 
+  closeSearchModal() {
+    this.isSearchModalOpen = false;
+  }
   ngOnInit(): void {
     this.filteredClients = this.clients; // Initially show all clients
 
@@ -230,12 +312,7 @@ export class LawyerClientsComponent implements OnInit {
     );
   }
 
-  confirmRemoveClient(clientId: string): void {
-    const confirmed = window.confirm('Are you sure you want to remove this client?');
-    if (confirmed) {
-      this.removeClient(clientId);
-    }
-  }
+
 
   onLogout(): void {
     this.authService.logout();

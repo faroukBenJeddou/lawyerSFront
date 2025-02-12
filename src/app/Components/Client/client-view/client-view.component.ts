@@ -2,24 +2,23 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {User} from "../../../Models/User";
 import {Lawyer} from "../../../Models/Lawyer";
 import {AuthService} from "../../../services/auth.service";
-import {ActivatedRoute, Router, RouterLink} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Client} from "../../../Models/Client";
 import {ClientService} from "../../../services/ClientService/client.service";
 import {Consultation} from "../../../Models/Consultation";
-import {UserService} from "../../../services/User/user.service";
 import jwtDecode from "jwt-decode";
-import {NgClass, NgForOf, NgStyle} from "@angular/common";
 import {Case} from "../../../Models/Case";
-import {DocumentsService} from "../../../services/documents/documents.service";
 import {HearingsService} from "../../../services/hearings/hearings.service";
 import {Hearing} from "../../../Models/Hearing";
 import {Documents} from "../../../Models/Documents";
 import {CaseService} from "../../../services/CaseService/case.service";
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {AppModule} from "../../../app.module";
-import Swal from "sweetalert2";
+import {FormBuilder, FormGroup} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {C} from "@angular/cdk/keycodes";
+import {Requests} from "../../../Models/Requests";
+import {RequestService} from "../../../services/Request/request.service";
+import {ConsultationStatus} from "../../../Models/ConsultationStatus";
+
 @Component({
   selector: 'app-client-view',
   templateUrl: 'client-view.component.html',
@@ -30,6 +29,8 @@ export class ClientViewComponent implements OnInit{
   authLinkText = 'Log In';
   currentUser!: User;
   clients: Client[] = [];
+  successMessage: string = '';  // For displaying success messages
+  errorMessagee: string = '';    // For displaying error messages
   notifications: any[] = []; // Adjust type based on your Request model
   hasNewNotifications: boolean = false;
   client: Client | null = null;
@@ -59,7 +60,7 @@ export class ClientViewComponent implements OnInit{
 
   constructor(private authService: AuthService, private router: Router,private clientService:ClientService,private route:ActivatedRoute,
               private modalService:NgbModal,  private fb: FormBuilder,private changeDetector: ChangeDetectorRef,private hearingServ:HearingsService,
-              private caseService:CaseService
+              private caseService:CaseService,private requestService:RequestService
   ) {
     this.currentUser = this.authService.getCurrentUser()!;
     this.ClientId = this.currentUser ? this.currentUser.id : null;
@@ -75,22 +76,6 @@ export class ClientViewComponent implements OnInit{
     });
   }
 
-  onFileSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      // Store the selected file for later upload
-      this.clientForm.patchValue({
-        image: file
-      });
-
-      // Optionally, preview the image here
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imageUrl = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
   ngOnInit(): void {
 
     this.isLoggedIn = this.authService.isLoggedIn();
@@ -127,6 +112,7 @@ export class ClientViewComponent implements OnInit{
               this.loadProfileImage(this.ClientId);
               this.loadCases(this.ClientId);
               this.loadConsultations(this.ClientId);
+              this.loadNotifications(this.ClientId);
 
               this.getClosestConsultation();
             } else {
@@ -145,31 +131,6 @@ export class ClientViewComponent implements OnInit{
     }
   }
 
-  updateProfile() {
-    if (this.clientForm.valid && this.ClientId) {
-      const updatedClient = { ...this.clientForm.value };
-
-      // Exclude the image field as you're not updating it
-      delete updatedClient.image;
-
-      // Handle password field if it's empty
-      if (updatedClient.password === '') {
-        delete updatedClient.password;
-      }
-
-      // Send updated client data to backend
-      this.clientService.updateClient(this.ClientId, updatedClient).subscribe({
-        next: (response) => {
-          console.log('Profile updated:', response);
-        },
-        error: (error) => {
-          this.errorMessage = 'Error updating profile.';
-        }
-      });
-    } else {
-      this.errorMessage = 'Please fill out the form correctly or ID is missing.';
-    }
-  }
 
 
   loadProfileImage(clientId: string): void {
@@ -184,64 +145,70 @@ export class ClientViewComponent implements OnInit{
     });
   }
 
-  uploadProfilePic(): void {
-    console.log('Upload button clicked');
-    if (this.ClientId) {
-      const fileInput = this.clientForm.get('image')?.value;
 
-      if (fileInput && fileInput instanceof File) {
-        if (fileInput.size > this.MAX_FILE_SIZE) {
-          this.errorMessage = 'File size exceeds the maximum limit.';
-          return;
-        }
+  loadNotifications(clientId: string): void {
+    this.requestService.getNotificationsForClient(clientId).subscribe(
+      (response: Requests[]) => {
+        console.log('Notifications received:', response);
+        this.notifications = response;
 
-        const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        if (!validTypes.includes(fileInput.type)) {
-          this.errorMessage = 'Invalid file type. Only JPEG, PNG, and GIF are allowed.';
-          return;
-        }
-
-        this.isLoading = true;
-
-        this.clientService.uploadProfilePicture(this.ClientId, fileInput).subscribe({
-          next: (response) => {
-            console.log('Profile picture uploaded successfully.');
-            console.log('Showing SweetAlert');
-
-            Swal.fire({
-              icon: 'success',
-              title: 'Upload Successful',
-              text: 'Your profile picture has been uploaded successfully!',
-              confirmButtonText: 'OK'
-            }).then(() => {
-              console.log('SweetAlert closed');
-              this.clientForm.get('image')?.setValue(null);
-            });
-
-            this.isLoading = false;
-          },
-          error: (error) => {
-            console.error('Error uploading profile picture:', error);
-            this.errorMessage = 'Error uploading profile picture.';
-
-            Swal.fire({
-              icon: 'error',
-              title: 'Upload Failed',
-              text: 'There was an error uploading your profile picture.',
-              confirmButtonText: 'OK'
-            });
-
-            this.isLoading = false;
-          }
+        // Sort the notifications by start date and status
+        this.notifications.sort((a, b) => {
+          const dateA = new Date(a.timestamp || a.start).getTime();
+          const dateB = new Date(b.timestamp || b.start).getTime();
+          if (dateA !== dateB) return dateA - dateB;
+          if (a.status === 'PENDING' && b.status !== 'PENDING') return -1;
+          if (a.status !== 'PENDING' && b.status === 'PENDING') return 1;
+          return 0;
         });
-      } else {
-        this.errorMessage = 'No file selected.';
-      }
-    }
 
-    this.changeDetector.detectChanges();
+        this.hasNewNotifications = this.notifications.length > 0;
+
+        // Set the displayed notifications (only the first 6)
+      },
+      (error) => {
+        console.error('Error fetching notifications', error);
+        this.notifications = [];
+        this.hasNewNotifications = false;
+      }
+    );
   }
 
+  acceptRequest(notification: Requests): void {
+    const lawyerId = notification.lawyer.id;
+    const clientId = notification.client.id;
+
+    console.log('Before Accept, status:', notification.status);
+    console.log('Lawyer Image:', notification.lawyer?.image);
+
+    this.clientService.affectClientToLawyer(lawyerId, clientId).subscribe(
+      (response) => {
+        // Update the notification's status
+        notification.status=ConsultationStatus.ACCEPTED;
+        notification.status = ConsultationStatus.ACCEPTED;
+
+        // Manually trigger change detection
+        this.changeDetector.detectChanges();
+        this.onStatusChanged(notification); // Trigger UI update
+
+        console.log('After Accept, status:', notification.status);
+
+        this.successMessage = 'Request accepted and client assigned to the lawyer!';
+        notification.status = ConsultationStatus.ACCEPTED;
+        this.errorMessage = '';
+      },
+      (error) => {
+        console.error('Error accepting follow request:', error);
+        this.errorMessage = 'Failed to assign client to lawyer. Please try again.';
+        this.successMessage = '';
+      }
+    );
+  }
+
+  onStatusChanged(notification: Requests): void {
+    // This can be used to trigger any additional UI changes
+    console.log('Status Changed', notification.status);
+  }
 
   updateAuthLink(): void {
     this.authLinkText = this.isLoggedIn ? 'Log Out' : 'Log In';
@@ -303,16 +270,6 @@ export class ClientViewComponent implements OnInit{
       next: (cases) => {
         this.cases = cases;
         console.log(cases);
-      },
-      error: (error) => {
-        this.errorMessage = 'Error fetching cases.';
-      }
-    });
-  }
-  loadLawyers(clientId: string): void {
-    this.clientService.getLawyers(clientId).subscribe({
-      next: (lawyers) => {
-        this.lawyers = lawyers;
       },
       error: (error) => {
         this.errorMessage = 'Error fetching cases.';

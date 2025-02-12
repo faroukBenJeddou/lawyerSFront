@@ -126,7 +126,7 @@ export class CaseDetailsComponent implements OnInit {
       const hearing = {
         start: startDate.toISOString(), // Convert Date object to ISO string
         title: this.newHearing.title,
-        end: endDate.toISOString()
+        end: endDate.toISOString(),
       };
 
       this.hearingServ.createHearing(hearing).subscribe(response => {
@@ -137,6 +137,9 @@ export class CaseDetailsComponent implements OnInit {
           this.hearingServ.assignHearing(response.hearingId, this.caseId).subscribe({
             next: () => {
               console.log('Hearing assigned to case successfully');
+
+              // Fetch upcoming hearings and save requests
+
               this.loadHearings(); // Reload hearings to reflect changes
               this.closeHearingModal(); // Close the hearing modal
             },
@@ -154,7 +157,6 @@ export class CaseDetailsComponent implements OnInit {
       console.error('Case ID is missing');
     }
   }
-
   onLogout(): void {
     this.authService.logout();
   }
@@ -329,27 +331,27 @@ export class CaseDetailsComponent implements OnInit {
 
     // Now calculate the days left for these upcoming hearings
     return upcomingHearings.map(hearing => {
-      // Check if the start date is not null
+      // Check if the start date is not null and convert it to Date object
       if (hearing.start) {
-        const daysLeft = this.calculateDays(hearing.start);
+        const hearingDate = new Date(hearing.start); // Convert string to Date object
+        const daysLeft = this.calculateDays(hearingDate); // Pass Date object
         return daysLeft;
       }
       return 0; // Default value if start date is null
     });
   }
 
-  isUpcoming(startDate: Date): boolean {
-    // Logic to check if the date is upcoming
-    // Example:
-    return new Date(startDate) > new Date();
+  isUpcoming(startDate: string): boolean {
+    const currentDate = new Date(); // Get the current date and time
+    const hearingStartDate = new Date(startDate); // Convert string to Date object
+    return hearingStartDate > currentDate; // Return true if the hearing is in the future
   }
 
-  calculateDays(startDate: Date): number {
-    // Example logic to calculate the number of days left
-    const today = new Date();
-    const start = new Date(startDate);
-    const timeDiff = start.getTime() - today.getTime();
-    return Math.ceil(timeDiff / (1000 * 3600 * 24));
+// Assuming calculateDays expects a Date object
+  calculateDays(hearingDate: Date): number {
+    const currentDate = new Date();
+    const timeDiff = hearingDate.getTime() - currentDate.getTime();
+    return Math.ceil(timeDiff / (1000 * 3600 * 24)); // Convert to days
   }
 
 

@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 import {Requests} from "../../../Models/Requests";
 import {RequestService} from "../../../services/Request/request.service";
 import {addHours, formatDistanceToNow} from "date-fns";
-import {BehaviorSubject, forkJoin, Observable, of, switchMap, tap} from "rxjs";
+import {BehaviorSubject, forkJoin, Observable, of, switchMap, take, tap} from "rxjs";
 import {ClientService} from "../../../services/ClientService/client.service";
 import {ConsultationService} from "../../../services/Consultation/consultation.service";
 import {Client} from "../../../Models/Client";
@@ -63,9 +63,12 @@ export class LawyerViewComponent implements OnInit{
   // Function to toggle dropdown visibility
   alertType: 'success' | 'error' | null = null; // To determine the alert type
   closestHearing: Hearing | null = null; // Initialize to null
+  reminder!: Hearing[];  // Change to an array
+  displayedNotifications: any[] = []; // Notifications to display
+  notificationsCount = 6; // Initial number of notifications to load
+  Notif!:any[];
+  loadAll(){
 
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
   }
   showAlert(message: string, type: 'success' | 'error'): void {
     this.alertMessage = message; // Set the alert message
@@ -109,7 +112,13 @@ export class LawyerViewComponent implements OnInit{
       image: [null],// Form control for profile picture
     });
   }
+  loadMoreNotifications(): void {
+    // Increase the notificationsCount by 4 each time the user clicks "Load More"
+    this.notificationsCount += 4; // Load next 4 notifications
 
+    // Update the displayedNotifications by slicing the array
+    this.displayedNotifications = this.notifications.slice(0, this.notificationsCount); // Show the next 4 notifications
+  }
   ngOnInit(): void {
     console.log(this.notifications);  // Check if each notification has the 'id' property
 
@@ -162,7 +171,11 @@ export class LawyerViewComponent implements OnInit{
               this.loadCases(this.lawyerId);
               this.fetchConsultations();
               this.getClosestConsultation();
+              console.log('Calling reminderHearing');
+              this.reminderHearing();
               this.loadNotifications(this.lawyerId);
+              this.displayedNotifications = this.notifications.slice(0, 4);
+
             } else {
               this.errorMessage = 'Lawyer ID is missing!';
             }
@@ -226,22 +239,20 @@ export class LawyerViewComponent implements OnInit{
         console.log('Notifications received:', response);
         this.notifications = response;
 
-        // Sort the notifications by status (PENDING first), then by date (newest first)
+        // Sort the notifications by start date and status
         this.notifications.sort((a, b) => {
-          // Priority: PENDING first
-          if (a.status === 'PENDING' && b.status !== 'PENDING') {
-            return -1; // 'a' comes before 'b'
-          } else if (a.status !== 'PENDING' && b.status === 'PENDING') {
-            return 1; // 'b' comes before 'a'
-          } else {
-            // If both have the same status, sort by date (newest first)
-            const dateA = new Date(a.timestamp || a.start).getTime();
-            const dateB = new Date(b.timestamp || b.start).getTime();
-            return dateB - dateA; // Descending order (newest first)
-          }
+          const dateA = new Date(a.timestamp || a.start).getTime();
+          const dateB = new Date(b.timestamp || b.start).getTime();
+          if (dateA !== dateB) return dateA - dateB;
+          if (a.status === 'PENDING' && b.status !== 'PENDING') return -1;
+          if (a.status !== 'PENDING' && b.status === 'PENDING') return 1;
+          return 0;
         });
 
         this.hasNewNotifications = this.notifications.length > 0;
+
+        // Set the displayed notifications (only the first 6)
+        this.displayedNotifications = this.notifications.slice(0, this.notificationsCount);
       },
       (error) => {
         console.error('Error fetching notifications', error);
@@ -521,7 +532,19 @@ export class LawyerViewComponent implements OnInit{
     this.closestHearing = upcomingHearings.length > 0 ? upcomingHearings[0] : null;
     console.log('Closest Hearing:', this.closestHearing); // For debugging
   }
-
+  reminderHearing(): void {
+    this.hearingServ.filterUpcomingHearings().pipe(
+      take(1)  // Ensures the observable completes after emitting the first value
+    ).subscribe(
+      (hearings: Hearing[]) => {
+        console.log("Upcoming hearings:", hearings);
+        this.reminder = hearings;  // Store the hearings
+      },
+      (error) => {
+        console.error("Error fetching hearings:", error);
+      }
+    );
+  }
 
 }
 

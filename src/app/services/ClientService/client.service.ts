@@ -131,6 +131,15 @@ export class ClientService {
 
     return this.http.get<Client[]>(`${this.baseUrl}/find`, { headers, params });
   }
+  affectClientToLawyer(lawyerId: string, clientId: string): Observable<any> {
+    const token = this.authService.getToken(); // Get token using AuthService
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
 
+    // Sending POST request to affect client to lawyer
+    return this.http.post<any>(`${this.baseUrl}/affect-to-lawyer/${lawyerId}/${clientId}`, {}, { headers });
+  }
 
 }

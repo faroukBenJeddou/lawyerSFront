@@ -8,9 +8,11 @@ export class Requests {
   start!: string; // ISO Date string for start time
   end!: string; // ISO Date string for end time
   title!: string;
-
+  creationDate!: Date;
   lawyer: {
     id: string;
+    image?: string; // Optional, add image property
+
   };
   client: {
     id: string;
@@ -26,7 +28,9 @@ export class Requests {
     status: ConsultationStatus,
     lawyer: Lawyer,
     client: Client,
+    creationDate:Date,
     accepted: boolean,
+
   consultation:Consultation[]
   ) {
     this.start = start;
@@ -35,6 +39,6 @@ export class Requests {
     this.status = status;
     this.lawyer = lawyer;
     this.client = client;
-
+    this.creationDate = creationDate;
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
-import {catchError, Observable, of, throwError} from "rxjs";
+import {catchError, Observable, of, tap, throwError} from "rxjs";
 import {Lawyer} from "../../Models/Lawyer";
 import {AuthService} from "../auth.service";
 import {Client} from "../../Models/Client";
@@ -177,9 +177,36 @@ export class LawyerServiceService {
 
 
 
+  isClientLinked(lawyerId:string,email: string): Observable<boolean> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get<boolean>(`${this.baseUrl}/${lawyerId}/client/email/${email}`, { headers });
+  }
 
 
 
+  sendFollowRequest(lawyerId: string, email: string): Observable<string> {
+    const token = this.authService.getToken(); // Get the token
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<string>(`${this.baseUrl}/sendFollowRequest?lawyerId=${lawyerId}&email=${email}`, {}, { headers })
+      .pipe(
+        tap((response) => {
+          console.log('Response:', response);  // Log the successful response
+        }),
+        catchError((error) => {
+          console.error('Error sending follow request:', error);
+          return throwError('Failed to send follow request. Please try again later.');
+        })
+      );
+  }
 
 
 

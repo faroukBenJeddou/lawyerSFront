@@ -1,9 +1,9 @@
 export class Hearing{
   hearingId!:string;
   title:string;
-  start !:Date;
-  end!:Date;
-  constructor( title: string, start: Date) {
+  start !:string;
+  end!:string;
+  constructor( title: string, start: string) {
     this.title = title;
     this.start = start;
 

@@ -224,6 +224,9 @@
           <a (click)="openModal()" class="btn btn-lg btn-success" style="border-radius:10px; background-color:#433b86; color:white; font-size:18px; padding:10px 30px; text-decoration:none;">
             Add New Client
           </a>
+          <a (click)="openSearchModal()" class="btn btn-lg btn-success" style="border-radius:10px; background-color:#433b86; color:white; font-size:18px; padding:10px 30px; text-decoration:none;">
+            Add by Email
+          </a>
         </div>
         <!-- Left Column (Text Section) -->
         <div class="col-lg-6 col-12 mb-5 mb-lg-0">
@@ -451,6 +454,67 @@
         <!-- Modal Footer -->
         <div class="modal-footer" style="border-top: 1px solid #dee2e6; background-color: #433b86;">
           <button type="button" class="btn btn-secondary" style="background-color: red; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 500; border-radius: 0.5rem;" (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" style="display: none; overflow: hidden;" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" [ngClass]="{'show': isSearchModalOpen}" [ngStyle]="{'display': isSearchModalOpen ? 'block' : 'none'}">
+    <div class="modal-dialog" style="position: relative; width: auto; margin: 1.75rem auto;">
+      <div class="modal-content" style="border-radius: 1rem; box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3); border: none;">
+        <!-- Modal Header -->
+        <div class="modal-header" style="border-bottom: 1px solid #dee2e6; background-color: #433b86; color: white; padding: 1.5rem;">
+          <h4 class="modal-title" id="exampleModalLabel1" style="margin: 0; font-size: 1.5rem; font-weight: bold;">Search for Client</h4>
+          <button type="button" class="btn-close" (click)="closeSearchModal()" aria-label="Close" style="background-color: transparent; border: none; font-size: 1.2rem; color: white; opacity: 0.7;"></button>
+        </div>
+        <!-- Modal Body -->
+        <div class="modal-body" style="padding: 2rem;">
+          <form [formGroup]="clientForm" (ngSubmit)="getClientByEmail(clientForm.value.email)" style="font-family: Arial, sans-serif; font-size: 0.9rem;">
+            <div class="mb-3">
+              <label for="emaill" class="form-label" style="font-weight: 500;">Email</label>
+              <input type="email" class="form-control" id="emaill" formControlName="email" required style="padding: 0.8rem; border-radius: 0.5rem; border: 1px solid #ced4da;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="background-color:#313175; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 500; border-radius: 0.5rem;">Search</button>
+          </form>
+
+          <!-- Display client information if available -->
+          <div *ngIf="client" style="margin-top: 20px;">
+            <h5>Client Details:</h5>
+            <p>
+              <img [src]="client.image || 'http://bootdey.com/img/Content/avatar/avatar1.png'" alt="" style="width: 50px; height: 50px; border-radius: 50%;">
+            </p>
+            <p><strong>Name:</strong> {{ client.firstName }} {{ client.familyName }}</p>
+            <p><strong>Email:</strong> {{ client.email }}</p>
+
+            <!-- Display message if client is linked to lawyer -->
+            <div *ngIf="isClientLinked" style="color: green; margin-top: 15px;">
+              <strong>This client is already linked.</strong>
+            </div>
+
+            <!-- Display message if client is not linked -->
+            <div *ngIf="!isClientLinked && client" style="color: red; margin-top: 15px;">
+              <strong>This client is not linked to the lawyer. You can add them.</strong>
+              <button (click)="sendFollowRequest()" type="submit" class="btn btn-primary" style="background-color:#313175; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 500; border-radius: 0.5rem;">Add</button>
+            </div>
+
+            <!-- Success message shown after sending the follow request -->
+            <div *ngIf="showSuccessMessage" class="alert alert-success" style="color: green; margin-top: 15px;">
+              <strong>Follow request sent successfully!</strong>
+            </div>
+
+            <div *ngIf="showErrorMessage" class="alert alert-danger" style="color: red; margin-top: 15px;">
+              <strong>Failed to send follow request. Please try again later.</strong>
+            </div>
+
+          </div>
+
+          <!-- If no client was found -->
+          <div *ngIf="!client && clientForm.touched" style="margin-top: 20px; color: red;">
+            <strong>No client found with this email.</strong>
+          </div>
+        </div>
+        <!-- Modal Footer -->
+        <div class="modal-footer" style="border-top: 1px solid #dee2e6; background-color: #433b86;">
+          <button type="button" class="btn btn-secondary" style="background-color: red; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 500; border-radius: 0.5rem;" (click)="closeSearchModal()">Close</button>
         </div>
       </div>
     </div>

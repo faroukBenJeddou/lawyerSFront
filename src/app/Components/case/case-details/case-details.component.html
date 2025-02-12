@@ -204,7 +204,7 @@
       <div class="col-lg-12 col-12 text-center">
         <h1 class="text-white"style="font-size:40px;font-weight:bold">Case Details</h1>
 
-        
+
       </div>
 
     </div>
@@ -332,8 +332,11 @@
               <div class="d-flex align-items-center">
                 <p class="job-date">
                   <i class="custom-icon bi-clock me-1"></i>
-                  {{ hearing.start | date: 'dd MMM dd, HH:mm' }}
+                  {{ hearing.start ? (hearing.start | date: 'dd MMM yyyy, HH:mm') : 'No date available' }}
                 </p>
+
+
+
               </div>
 
             </div>

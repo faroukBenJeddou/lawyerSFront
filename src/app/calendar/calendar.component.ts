@@ -490,7 +490,8 @@ getAllConsultations(){
       client: { id: this.client.id },
       status: ConsultationStatus.PENDING,
       isRead: false,
-      isNotification: true
+      isNotification: true,
+      creationDate: new Date()  // Assign the current system date and time
     };
 
     this.requestServ.createRequest(request, this.client.id, this.lawyer.id).subscribe({
