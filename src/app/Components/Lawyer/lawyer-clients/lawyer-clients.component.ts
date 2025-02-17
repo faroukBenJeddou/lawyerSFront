@@ -33,7 +33,8 @@ import {ConsultationService} from "../../../services/Consultation/consultation.s
     DatePipe
   ],
   templateUrl: './lawyer-clients.component.html',
-  styleUrls: []
+  styleUrls: [],
+
 })
 export class LawyerClientsComponent implements OnInit {
   isModalOpen = false;

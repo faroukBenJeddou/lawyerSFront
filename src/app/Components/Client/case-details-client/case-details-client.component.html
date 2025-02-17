@@ -346,14 +346,14 @@
 
                 <div class="job-image-box-wrap-info d-flex align-items-center">
                   <p class="mb-0">
-                    <a href="javascript:void(0)" class="badge badge-level">{{ doc.title }}</a>
+                    <a href="javascript:void(0)" (click)="downloadFile(doc.id)" class="badge badge-level">Download</a>
                   </p>
                 </div>
               </div>
 
               <div class="job-body">
                 <h4 class="job-title">
-                  <a href="javascript:void(0)" class="job-title-link">Hearing Details</a>
+                  <a href="javascript:void(0)" class="job-title-link">Document Details</a>
                 </h4>
 
                 <div class="d-flex align-items-center">
@@ -361,12 +361,17 @@
                 </div>
 
                 <div class="d-flex align-items-center">
-                  <p class="job-date">
+                  <p class="job-date" style="font-size:20px; color: #c11919">
                     <i class="custom-icon bi-paperclip me-1"></i>
-                    {{ doc.content}}
+                    {{ doc.title}}
                   </p>
                 </div>
-
+                <div class="d-flex align-items-center">
+                  <p class="job-date" style="font-size:20px; color: #c11919">
+                    <i class="bi-calendar"></i>
+                    {{ doc.uploadTime}}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -379,7 +384,8 @@
   </section>
 
 </main>
-<div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true" [ngClass]="{'show': isModalOpen}" [ngStyle]="{'display': isModalOpen ? 'block' : 'none'}">
+<div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true"
+     [ngClass]="{'show': isModalOpen}" [ngStyle]="{'display': isModalOpen ? 'block' : 'none'}">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <!-- Modal Header -->
@@ -387,27 +393,39 @@
         <h4 class="modal-title" id="documentModalLabel">Add Document</h4>
         <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
       </div>
+
       <!-- Modal Body -->
       <div class="modal-body">
+        <!-- Success Alert -->
+        <div *ngIf="showSuccessAlert" class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ successMessage }}
+          <button type="button" class="btn-close" (click)="showSuccessAlert = false"></button>
+        </div>
+
+        <!-- Error Alert -->
+        <div *ngIf="showErrorAlert" class="alert alert-danger alert-dismissible fade show" role="alert">
+          {{ errorMessage }}
+          <button type="button" class="btn-close" (click)="showErrorAlert = false"></button>
+        </div>
+
         <form (ngSubmit)="addDocument()">
           <div class="mb-3">
             <label for="documentTitle" class="form-label">Title</label>
             <input type="text" class="form-control" id="documentTitle" [(ngModel)]="newDocument.title" name="title" required>
           </div>
+
           <div class="mb-3">
-            <label for="documentDate" class="form-label">Date</label>
-            <input type="date" class="form-control" id="documentDate" [(ngModel)]="newDocument.date" name="date" required>
+            <label for="documentFile" class="form-label">Upload File</label>
+            <input type="file" class="form-control" id="documentFile" (change)="onFileSelected($event)" required>
           </div>
-          <div class="mb-3">
-            <label for="documentContent" class="form-label">Content</label>
-            <textarea class="form-control" id="documentContent" [(ngModel)]="newDocument.content" name="content" required></textarea>
-          </div>
+
           <button type="submit" class="btn btn-primary" style="background-color:blue">Add Document</button>
         </form>
       </div>
+
       <!-- Modal Footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeModal()" >Close</button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
       </div>
     </div>
   </div>

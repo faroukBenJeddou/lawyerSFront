@@ -17,11 +17,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700&display=swap" rel="stylesheet">
 
 
-  <link href="css/bootstrap-icons.css" rel="stylesheet">
+  <link href="../lawyer-view/css/bootstrap-icons.css" rel="stylesheet">
 
-  <link href="css/apexcharts.css" rel="stylesheet">
+  <link href="../lawyer-view/css/apexcharts.css" rel="stylesheet">
 
-  <link href="css/tooplate-mini-finance.css" rel="stylesheet">
+  <link href="../lawyer-view/css/tooplate-mini-finance.css" rel="stylesheet">
   <!--
 
   Tooplate 2135 Mini Finance
@@ -193,7 +193,7 @@
 
 
     </a>
-    <ul class="menu-list flex-grow-1 mt-3" >
+    <ul class="menu-list flex-grow-1 mt-3">
       <li>
         <a style="color:white" class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
           <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
@@ -233,7 +233,6 @@
           <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
         </a>
       </li>
-
     </ul>
     <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
       Logout
@@ -245,198 +244,167 @@
   </div>
 </div>
 
-<div class="container-fluid" style="padding-right:500px; background:#ececec">
-  <div class="row">
-    <main class="main-wrapper col-md-9 ms-sm-auto py-4 col-lg-9 px-md-4 border-start">
-      <div class="title-group mb-3">
-        <h1 class="h2 mb-0"style="font-size: 50px;">Overview</h1>
+<main class="main-wrapper col-md-9 ms-sm-auto py-4 col-lg-9 px-md-4" style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 20px;">
+  <div class="custom-block" style="width: 100%; max-width: 1600px; margin: 0 auto; background-color: #ececec !important; ">
 
-        <small class="text-muted">Hello {{ lawyer?.firstName }}, welcome back!</small>
-      </div>
+  <div class="title-group mb-3">
+    <h1 class="h2 mb-0" style="font-size:60px;color:black;">Wallet</h1>
+  </div>
 
-      <div class="row my-4">
-        <div class="col-lg-7 col-12">
-          <div class="custom-block custom-block-consultation">
-            <h2 style="font-size: 40px; colro:#313557">Recent Consultations</h2>
+  <div class="row my-4" >
+    <div class="col-lg-12 col-12">
+      <div class="custom-block bg-white" style="font-size: 1.2rem; padding: 30px;">
+        <h5 class="mb-4" style="font-size: 2rem; color:#1d3557">Account Activities</h5>
 
-            <!-- Loop through all consultations and display them -->
-            <div *ngFor="let con of consultations" class="mb-3">
+        <div class="table-responsive">
+          <table class="account-table table" style="font-size: 1.1rem; width: 100%;">
+            <thead style=" background-color: #a8dadc" >
+            <tr>
+              <th scope="col">Client</th>
+              <th scope="col">Date</th>
+              <th scope="col">Time</th>
+              <th scope="col">Description</th>
+              <th scope="col">Payment Type</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Status</th>
+            </tr>
+            </thead>
+            <tbody *ngFor="let cas of cases">
+            <tr>
+              <td scope="row">{{cas.client?.firstName}} {{cas.client?.familyName}}</td>
 
-              <!-- Consultation Title and Start Date -->
-              <h2 class="mt-2 mb-3">
-                <mat-icon style="font-size: 30px; color: #3f51b5;" aria-hidden="true">event_note</mat-icon>
-                {{ con.title }} - {{ con.start | date: 'short' }}
-              </h2>
+              <td scope="row">{{cas.invoice.date}}</td>
+              <td scope="row">10:00 PM</td>
+              <td scope="row">{{ cas.invoice.details }}</td>
+              <td scope="row">C2C Transfer</td>
+              <td class="text-danger" scope="row">
+                <span class="me-1">-</span>
+                {{cas.invoice.price}}DT
+              </td>
+              <td scope="row">
+            <span class="badge text-bg-danger">
+              Pending
+            </span>
+              </td>
+            </tr>
 
-              <!-- Consultation Description -->
-              <div class="d-flex align-items-center mb-3">
-                <mat-icon style="font-size: 30px; color: #3f51b5;" aria-hidden="true">description</mat-icon>
-                <p class="ms-2">Description:{{ con.description }}</p>
-              </div>
-
-              <!-- Client Information -->
-              <div class="d-flex">
-                <div class="d-flex align-items-center">
-                  <mat-icon style="font-size: 30px; color: #3f51b5;" aria-hidden="true">person</mat-icon>
-                  <div class="ms-2">
-                    <small>Client</small>
-                    <p>{{ con.client.firstName }} {{ con.client.familyName }}</p>
-                  </div>
-                </div>
-
-                <!-- Consultation Status -->
-
-              </div>
-
-              <!-- Divider Line -->
-              <hr class="my-4">
-
-            </div>
-          </div>
-
-
-          <div class="custom-block custom-block-exchange">
-            <h5 class="mb-4" style="font-size:40px; color:#313557">Recent Cases</h5>
-
-            <!-- Show message if no cases are available -->
-            <div *ngIf="cases.length === 0" class="no-cases-message text-center" style="font-size: 18px; color: #999;">
-              <p>No cases available</p>
-            </div>
-
-            <!-- Loop through cases and display them -->
-            <div *ngFor="let cas of cases" class="d-flex align-items-center border-bottom pb-3 mb-3">
-              <div class="d-flex align-items-center">
-                <mat-icon class="exchange-image img-fluid" style="font-size: 30px; color: #3f51b5;">gavel</mat-icon>
-                <div>
-                  <p>{{ cas.caseType }}</p>
-                  <h6>{{ cas.client?.firstName }} {{ cas.client?.familyName }}</h6>
-                </div>
-              </div>
-
-              <div class="ms-auto me-4">
-                <small>Status</small>
-                <h6>{{ cas.caseStatus }}</h6>
-              </div>
-
-              <div class="ms-auto me-4">
-                <small>Date</small>
-                <h6>{{ cas.start }}</h6>
-              </div>
-            </div>
-
-            <!-- View All Cases Button -->
-            <div class="text-center mt-4">
-              <a [routerLink]="['/lawyer', lawyerId, 'cases']" class="btn custom-btn " style="font-size: 18px; ">
-                View All Cases
-              </a>
-            </div>
-          </div>
+            </tbody>
+          </table>
         </div>
 
-        <div class="col-lg-5 col-12">
-          <div class="custom-block custom-block-profile-front custom-block-profile text-center bg-white">
-            <div class="custom-block-profile-image-wrap mb-4">
-              <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="custom-block-profile-image img-fluid" alt="">
-
-              <a [routerLink]="['/edit/lawyer', lawyerId]" class="bi-pencil-square custom-block-edit-icon" style="color:white; background-color:#ff2100; border-radius:50%; "></a>
-            </div>
-
-
-            <p class="d-flex flex-wrap mb-2">
-              <strong>Name:</strong>
-
-              <span>{{ lawyer?.familyName }} {{lawyer?.familyName}}</span>
-            </p>
-
-            <p class="d-flex flex-wrap mb-2">
-              <strong>Email:</strong>
-
-              <a href="#">
-                {{ lawyer?.email }}
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center mb-0" style="font-size: 1.2rem;">
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">Prev</span>
               </a>
-            </p>
+            </li>
 
-            <p class="d-flex flex-wrap mb-0">
-              <strong>Phone:</strong>
+            <li class="page-item active" aria-current="page">
+              <a class="page-link" href="#">1</a>
+            </li>
 
-              <a href="#">
-                {{ lawyer?.phoneNumber }}
+            <li class="page-item">
+              <a class="page-link" href="#">2</a>
+            </li>
+
+            <li class="page-item">
+              <a class="page-link" href="#">3</a>
+            </li>
+
+            <li class="page-item">
+              <a class="page-link" href="#">4</a>
+            </li>
+
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">Next</span>
               </a>
-            </p>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="col-lg-7 col-12">
+      <div class="custom-block custom-block-balance">
+        <small>Your Balance</small>
+
+        <h2 class="mt-2 mb-3">$254,800</h2>
+
+        <div class="custom-block-numbers d-flex align-items-center">
+          <span>****</span>
+          <span>****</span>
+          <span>****</span>
+          <p>2560</p>
+        </div>
+
+        <div class="d-flex">
+          <div>
+            <small>Valid Date</small>
+            <p>12/2028</p>
           </div>
 
+          <div class="ms-auto">
+            <small>Card Holder</small>
+            <p>Thomas</p>
+          </div>
+        </div>
+      </div>
 
+    </div>
 
-          <div class="custom-block custom-block-transations">
-            <h5 class="mb-4" style="color:#1d3557 ;font-size: 40px">Recent Clients</h5>
+    <div class="col-lg-5 col-12">
+      <div class="custom-block custom-block-transations">
+        <h5 class="mb-4" style="font-size:30px;color:#1d3557">Recent Transactions</h5>
 
-            <div class="d-flex flex-wrap align-items-center mb-4" *ngFor="let client of clients" >
-              <div class="d-flex align-items-center">
-                <img  [src]="client.image || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image img-fluid" alt="">
+        <div class="d-flex flex-wrap align-items-center mb-4" *ngFor="let cas of clients">
+          <!-- Check if the client has at least one case -->
+          <div *ngIf="cas.cases && cas.cases.length > 0" class="d-flex align-items-center w-100">
 
-                <div>
-                  <p>
-                    <a href="transation-detail.html">{{ client.firstName  }} {{client.familyName}}</a>
-                  </p>
+            <!-- Left side: client image and details -->
+            <div class="d-flex align-items-center">
+              <img [src]="cas.image || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image img-fluid" alt="">
 
-                  <small class="text-muted">C2C Transfer</small>
-                </div>
+              <div>
+                <p>
+                  <a href="transation-detail.html">{{ cas.firstName }} {{ cas.familyName }}</a>
+                </p>
+
+                <small class="text-muted">C2C Transfer</small>
               </div>
-
-
             </div>
 
-
-
-
-            <div class="border-top pt-4 mt-4 text-center">
-              <a class="btn custom-btn " style=" font-size:20px; " [routerLink]="['/lawyer', lawyerId, 'clients']">
-                View all clients
-                <i class="bi-arrow-up-right-circle-fill ms-2"></i>
-              </a>
-            </div>
-
-          </div>
-
-          <div class="custom-block primary-bg">
-            <h5 class="text-white mb-4" style="font-size:40px;">Recent Hearings</h5>
-
-            <!-- Check if hearings exist, else display a message -->
-
-
-            <!-- Display hearings if available -->
-            <div *ngFor="let case of cases" class="d-flex align-items-center border-bottom pb-3 mb-3">
-              <ng-container *ngIf="case.hearings && case.hearings.length > 0">
-                <a href="#">
-                  <mat-icon class="profile-image" style="font-size: 50px; color: #3f51b5;">balance</mat-icon>
-                </a>
-
-                <div class="ms-3">
-                  <!-- Loop through each hearing in the current case -->
-                  <div *ngFor="let hearing of case.hearings">
-                    <h6 style="color:white; font-size: 20px;">
-                      Date: {{ hearing.start ? (hearing.start | date: 'short') : 'No Date Available' }}
-                    </h6>
-                    <p style="color:white; font-size: 18px;">Title: {{ hearing.title || 'No Title' }}</p>
-
-                    <!-- Add a line to separate hearings -->
-                    <hr style="border: 1px solid #fff; margin: 10px 0;">
-                  </div>
+            <!-- Right side: date and price or "No invoice yet" -->
+            <div class="ms-auto text-end">
+              <ng-container *ngFor="let caseItem of cas.cases">
+                <!-- Display date or "No invoice yet" -->
+                <div *ngIf="caseItem.invoice?.date">
+                  <small>{{ caseItem.invoice?.date }}</small>
+                </div>
+                <div *ngIf="!caseItem.invoice?.date">
+                  <small>No invoice yet</small>
                 </div>
               </ng-container>
+
+              <strong class="d-block text-danger">
+                <span class="me-1">-</span>
+                <!-- Show the invoice price if available, otherwise show "No invoice yet" -->
+                <ng-container *ngFor="let caseItem of cas.cases">
+                  <span *ngIf="caseItem.invoice?.price">{{ caseItem.invoice?.price }} DT</span>
+                  <span *ngIf="!caseItem.invoice?.price">No invoice yet</span>
+                </ng-container>
+              </strong>
             </div>
 
           </div>
-
-
         </div>
+
       </div>
-
-    </main>
-
+    </div>
   </div>
-</div>
-
+  </div>
+</main>
 <!-- JAVASCRIPT FILES -->
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>

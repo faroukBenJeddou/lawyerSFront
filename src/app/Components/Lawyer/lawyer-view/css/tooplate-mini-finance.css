@@ -9,6 +9,10 @@ https://www.tooplate.com/view/2135-mini-finance
 /*---------------------------------------
   CUSTOM PROPERTIES ( VARIABLES )
 -----------------------------------------*/
+.custom-head {
+  background-color: #a8dadc !important;
+}
+
 :root {
   --white-color:                  #ffffff;
   --primary-color:                #E63946;
@@ -134,7 +138,7 @@ strong {
   SECTION
 -----------------------------------------*/
 .main-wrapper {
-  background: var(--section-bg-color);
+  background: #ececec;
   min-height: calc(100vh - 65px);
 }
 
@@ -398,7 +402,7 @@ strong {
   NAVIGATION
 -----------------------------------------*/
 .sidebar {
-  background: #6f4a91;
+  background: #2c3e50;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -447,10 +451,12 @@ strong {
 
 
 .navbar {
-  background: var(--white-color);
+  background: #f5f7fa;
   border-bottom: 1px solid var(--border-color);
   padding-top: 8px;
   padding-bottom: 8px;
+  z-index: 10; /* Lower than the sidebar */
+
 }
 
 .navbar .nav-link {
@@ -906,9 +912,8 @@ strong {
   padding: 15px 10px;
 }
 
-.account-table thead {
-  background: var(--custom-btn-bg-color);
-}
+
+
 
 .account-table th,
 .account-table tr {

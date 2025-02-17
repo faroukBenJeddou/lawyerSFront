@@ -42,7 +42,8 @@ import {Lawyer} from "../../../Models/Lawyer";
         NgIf
     ],
   templateUrl: './cases.component.html',
-  styleUrl: './cases.component.css'
+  styleUrl: './cases.component.css',
+
 })
 export class CasesComponent implements OnInit{
     cases: Case[]=[];

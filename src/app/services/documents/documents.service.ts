@@ -23,6 +23,31 @@ export class DocumentsService {
     return this.http.post<any>(`${this.baseUrl}/add`, documentData, { headers });
   }
 
+  uploadDoc(file:File,title:string,caseId?: string):Observable<any> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('title', title);
+    if (caseId) {
+      formData.append('caseId', caseId);
+    }
+    return this.http.post<any>(`${this.baseUrl}/upload`, formData, { headers });
+
+  }
+  downloadDocument(documentId: string): Observable<Blob> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get(`${this.baseUrl}/download/${documentId}`, {
+      headers,
+      responseType: 'blob' // Important for handling binary data
+    });
+  }
 
   assignDocumentToCase(DocId: string, caseId: string): Observable<Case> {
     const token = this.authService.getToken();

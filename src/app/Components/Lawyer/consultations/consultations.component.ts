@@ -47,6 +47,7 @@ import {addHours, formatDistanceToNow} from "date-fns";
   changeDetection: ChangeDetectionStrategy.OnPush,
 
   templateUrl: './consultations.component.html',
+
 })
 export class ConsultationsComponent implements OnInit{
   consultations: Consultation[]=[];

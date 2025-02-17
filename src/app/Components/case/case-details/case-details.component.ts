@@ -27,6 +27,7 @@ import {ClientService} from "../../../services/ClientService/client.service";
 import {ConsultationService} from "../../../services/Consultation/consultation.service";
 import {Lawyer} from "../../../Models/Lawyer";
 import {Client} from "../../../Models/Client";
+import { saveAs } from 'file-saver'; // Optional: if you want to use FileSaver.js for better compatibility with browsers
 
 @Component({
   selector: 'app-case-details',
@@ -57,7 +58,7 @@ export class CaseDetailsComponent implements OnInit {
   };
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
   lawyer: Lawyer | null = null;
-
+  selectedFile!: File; // Declare the property to store the selected file
   isModalOpen = false;
   title: string | null = null;
   content: string | null = null;
@@ -71,8 +72,10 @@ export class CaseDetailsComponent implements OnInit {
   progressPercentage: number = 33; // Starting progress
   notifications: any[] = []; // Adjust type based on your Request model
   hasNewNotifications: boolean = false;
-  notifications$: Observable<Requests[]> = new BehaviorSubject([]);
-  isDropdownOpen = false;
+  successMessage: string = '';
+  errorMessage: string = '';
+  showSuccessAlert: boolean = false;
+  showErrorAlert: boolean = false;  isDropdownOpen = false;
   isNotificationDropdownOpen = false; // Track the state of the notification dropdown
   isProfileDropdownOpen = false; // Track the state of the profile dropdown
   alertMessage: string | null = null; // For displaying alert messages
@@ -252,34 +255,78 @@ export class CaseDetailsComponent implements OnInit {
       });
     }
   }
+  onFileSelected(event: any) {
+    if (event.target.files.length > 0) {
+      this.selectedFile = event.target.files[0];
+      console.log("Selected file:", this.selectedFile.name);
+    }
+  }
+
+  downloadFile(documentId: string): void {
+    this.docServ.downloadDocument(documentId).subscribe({
+      next: (blob: Blob) => {
+        const fileName = `document-${documentId}.pdf`; // Adjust based on your file type or use document's filename
+        saveAs(blob, fileName); // Use FileSaver.js to download the file
+      },
+      error: (err) => {
+        console.error('Error downloading file:', err);
+      }
+    });
+  }
+
 
   addDocument() {
-    if (this.caseId) {
-      const document: { title: string; content: string } = {
-        title: this.newDocument.title,
-        content: this.newDocument.content,
-      };
-
-      this.docServ.createDocument(document).subscribe(response => {
-        console.log('Document added successfully:', response);
+    if (this.caseId && this.selectedFile) {
+      this.docServ.uploadDoc(this.selectedFile, this.newDocument.title, this.caseId).subscribe(response => {
+        console.log('Document uploaded successfully:', response);
+        this.successMessage = 'Document uploaded successfully!';
+        this.showSuccessAlert = true;
+        this.showErrorAlert = false; // Hide error if previously shown
 
         this.docServ.assignDocumentToCase(response.id, this.caseId).subscribe({
           next: () => {
             console.log('Document assigned to case successfully');
+            this.successMessage = 'Document assigned to case successfully!';
+            this.showSuccessAlert = true;
             this.loadDocuments(); // Reload documents to reflect changes
-            this.closeDocumentsModal(); // Close the document modal
+            this.closeDocumentsModal();
+            this.isModalOpen = false;
+// Close the document modal
+            setTimeout(() => this.showSuccessAlert = false, 3000); // Auto-hide alert
           },
           error: (error) => {
             console.error('Error assigning document to case:', error);
+            this.errorMessage = 'Error assigning document to case!';
+            this.showErrorAlert = true;
+            setTimeout(() => this.showErrorAlert = false, 3000);
           }
         });
       }, error => {
-        console.error('Error creating document:', error);
+        console.error('Error uploading document:', error);
+        this.errorMessage = 'Error uploading document!';
+        this.showErrorAlert = true;
+        setTimeout(() => this.showErrorAlert = false, 3000);
       });
     } else {
-      console.error('Case ID is missing');
+      this.errorMessage = 'Case ID or file is missing!';
+      this.showErrorAlert = true;
+      setTimeout(() => this.showErrorAlert = false, 3000);
     }
   }
+
+  isImage(doc: any): boolean {
+    return doc.fileType.startsWith('image/');
+  }
+
+  // Check if file is a PDF based on file type
+  isPdf(doc: any): boolean {
+    return doc.fileType === 'application/pdf';
+  }
+
+
+
+
+
   openShowHearingsModal(caseId: string) {
     this.isShowHearingsModalOpen = true;
   }

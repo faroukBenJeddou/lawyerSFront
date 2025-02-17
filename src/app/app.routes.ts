@@ -22,6 +22,7 @@ import {ResetPasswordComponent} from "./Components/reset-password/reset-password
 import {EditProfileLawyerComponent} from "./Components/Lawyer/edit-profile-lawyer/edit-profile-lawyer.component";
 import {EditClientProfileComponent} from "./Components/Client/edit-client-profile/edit-client-profile.component";
 import {AllprofilesComponent} from "./Components/allprofiles/allprofiles.component";
+import {InvoiceComponent} from "./Components/Lawyer/invoice/invoice.component";
 
 export const routes: Routes = [
   {path:'login', component: LoginComponent},
@@ -44,7 +45,7 @@ export const routes: Routes = [
   {path:'forgotPassword',component:ForgotPasswordComponent},
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'profile/:id', component: AllprofilesComponent },
-
+  {path: 'lawyer/:id/invoice',component: InvoiceComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
   { path: 'home', component: HomeComponent },
 
   { path: 'notFound', component: NotFoundComponent }, // Ensure this component exists

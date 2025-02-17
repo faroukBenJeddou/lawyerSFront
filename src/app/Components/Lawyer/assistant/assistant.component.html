@@ -175,6 +175,13 @@
           <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
         </a>
       </li>
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'invoice']">
+          <i class="icofont-users-alt-5"></i><mat-icon>description</mat-icon>
+          <span>Invoice</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
     </ul>
     <button class="btn btn-danger" (click)="onLogout()">Logout
       <span class="ms-2"> <mat-icon>exit_to_app</mat-icon>

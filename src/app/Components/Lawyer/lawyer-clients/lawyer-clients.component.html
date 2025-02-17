@@ -87,6 +87,13 @@
           <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
         </a>
       </li>
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'invoice']">
+          <i class="icofont-users-alt-5"></i><mat-icon>description</mat-icon>
+          <span>Invoice</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
     </ul>
     <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
       Logout
@@ -110,7 +117,7 @@
     <div class="nav-item text-nowrap d-flex align-items-center">
       <div class="dropdown ps-3 position-relative">
         <a class="nav-link dropdown-toggle text-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="navbarLightDropdownMenuLink">
-          <i class="bi-bell"></i>
+          <i class="bi-bell fs-3"></i>
           <span class="position-absolute start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
             <span class="visually-hidden">New alerts</span>
           </span>
@@ -133,6 +140,7 @@
                   <br>
                   {{ notification.start | date: 'fullDate' }} - {{ notification.start | date: 'shortTime' }}
                 </div>
+
                 <div class="mt-2">
                   <!-- Show Accept and Decline buttons only if the request is PENDING -->
                   <ng-container *ngIf="notification.status === 'PENDING'">
@@ -220,11 +228,11 @@
 
     <div class="container">
       <div class="row">
-        <div class="col-lg-12 col-12" style="padding:-200px;padding-right:1100px; text-align:center;">
-          <a (click)="openModal()" class="btn btn-lg btn-success" style="border-radius:10px; background-color:#433b86; color:white; font-size:18px; padding:10px 30px; text-decoration:none;">
+        <div class="d-flex justify-content-center gap-3">
+          <a (click)="openModal()" class="btn btn-lg btn-success custom-btn" style="background-color: #7f73eb ; color: white;border-radius:10px;">
             Add New Client
           </a>
-          <a (click)="openSearchModal()" class="btn btn-lg btn-success" style="border-radius:10px; background-color:#433b86; color:white; font-size:18px; padding:10px 30px; text-decoration:none;">
+          <a (click)="openSearchModal()" class="btn btn-lg btn-success custom-btn" style="background-color: #7f73eb ; color: white;border-radius:10px;">
             Add by Email
           </a>
         </div>

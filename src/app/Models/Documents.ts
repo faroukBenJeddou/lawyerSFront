@@ -1,10 +1,15 @@
 export class Documents{
   id !:string;
-  content :string;
-  title :string;
-  constructor(title: string, content: string, date: string) {
+  title!: string;
+  fileName!: string;
+  fileType!: string;
+  fileData!: Blob; // Store binary data
+  uploadTime !: string;
+  constructor(title: string, fileName: string, fileType: string, fileData: Blob, uploadTime: string) {
     this.title = title;
-    this.content = content;
-
+    this.fileName = fileName;
+    this.fileType = fileType;
+    this.fileData = fileData;
+    this.uploadTime = uploadTime;
   }
 }

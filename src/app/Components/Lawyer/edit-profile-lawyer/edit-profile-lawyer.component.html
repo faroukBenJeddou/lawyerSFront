@@ -54,27 +54,19 @@
   </script>
 </head>
 <body >
-<header style="background-color: #4c3575;" class="header fixed top-0 z-10 left-0 right-0 flex items-stretch shrink-0 bg-[--tw-page-bg] dark:bg-[--tw-page-bg-dark]" data-sticky="true" data-sticky-class="shadow-sm" data-sticky-name="header" id="header">
-  <!-- Container -->
-
-    <!-- End of Breadcrumbs -->
-
-    <!-- Topbar -->
-    <!-- End of Topbar -->
-
-  <!-- End of Container -->
-</header>
 
 
 
 
-
-<header class="navbar sticky-top flex-md-nowrap">
+<header class="navbar sticky-top flex-md-nowrap" style="    z-index: 10; /* Lower than the sidebar */
+">
   <div class="col-md-3 col-lg-3 me-0 px-3 fs-6">
 
   </div>
 
-
+  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
 
 
@@ -82,19 +74,19 @@
     <div class="nav-item text-nowrap d-flex align-items-center">
       <div class="dropdown ps-3">
         <a class="nav-link dropdown-toggle text-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="navbarLightDropdownMenuLink">
-          <i class="bi-bell" style="font-size: 20px;"></i>
+          <i class="bi-bell fs-3"></i>
           <span class="position-absolute start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
                                 <span class="visually-hidden">New alerts</span>
                             </span>
         </a>
 
-        <ul class="dropdown-menu dropdown-menu-lg-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" >
+        <ul class="dropdown-menu dropdown-menu-lg-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink">
           <small>Notifications</small>
 
-          <li *ngFor="let notification of notifications" class="notifications-block border-bottom pb-2 mb-2">
+          <li *ngFor="let notification of notifications | slice:0:4" class="notifications-block border-bottom pb-2 mb-2">
             <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);">
-              <div class="notifications-icon-wrap bg-warning">
-                <i class="notifications-icon bi-envelope-fill"></i>
+              <div class="notifications-icon-wrap" [ngClass]="notification.title === 'Reminder' ? 'bg-info' : 'bg-warning'">
+                <i class="notifications-icon" [ngClass]="notification.title === 'Reminder' ? 'bi-alarm-fill' : 'bi-envelope-fill'"></i>
               </div>
 
               <div class="ms-2">
@@ -104,6 +96,7 @@
                   <br>
                   {{ notification.start | date: 'fullDate' }} - {{ notification.start | date: 'shortTime' }}
                 </div>
+
                 <div class="mt-2">
                   <!-- Show Accept and Decline buttons only if the request is PENDING -->
                   <ng-container *ngIf="notification.status === 'PENDING'">
@@ -125,14 +118,43 @@
             </a>
           </li>
 
+          <li *ngFor="let hearing of reminder" class="notifications-block border-bottom pb-2 mb-2">
+            <a class="dropdown-item d-flex align-items-center" href="#">
+              <div class="notifications-icon-wrap bg-info">
+                <i class="notifications-icon bi-folder"></i>
+              </div>
+
+              <div class="ms-2">
+                <span>Upcoming hearing: {{ hearing.title }}</span>
+                <p>{{ hearing.start | date:'short' }}</p>
+              </div>
+            </a>
+          </li>
+
+          <!-- Load More Button -->
+
+
+
+
+          <li class="notifications-block">
+            <a class="dropdown-item d-flex align-items-center" href="#">
+              <div class="notifications-icon-wrap bg-danger">
+                <i class="notifications-icon bi-question-circle"></i>
+              </div>
+
+              <div>
+                <span>Account verification failed.</span>
+
+                <p>1 hour ago</p>
+              </div>
+            </a>
+          </li>
         </ul>
       </div>
       <div class="dropdown px-3">
         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image" alt="" style="width: 50px; height: 50px; border-radius: 25%; object-fit: cover;">
+          <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image img-fluid" alt=""style="width: 50px; height: 50px; border-radius: 25%; object-fit: cover;">
         </a>
-
-
         <ul class="dropdown-menu bg-white shadow">
           <li>
             <div class="dropdown-menu-profile-thumb d-flex">
@@ -195,42 +217,52 @@
     </a>
     <ul class="menu-list flex-grow-1 mt-3">
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
+        <a style="color:white" class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
           <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
           <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
         </a>
 
       </li>
       <li>
-        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
+        <a style="color:white" class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
           <i class="icofont-briefcase"></i> <mat-icon>people</mat-icon> <span>Clients</span>
         </a>
       </li>
 
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
+        <a style="color:white" class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
           <i class="icofont-ticket"></i><mat-icon>gavel</mat-icon> <span>Cases</span>
           <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
         </a>
       </li>
 
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
+        <a style="color:white" class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
           <i class="icofont-ticket"></i><mat-icon>event</mat-icon> <span>Consultations</span>
           <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
         </a>
       </li>
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
+        <a style="color:white" class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
           <i class="icofont-users-alt-5"></i> <mat-icon>group</mat-icon> <span>Assistant</span>
           <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
         </a>
       </li>
+      <li>
+        <a style="color:white" class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'invoice']">
+          <i class="icofont-users-alt-5"></i><mat-icon>description</mat-icon>
+          <span>Invoice</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
     </ul>
-    <button class="btn btn-danger" (click)="onLogout()">Logout
-      <span class="ms-2"> <mat-icon>exit_to_app</mat-icon>
-</span>
+    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
+      Logout
+      <span class="ms-2">
+    <mat-icon style="vertical-align: middle;">exit_to_app</mat-icon>
+  </span>
     </button>
+
   </div>
 </div>
 

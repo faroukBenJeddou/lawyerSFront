@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, HostListener, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Route, Router, RouterLink} from "@angular/router";
 import {AuthService} from "../../../services/auth.service";
 import {User} from "../../../Models/User";
@@ -32,7 +32,9 @@ import {ConsultationStatus} from "../../../Models/ConsultationStatus";
   templateUrl: 'lawyer-view.component.html',
   styleUrls: [
 
-  ]
+  ],
+  encapsulation: ViewEncapsulation.None
+
 })
 export class LawyerViewComponent implements OnInit{
   notifications: any[] = []; // Adjust type based on your Request model
@@ -79,11 +81,7 @@ export class LawyerViewComponent implements OnInit{
       this.alertVisible = false; // Hide the alert after 2 seconds
     }, 2000);
   }
-  toggleNotificationDropdown() {
-    this.isNotificationDropdownOpen = !this.isNotificationDropdownOpen;
-    this.isProfileDropdownOpen = false; // Close profile dropdown if open
-    console.log('Notification dropdown toggled:', this.isNotificationDropdownOpen);
-  }
+
 // Close dropdowns when clicking outside
   @HostListener('document:click', ['$event'])
   closeDropdowns(event: MouseEvent) {
