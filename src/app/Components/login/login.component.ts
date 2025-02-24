@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {CardModule} from "primeng/card";
 import {Button} from "primeng/button";
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -18,8 +18,10 @@ import jwtDecode from "jwt-decode";
   selector: 'app-login',
 
   providers: [MessageService,SocialAuthService],
-  templateUrl: '../../loginPage/brandio.io/envato/iofrm/html/login1.html',
-  styleUrl: '../../loginPage/brandio.io/envato/iofrm/html/css/iofrm-style.css'
+  templateUrl: 'login.component.html',
+  styleUrl: 'login.component.css',
+  encapsulation: ViewEncapsulation.None
+
 })
 export class LoginComponent implements OnInit {
   user: any

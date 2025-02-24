@@ -173,7 +173,12 @@ export class ConsultationsComponent implements OnInit{
 
 
 
-
+  toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('d-none'); // Hide/Show Sidebar
+    }
+  }
 
   loadProfileImageLawyer(lawyer: Lawyer): void {
     if (lawyer && lawyer.id) {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, ViewEncapsulation} from '@angular/core';
 import {Button} from "primeng/button";
 import {GoogleSigninButtonModule} from "@abacritt/angularx-social-login";
 import {NgIf} from "@angular/common";
@@ -18,8 +18,10 @@ import {AuthService} from "../../services/auth.service";
         ReactiveFormsModule,
         RouterLink
     ],
-  templateUrl: '../../loginPage/brandio.io/envato/iofrm/html/forget1.html',
-  styleUrl: '../../loginPage/brandio.io/envato/iofrm/html/css/iofrm-theme2.css'
+  templateUrl: 'forgot-password.component.html',
+  styleUrl: 'forgot-password.component.css',
+  encapsulation: ViewEncapsulation.None
+
 })
 export class ForgotPasswordComponent {
   token: string = '';

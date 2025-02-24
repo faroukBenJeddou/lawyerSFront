@@ -30,91 +30,86 @@
   </style>
 </head>
 <body>
-<div class="sidebar px-4 py-4 py-md-5 me-0"
-
-
-
->
+<div class="sidebar px-4 py-4 py-md-5 me-0 d-md-block d-none" id="sidebar">
   <div class="d-flex flex-column h-100">
     <a class="mb-0 brand-icon">
-<span class="logo-icon">
-<img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png" style="width: 200px; height:150px; " />
-
-</span>
-
-
+      <span class="logo-icon">
+        <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png"
+             style="width: 200px; height:150px;" />
+      </span>
     </a>
+
     <ul class="menu-list flex-grow-1 mt-3">
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
-          <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId]">
+          <mat-icon>home</mat-icon> <span>Dashboard</span>
         </a>
-
       </li>
       <li>
         <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
-          <i class="icofont-briefcase"></i> <mat-icon>people</mat-icon> <span>Clients</span>
-        </a>
-      </li>
-
-      <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
-          <i class="icofont-ticket"></i><mat-icon>gavel</mat-icon> <span>Cases</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
-        </a>
-      </li>
-
-      <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
-          <i class="icofont-ticket"></i><mat-icon>event</mat-icon> <span>Consultations</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+          <mat-icon>people</mat-icon> <span>Clients</span>
         </a>
       </li>
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
-          <i class="icofont-users-alt-5"></i> <mat-icon>group</mat-icon> <span>Assistant</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'cases']">
+          <mat-icon>gavel</mat-icon> <span>Cases</span>
         </a>
       </li>
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'invoice']">
-          <i class="icofont-users-alt-5"></i><mat-icon>description</mat-icon>
-          <span>Invoice</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'consultations']">
+          <mat-icon>event</mat-icon> <span>Consultations</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'assistant']">
+          <mat-icon>group</mat-icon> <span>Assistant</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'invoice']">
+          <mat-icon>description</mat-icon> <span>Invoice</span>
         </a>
       </li>
     </ul>
-    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
-      Logout
-      <span class="ms-2">
-    <mat-icon style="vertical-align: middle;">exit_to_app</mat-icon>
-  </span>
-    </button>
 
+    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
+      Logout <mat-icon>exit_to_app</mat-icon>
+    </button>
   </div>
 </div>
+<button class="d-md-none"
+        style="position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1050;
+    color: white;
+    background-color: #2c3e50;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;"
+        (click)="toggleSidebar()">
+  ☰
+</button>
 
 <header class="navbar sticky-top flex-md-nowrap">
   <div class="col-md-3 col-lg-3 me-0 px-3 fs-6">
   </div>
 
-  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
 
-  <div class="navbar-nav me-lg-2">
+
+  <div class="navbar-nav me-lg-2" >
     <div class="nav-item text-nowrap d-flex align-items-center">
       <div class="dropdown ps-3 position-relative">
         <a class="nav-link dropdown-toggle text-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="navbarLightDropdownMenuLink">
-          <i class="bi-bell"></i>
+          <i class="bi-bell fs-3"></i>
           <span class="position-absolute start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
             <span class="visually-hidden">New alerts</span>
           </span>
         </a>
 
         <!-- Dropdown menu with max-width and overflow control -->
-        <ul class="dropdown-menu dropdown-menu-lg-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" style="max-width: 300px; width: auto; padding: 10px 0; overflow-x: hidden;">
+        <ul class="dropdown-menu dropdown-menu-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" >
           <small>Notifications</small>
 
           <li *ngFor="let notification of notifications" class="notifications-block border-bottom pb-2 mb-2">
@@ -130,6 +125,7 @@
                   <br>
                   {{ notification.start | date: 'fullDate' }} - {{ notification.start | date: 'shortTime' }}
                 </div>
+
                 <div class="mt-2">
                   <!-- Show Accept and Decline buttons only if the request is PENDING -->
                   <ng-container *ngIf="notification.status === 'PENDING'">
@@ -202,7 +198,6 @@
       </div>
     </div>
   </div>
-
 </header>
 <!-- Add Consultation Modal -->
 <div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true" [ngClass]="{'show': isModalOpen}" [ngStyle]="{'display': isModalOpen ? 'block' : 'none'}">
@@ -266,64 +261,44 @@
     </div>
   </div>
 </div>
-<div class="d-flex" style="margin-top: 100px;">
+<div class="d-flex" style="margin-top: 100px;margin-left:200px;">
   <!-- Calendar Container -->
 
 
   <!-- Main Content -->
 
-  <section class="about section-padding" id="section_2" style="padding-left:400px;">
+  <section class="about section-padding" id="section_2">
     <div class="container">
       <div class="row">
 
         <div class="col-lg-6 col-12 mb-5 mb-lg-0">
           <div class="about-image-wrap h-100">
             <app-calendar></app-calendar>
-
-            <div class="about-image-info">
-
-
-            </div>
+            <div class="about-image-info"></div>
           </div>
         </div>
 
         <div class="col-lg-6 col-12 d-flex flex-column">
-          <div class="about-thumb bg-white shadow-lg">
-
+          <div class="about-thumb bg-white shadow-lg flex-grow-1">
             <div class="about-info">
-
               <h2 class="mb-3">Track your consultations</h2>
-
-
               <p>The integrated calendar helps you keep track of key legal events. Consultation dates are marked with <strong>red dots</strong>, while hearing dates are highlighted with <strong>blue dots</strong>. This visual representation ensures you never miss an important appointment.</p>
-
               <p>Stay organized and plan ahead with ease by using the calendar to manage your consultations and hearings efficiently.</p>
             </div>
           </div>
 
-          <div class="row h-100" style="width:350px;">
-            <div class="col-lg-6 col-6">
+          <div class="row mt-3">
+            <div class="col-lg-6 col-md-6 col-12">
               <div class="about-thumb d-flex flex-column justify-content-center bg-danger mb-lg-0 h-100">
-
                 <div class="about-info">
-                  <h5 class="text-white mb-4" >Add new Consultation</h5>
-
-                  <a class="custom-btn btn custom-bg-primary" (click)="openModal(consultationId)" style="padding: 12px 20px;
-           border-radius: 5px;
-           font-size: 16px;
-           font-weight: bold;
-           text-align: center;
-           text-decoration: none;
-           display: inline-block;
-           background-color: #ffc107;
-           color: white;
-            border-radius:10px;
-               transition: background-color 0.3s ease, transform 0.2s ease;">Add Consultation</a>
+                  <h5 class="text-white mb-4">Add new Consultation</h5>
+                  <a class="custom-btn btn custom-bg-primary" (click)="openModal(consultationId)"
+                     style="padding: 12px 20px; border-radius: 10px; font-size: 16px; font-weight: bold; text-align: center; text-decoration: none; display: inline-block; background-color: #ffc107; color: white; transition: background-color 0.3s ease, transform 0.2s ease;">
+                    Add Consultation
+                  </a>
                 </div>
               </div>
             </div>
-
-
           </div>
         </div>
 

@@ -210,7 +210,17 @@ export class LawyerServiceService {
 
 
 
+  changePassword(currentPassword: string, newPassword: string, confirmationPassword: string): Observable<any> {
+    const token = this.authService.getToken(); // Get the token
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
 
+
+    const requestBody = { currentPassword, newPassword, confirmationPassword };
+    return this.http.patch(`${this.baseUrl}/change-password`, requestBody, { headers });
+  }
 
 
   deleteLawyer(id: string): Observable<void> {

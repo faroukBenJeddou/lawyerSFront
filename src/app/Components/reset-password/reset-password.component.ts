@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, ViewEncapsulation} from '@angular/core';
 import {Button} from "primeng/button";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgClass, NgIf} from "@angular/common";
@@ -18,8 +18,10 @@ import {HttpErrorResponse} from "@angular/common/http";
     RouterLink,
     NgClass
   ],
-  templateUrl: '../../loginPage/brandio.io/envato/iofrm/html/login3.html',
-  styleUrl: '../../loginPage/brandio.io/envato/iofrm/html/css/iofrm-theme3.css'
+  templateUrl: 'reset-password.component.html',
+  styleUrl: 'reset-password.component.css',
+  encapsulation: ViewEncapsulation.None
+
 })
 export class ResetPasswordComponent {
   resetPasswordForm: FormGroup;

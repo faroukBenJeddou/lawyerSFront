@@ -17,91 +17,87 @@
 
 </head>
 <body>
-<div class="sidebar px-4 py-4 py-md-5 me-0"
-
-
-
->
+<div class="sidebar px-4 py-4 py-md-5 me-0 d-md-block d-none" id="sidebar">
   <div class="d-flex flex-column h-100">
     <a class="mb-0 brand-icon">
-<span class="logo-icon">
-<img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png" style="width: 200px; height:150px; " />
-
-</span>
-
-
+      <span class="logo-icon">
+        <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png"
+             style="width: 200px; height:150px;" />
+      </span>
     </a>
+
     <ul class="menu-list flex-grow-1 mt-3">
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
-          <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId]">
+          <mat-icon>home</mat-icon> <span>Dashboard</span>
         </a>
-
       </li>
       <li>
         <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
-          <i class="icofont-briefcase"></i> <mat-icon>people</mat-icon> <span>Clients</span>
-        </a>
-      </li>
-
-      <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
-          <i class="icofont-ticket"></i><mat-icon>gavel</mat-icon> <span>Cases</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
-        </a>
-      </li>
-
-      <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
-          <i class="icofont-ticket"></i><mat-icon>event</mat-icon> <span>Consultations</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+          <mat-icon>people</mat-icon> <span>Clients</span>
         </a>
       </li>
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
-          <i class="icofont-users-alt-5"></i> <mat-icon>group</mat-icon> <span>Assistant</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'cases']">
+          <mat-icon>gavel</mat-icon> <span>Cases</span>
         </a>
       </li>
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'invoice']">
-          <i class="icofont-users-alt-5"></i><mat-icon>description</mat-icon>
-          <span>Invoice</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'consultations']">
+          <mat-icon>event</mat-icon> <span>Consultations</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'assistant']">
+          <mat-icon>group</mat-icon> <span>Assistant</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'invoice']">
+          <mat-icon>description</mat-icon> <span>Invoice</span>
         </a>
       </li>
     </ul>
-    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
-      Logout
-      <span class="ms-2">
-    <mat-icon style="vertical-align: middle;">exit_to_app</mat-icon>
-  </span>
-    </button>
 
+    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
+      Logout <mat-icon>exit_to_app</mat-icon>
+    </button>
   </div>
 </div>
+<button class="d-md-none"
+        style="position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1050;
+    color: white;
+    background-color: #2c3e50;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;"
+        (click)="toggleSidebar()">
+  ☰
+</button>
+
 
 <header class="navbar sticky-top flex-md-nowrap">
   <div class="col-md-3 col-lg-3 me-0 px-3 fs-6">
   </div>
 
-  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
 
-  <div class="navbar-nav me-lg-2">
+
+  <div class="navbar-nav me-lg-2" >
     <div class="nav-item text-nowrap d-flex align-items-center">
       <div class="dropdown ps-3 position-relative">
         <a class="nav-link dropdown-toggle text-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="navbarLightDropdownMenuLink">
-          <i class="bi-bell"></i>
+          <i class="bi-bell fs-3"></i>
           <span class="position-absolute start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
             <span class="visually-hidden">New alerts</span>
           </span>
         </a>
 
         <!-- Dropdown menu with max-width and overflow control -->
-        <ul class="dropdown-menu dropdown-menu-lg-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" style="max-width: 300px; width: auto; padding: 10px 0; overflow-x: hidden;">
+        <ul class="dropdown-menu dropdown-menu-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" >
           <small>Notifications</small>
 
           <li *ngFor="let notification of notifications" class="notifications-block border-bottom pb-2 mb-2">
@@ -117,6 +113,7 @@
                   <br>
                   {{ notification.start | date: 'fullDate' }} - {{ notification.start | date: 'shortTime' }}
                 </div>
+
                 <div class="mt-2">
                   <!-- Show Accept and Decline buttons only if the request is PENDING -->
                   <ng-container *ngIf="notification.status === 'PENDING'">
@@ -216,13 +213,13 @@
           <p style="color:#7e8182;font-size:20px;">Browse through our cases and manage them efficiently with the tools available. You can view, edit, and assign clients to cases with just a few clicks.</p>
         </div>
 
-        <div class="col-lg-12 col-12" *ngFor="let c of cases">
-          <div class="job-thumb d-flex">
-            <div class="job-image-wrap bg-white shadow-lg">
+        <div class="col-12" *ngFor="let c of cases">
+          <div class="job-thumb d-flex flex-wrap">
+            <div class="job-image-wrap bg-white shadow-lg col-md-4">
               <img src="./assets/court.png" class="job-image img-fluid" alt="">
             </div>
 
-            <div class="job-body d-flex flex-wrap flex-auto align-items-center ms-4">
+            <div class="job-body d-flex flex-column flex-md-row flex-wrap align-items-center ms-md-4 col-md-8">
               <div class="mb-3">
                 <h4 class="job-title mb-lg-0">
                   <a [routerLink]="['/lawyer', lawyerId, 'cases', c.caseId]" class="job-title-link">{{ c.caseType }}</a>
@@ -258,7 +255,7 @@
                     </p>
                   </div>
 
-                  <div class="job-section-btn-wrap" style="margin-top:-2px;">
+                  <div class="job-section-btn-wrap mt-2" style="margin-top:-2px;">
                     <button class="btn btn-info btn-sm" (click)="handleButtonClick(c)" style="background-color:#433b86;  line-height: normal;
   margin-right: 5px;
   margin-left: 5px;

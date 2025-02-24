@@ -1,81 +1,169 @@
-.bg-image-vertical {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  height: 100vh; /* Ensure the background image covers the entire viewport height */
+body {
+  font-family: "Poppins";
+  user-select: none;
+  overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: hsl(218deg 50% 91%);
+  height: 100vh;
 }
-@media (min-width: 1025px) {
-
-  .h-custom-2 {
-    height: 100vh; /* Make the form section cover the full height */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
-.login-form {
-  width: 800px;
-  padding: 3rem;
-}
-.login-form h3 {
-  font-size: 48px; /* Increased font size for the heading */
-  margin-bottom: 2.5rem; /* Added margin below the heading */
-}
-
-
-
-.login-form .btn {
-  font-size: 24px; /* Further increased font size for buttons */
-  padding: 18px 36px; /* Further increased padding for buttons */
-}
-
-.login-form .form-label {
-  display: block; /* Ensure label takes full width */
-  margin-bottom: 0.5rem; /* Space between label and input */
-}
-
-body, html {
-  height: 100%; /* Ensure the body and HTML elements are 100% height */
-  margin: 0; /* Remove default margins */
-}
-
-/* Ensure that floating labels work correctly */
-
-.form-outline input {
-  width: 100%;
-  padding: 16px 20px; /* Further increased padding for input fields */
-  font-size: 24px; /* Further increased font size for input fields */
+/* Centering the button using margin */
+#submit {
+  display: block; /* Make it a block element */
+  margin: 0 auto; /* Center it horizontally */
+  /* Other existing styles for the button */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  outline: none;
 }
 
 
-
-.form-outline input:focus ~ label,
-.form-outline input:not(:placeholder-shown) ~ label {
-  top: -28px; /* Adjusted for larger label font size */
-  left: 16px; /* Adjusted to align with padding */
-  font-size: 20px; /* Increased font size when label is active */
-  color: #0d6efd; /* Adjust color as needed */
-}
-.form-gap {
-  padding-top: 70px;
-
-}
-.form-outline {
-  position: relative;
-  margin-bottom: 1rem; /* Add space between fields */
+#submit:disabled {
+  background-color: #c0c0c0; /* Disabled button color */
+  color: #6c757d; /* Disabled text color */
+  cursor: not-allowed; /* Change cursor for disabled state */
 }
 
-.form-label {
-  display: block; /* Ensure label takes full width */
-  margin-bottom: 0.5rem; /* Space between label and input */
-  font-size: 1rem; /* Adjust font size as needed */
-  color:white;
+#submit:hover:not(:disabled) {
+  background-color: #0056b3; /* Darker blue on hover */
+  transform: scale(1.05); /* Slight scaling effect on hover */
 }
 
-.form-control {
-  width: 100%; /* Ensure the input takes full width */
-  padding: 0.75rem 1.25rem; /* Adjust padding for better spacing */
-  font-size: 1rem; /* Adjust font size as needed */
+#submit:focus {
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Focus effect */
 }
 
+.logo-container {
+  width: 300px; /* Ensures consistent width */
+  height: 300px; /* Ensures consistent height */
+  overflow: hidden; /* Ensures no overflow outside the rounded area */
+  display: flex; /* Centers the content */
+  align-items: center; /* Vertically centers the image */
+  justify-content: center; /* Horizontally centers the image */
+}
+
+.logo-container img {
+  width: 100%; /* Scale image to fit the container */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.screen-1 {
+  background: hsl(213deg 85% 97%);
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  border-radius: 30px;
+  box-shadow: 0 0 2em hsl(231deg 62% 94%);
+  gap: 2em;
+}
+
+.screen-1 .logo {
+  margin-top: -3em;
+}
+
+.screen-1 .email {
+  background: hsl(0deg 0% 100%);
+  box-shadow: 0 0 2em hsl(231deg 62% 94%);
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  border-radius: 20px;
+  color: hsl(0deg 0% 30%);
+  margin-top: -3em;
+}
+
+.screen-1 .email input {
+  outline: none;
+  border: none;
+}
+
+.screen-1 .email input::placeholder {
+  color: hsl(0deg 0% 0%);
+  font-size: 0.9em;
+}
+
+.screen-1 .email ion-icon {
+  color: hsl(0deg 0% 30%);
+  margin-bottom: -0.2em;
+}
+
+.screen-1 .password {
+  background: hsl(0deg 0% 100%);
+  box-shadow: 0 0 2em hsl(231deg 62% 94%);
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  border-radius: 20px;
+  color: hsl(0deg 0% 30%);
+}
+
+.screen-1 .password input {
+  outline: none;
+  border: none;
+}
+
+.screen-1 .password input::placeholder {
+  color: hsl(0deg 0% 0%);
+  font-size: 0.9em;
+}
+
+.screen-1 .password ion-icon {
+  color: hsl(0deg 0% 30%);
+  margin-bottom: -0.2em;
+}
+
+.screen-1 .password .show-hide {
+  margin-right: -5em;
+}
+
+.screen-1 .login {
+  padding: 1em;
+  background: hsl(233deg 36% 38%);
+  color: hsl(0 0 100);
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+}
+
+.screen-1 .footer {
+  display: flex;
+  font-size: 0.9em; /* Slightly larger font for better readability */
+  color: hsl(0deg 0% 37%); /* Main text color */
+  gap: 2em; /* Space between links, adjusted for better spacing */
+  padding: 20px 0; /* Added padding for top and bottom */
+  justify-content: center; /* Center the links horizontally */
+  border-top: 1px solid #e0e0e0; /* Light top border for separation */
+  background-color: #f8f9fa; /* Light background for the footer */
+}
+
+.screen-1 .footer a {
+  text-decoration: none; /* Remove underline from links */
+  color: hsl(200deg 100% 40%); /* Link color (blue) */
+  font-weight: 600; /* Make links bold */
+  transition: color 0.3s, text-shadow 0.3s; /* Smooth transition for hover effects */
+}
+
+.screen-1 .footer a:hover {
+  color: hsl(200deg 100% 25%); /* Darker blue on hover */
+  text-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle glow effect on hover */
+}
+
+.screen-1 .footer a:focus {
+  outline: none; /* Remove outline on focus */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add focus effect */
+}
+
+
+button {
+  cursor: pointer;
+}

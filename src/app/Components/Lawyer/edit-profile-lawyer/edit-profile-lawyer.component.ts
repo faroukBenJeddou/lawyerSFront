@@ -67,6 +67,10 @@ export class EditProfileLawyerComponent implements OnInit{
   // Function to toggle dropdown visibility
   alertType: 'success' | 'error' | null = null; // To determine the alert type
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
+  currentPassword: string = '';
+  newPassword: string = '';
+  confirmationPassword: string = '';
+  message: string = '';
   constructor(private authService: AuthService, private router: Router,private lawyerService:LawyerServiceService,private route:ActivatedRoute,
               private modalService:NgbModal,  private fb: FormBuilder,private changeDetector: ChangeDetectorRef, private requestService:RequestService,private hearingServ:HearingsService,
               private lawyerServ:LawyerServiceService,private clientServ:ClientService,private consultationServ:ConsultationService, private cdr: ChangeDetectorRef,private location: Location
@@ -201,7 +205,6 @@ export class EditProfileLawyerComponent implements OnInit{
   updateProfile() {
     if (this.lawyerForm.valid && this.lawyerId) {
       const updatedLawyer = { ...this.lawyerForm.value };  // Copy form data
-
       // Remove the photo field if you're not updating it
       if (!this.lawyerForm.get('photo')?.value) {
         delete updatedLawyer.photo;
@@ -215,6 +218,7 @@ export class EditProfileLawyerComponent implements OnInit{
       // Call the updateLawyer service with updated lawyer data
       this.lawyerService.updateLawyer(this.lawyerId, updatedLawyer).subscribe({
         next: (response) => {
+
           console.log('Profile updated:', response);
         },
         error: (error) => {
@@ -298,14 +302,6 @@ export class EditProfileLawyerComponent implements OnInit{
     this.changeDetector.detectChanges();
   }
 
-  testAlert(): void {
-    Swal.fire({
-      title: 'Test Alert',
-      text: 'This is a test alert!',
-      icon: 'info',
-      confirmButtonText: 'OK'
-    });
-  }
 
   updateAuthLink(): void {
     this.authLinkText = this.isLoggedIn ? 'Log Out' : 'Log In';
@@ -511,5 +507,15 @@ export class EditProfileLawyerComponent implements OnInit{
       }
     );
   }
-
+  changePassword() {
+    this.lawyerService.changePassword(this.currentPassword, this.newPassword, this.confirmationPassword)
+      .subscribe({
+        next: () => {
+          this.message = 'Password changed successfully!';
+        },
+        error: (err) => {
+          this.message = `Error: ${err.error}`;
+        }
+      });
+  }
 }

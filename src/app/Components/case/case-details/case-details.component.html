@@ -18,137 +18,130 @@
   <link rel="stylesheet" href="../../Lawyer/lawyer-clients/css/tooplate-gotto-job.css">
 </head>
 <body>
-<div class="sidebar px-4 py-4 py-md-5 me-0"
-
-
-
->
+<div class="sidebar px-4 py-4 py-md-5 me-0 d-md-block d-none" id="sidebar">
   <div class="d-flex flex-column h-100">
     <a class="mb-0 brand-icon">
-<span class="logo-icon">
-<img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png" style="width: 200px; height:150px; " />
-
-</span>
-
-
+      <span class="logo-icon">
+        <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png"
+             style="width: 200px; height:150px;" />
+      </span>
     </a>
+
     <ul class="menu-list flex-grow-1 mt-3">
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
-          <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId]">
+          <mat-icon>home</mat-icon> <span>Dashboard</span>
         </a>
-
       </li>
       <li>
         <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
-          <i class="icofont-briefcase"></i> <mat-icon>people</mat-icon> <span>Clients</span>
-        </a>
-      </li>
-
-      <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
-          <i class="icofont-ticket"></i><mat-icon>gavel</mat-icon> <span>Cases</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
-        </a>
-      </li>
-
-      <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
-          <i class="icofont-ticket"></i><mat-icon>event</mat-icon> <span>Consultations</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+          <mat-icon>people</mat-icon> <span>Clients</span>
         </a>
       </li>
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
-          <i class="icofont-users-alt-5"></i> <mat-icon>group</mat-icon> <span>Assistant</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'cases']">
+          <mat-icon>gavel</mat-icon> <span>Cases</span>
         </a>
       </li>
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'invoice']">
-          <i class="icofont-users-alt-5"></i><mat-icon>description</mat-icon>
-          <span>Invoice</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'consultations']">
+          <mat-icon>event</mat-icon> <span>Consultations</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'assistant']">
+          <mat-icon>group</mat-icon> <span>Assistant</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'invoice']">
+          <mat-icon>description</mat-icon> <span>Invoice</span>
         </a>
       </li>
     </ul>
-    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
-      Logout
-      <span class="ms-2">
-    <mat-icon style="vertical-align: middle;">exit_to_app</mat-icon>
-  </span>
-    </button>
 
+    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
+      Logout <mat-icon>exit_to_app</mat-icon>
+    </button>
   </div>
 </div>
+<button class="d-md-none"
+        style="position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1050;
+    color: white;
+    background-color: #2c3e50;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;"
+        (click)="toggleSidebar()">
+  ☰
+</button>
+
 
 <header class="navbar sticky-top flex-md-nowrap">
   <div class="col-md-3 col-lg-3 me-0 px-3 fs-6">
   </div>
 
-  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
 
-  <div class="navbar-nav me-lg-2">
+
+  <div class="navbar-nav me-lg-2" >
     <div class="nav-item text-nowrap d-flex align-items-center">
       <div class="dropdown ps-3 position-relative">
         <a class="nav-link dropdown-toggle text-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="navbarLightDropdownMenuLink">
-          <i class="bi-bell"></i>
+          <i class="bi-bell fs-3"></i>
           <span class="position-absolute start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
             <span class="visually-hidden">New alerts</span>
           </span>
         </a>
 
         <!-- Dropdown menu with max-width and overflow control -->
-        <ul class="dropdown-menu dropdown-menu-lg-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" style="max-width: 300px; width: auto; padding: 10px 0; overflow-x: hidden;">
+        <ul class="dropdown-menu dropdown-menu-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" >
           <small>Notifications</small>
 
-          <li class="notifications-block border-bottom pb-2 mb-2" style="padding: 8px 16px;">
-            <a class="dropdown-item d-flex align-items-center" href="#">
-              <div class="notifications-icon-wrap bg-success" style="width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
-                <i class="notifications-icon bi-check-circle-fill"></i>
+          <li *ngFor="let notification of notifications" class="notifications-block border-bottom pb-2 mb-2">
+            <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);">
+              <div class="notifications-icon-wrap bg-warning">
+                <i class="notifications-icon bi-envelope-fill"></i>
               </div>
 
-              <div>
-                <span>Your account has been created successfully.</span>
-                <p>12 days ago</p>
+              <div class="ms-2">
+                <span class="fw-bold">{{ notification.title }}</span>
+                <div class="text-muted">
+                  {{ notification.client.firstName }} {{ notification.client.familyName }}
+                  <br>
+                  {{ notification.start | date: 'fullDate' }} - {{ notification.start | date: 'shortTime' }}
+                </div>
+
+                <div class="mt-2">
+                  <!-- Show Accept and Decline buttons only if the request is PENDING -->
+                  <ng-container *ngIf="notification.status === 'PENDING'">
+                    <button class="btn btn-success btn-sm me-2" (click)="acceptRequest(notification.id)">Accept</button>
+                    <button class="btn btn-danger btn-sm" (click)="declineRequest(notification.id)">Decline</button>
+                  </ng-container>
+
+                  <!-- Show Accepted or Rejected status -->
+                  <ng-container *ngIf="notification.status === 'ACCEPTED'">
+                    <span class="text-success">Accepted</span>
+                  </ng-container>
+
+                  <!-- Show Declined status -->
+                  <ng-container *ngIf="notification.status === 'DECLINED'">
+                    <span class="text-danger">Declined</span>
+                  </ng-container>
+                </div>
               </div>
             </a>
           </li>
 
-          <li class="notifications-block border-bottom pb-2 mb-2" style="padding: 8px 16px;">
-            <a class="dropdown-item d-flex align-items-center" href="#">
-              <div class="notifications-icon-wrap bg-info" style="width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
-                <i class="notifications-icon bi-folder"></i>
-              </div>
-
-              <div>
-                <span>Please check. We have sent a Daily report.</span>
-                <p>10 days ago</p>
-              </div>
-            </a>
-          </li>
-
-          <li class="notifications-block" style="padding: 8px 16px;">
-            <a class="dropdown-item d-flex align-items-center" href="#">
-              <div class="notifications-icon-wrap bg-danger" style="width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
-                <i class="notifications-icon bi-question-circle"></i>
-              </div>
-
-              <div>
-                <span>Account verification failed.</span>
-                <p>1 hour ago</p>
-              </div>
-            </a>
-          </li>
         </ul>
       </div>
 
       <div class="dropdown px-3 position-relative">
         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image img-fluid" alt="" style="width: 40px; height: 40px; object-fit: cover;">
+          <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image" alt="" style="width: 50px; height: 50px; border-radius: 25%; object-fit: cover;">
         </a>
 
         <!-- Dropdown menu with max-width and overflow control -->
@@ -194,7 +187,6 @@
       </div>
     </div>
   </div>
-
 </header>
 
 <main>

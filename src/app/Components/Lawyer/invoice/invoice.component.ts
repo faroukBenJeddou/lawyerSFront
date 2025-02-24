@@ -493,6 +493,14 @@ export class InvoiceComponent implements OnInit {
       }
     });
   }
+
+  toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('d-none'); // Hide/Show Sidebar
+    }
+  }
+
   getClosestHearing(): void {
     const now = new Date();
     const upcomingHearings = this.hearings.filter(hearing => new Date(hearing.start) > now);

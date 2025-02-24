@@ -221,7 +221,12 @@ export class LawyerViewComponent implements OnInit{
     });
   }
 
-
+  toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('d-none'); // Hide/Show Sidebar
+    }
+  }
 
   updateAuthLink(): void {
     this.authLinkText = this.isLoggedIn ? 'Log Out' : 'Log In';

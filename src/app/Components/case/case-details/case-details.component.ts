@@ -65,6 +65,7 @@ export class CaseDetailsComponent implements OnInit {
   newDocument: { title: string; content: string; date: string } = { title: '', content: '', date: '' };
   isDocumentsModalOpen = false;
   documents: Documents[] = [];
+  cases: Case[]=[];
   hearings: Hearing[] = [];
   isShowHearingsModalOpen = false;
   isHearingModalOpen = false; // New property for hearing modal
@@ -209,7 +210,8 @@ export class CaseDetailsComponent implements OnInit {
           console.error('Error fetching lawyer:', error);
         }
       );
-
+      this.cases.forEach(cas => console.log('Client for case:', cas.client));
+      this.loadNotifications(this.lawyerId);
       // Fetch the case data if the lawyer ID is present
       this.caseService.getCase(this.caseId).subscribe({
         next: (data: Case) => {
@@ -225,6 +227,20 @@ export class CaseDetailsComponent implements OnInit {
         }
       });
     }
+  }
+  loadNotifications(lawyerId: string): void {
+    this.requestService.getNotifications(lawyerId).subscribe(
+      (response: Requests[]) => {
+        console.log('Notifications received:', response);
+        this.notifications = response;
+        this.hasNewNotifications = this.notifications.length > 0;
+      },
+      (error) => {
+        console.error('Error fetching notifications', error);
+        this.notifications = [];
+        this.hasNewNotifications = false;
+      }
+    );
   }
   loadProfileImage(lawyerId: string): void {
     this.lawyerServ.getImageById(lawyerId).subscribe(blob => {
@@ -253,6 +269,12 @@ export class CaseDetailsComponent implements OnInit {
           console.error('Error fetching case:', error);
         }
       });
+    }
+  }
+  toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('d-none'); // Hide/Show Sidebar
     }
   }
   onFileSelected(event: any) {

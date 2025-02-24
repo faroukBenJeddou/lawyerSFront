@@ -265,88 +265,115 @@
 
   </div>
 </div>
+<main class="main-wrapper col-md-9  py-4 col-lg-9 px-md-4 border-start" style="margin-left: 500px">
+  <div class="title-group mb-3">
+    <h1 class="h2 mb-0" style="font-size: 50px">Settings</h1>
+  </div>
 
-<div class="container-fluid" style=" background:#ececec; padding-top:150px; padding-left:500px;">
-  <div class="container-xl px-4 mt-4"  >
-    <!-- Account page navigation-->
-    <hr class="mt-0 mb-4">
-    <div class="row">
-      <div class="col-xl-4" style="width:350px; ">
+  <div class="row my-4" >
+    <div class="col-lg-7 col-12">
+      <div class="custom-block bg-white">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="true">Profile</button>
+          </li>
 
-        <!-- Profile picture card -->
-        <div class="card mb-4 mb-xl-0" style="border: 1px solid #ccc; border-radius: 8px;">
-          <div class="card-header" style="font-weight: bold;background-color: #4c3575;color:white">Profile Picture</div>
-          <div class="card-body text-center">
-            <div class="profile-picture-container" style="width:150px; display: flex; justify-content: center; align-items: center; margin: 0 auto;">
-              <img *ngIf="imageUrl" [src]="imageUrl" alt="Profile Picture" class="img-account-profile" style="border: 2px solid #ccc; border-radius: 50%; padding: 5px; width: 100%; height: auto;">
-            </div>
-            <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
-            <input type="file" class="form-control mb-2" (change)="onFileChange($event)"  formControlName="image">
-            <button class="btn btn-primary" (click)="uploadProfilePic()" style="background-color: #4c3575; border-color: #4c3575;">Upload</button>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-tab-pane" type="button" role="tab" aria-controls="password-tab-pane" aria-selected="false">Password</button>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification-tab-pane" type="button" role="tab" aria-controls="notification-tab-pane" aria-selected="false">Notification</button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <h6 class="mb-4" style="font-size:30px;">User Profile</h6>
+
+            <form class="custom-form profile-form"  [formGroup]="lawyerForm" (ngSubmit)="updateProfile()" role="form">
+              <input class="form-control" type="text" id="inputFirstName" formControlName="firstName" placeholder="{{lawyer?.firstName}}">
+              <input class="form-control" type="text" id="inputLastName" formControlName="familyName" placeholder="{{lawyer?.familyName}}">
+              <input class="form-control" formControlName="email" type="email" name="profile-email" id="inputEmailAddress" placeholder="{{lawyer?.email}}">
+              <input class="form-control"  type="email" id="inputBirthday" formControlName="birthdate" placeholder="{{lawyer?.birthdate}}">
+              <input class="form-control"  type="tel" id="inputPhone" formControlName="phoneNumber" placeholder="{{lawyer?.phoneNumber}}">
+              <input class="form-control"  type="text" id="inputOrgName" formControlName="office_adress" placeholder="{{lawyer?.office_adress}}">
+
+              <div class="input-group mb-1">
+                <img *ngIf="imageUrl" [src]="imageUrl" class="profile-image img-fluid" >
+
+                <input type="file" class="form-control" id="inputGroupFile02" (change)="onFileChange($event)" formControlName="image">
+              </div>
+
+              <div class="d-flex">
+                <button type="button" class="form-control me-3" >
+                  Reset
+                </button>
+
+                <button type="submit" class="form-control ms-2">
+                  Update
+                </button>
+              </div>
+            </form>
           </div>
-        </div>
+          <div class="tab-pane fade" id="password-tab-pane" role="tabpanel" aria-labelledby="password-tab" tabindex="0">
+            <h6 class="mb-4" style="font-size:30px;">Password</h6>
 
-      </div>
-      <div class="col-xl-8" style="width:900px;">
-        <!-- Account details card-->
-        <div class="card mb-4" style="border: 1px solid #ccc; border-radius: 8px;">
-          <div class="card-header" style="font-weight: bold;background-color: #4c3575;color:white">Account Details</div>
-          <div class="card-body">
-            <form [formGroup]="lawyerForm" (ngSubmit)="updateProfile()">
-              <div class="row gx-3 mb-3">
-                <!-- Form Group (first name)-->
-                <div class="col-md-6">
-                  <label class="small mb-1" for="inputFirstName">First name</label>
-                  <input class="form-control" id="inputFirstName" formControlName="firstName" type="text" placeholder="Enter your first name" style="border: 1px solid #ccc;">
-                </div>
-                <!-- Form Group (last name)-->
-                <div class="col-md-6">
-                  <label class="small mb-1" for="inputLastName">Last name</label>
-                  <input class="form-control" id="inputLastName" formControlName="familyName" type="text" placeholder="Enter your last name" style="border: 1px solid #ccc;">
-                </div>
+            <form class="custom-form password-form" action="#" method="post" role="form">
+              <input type="password" name="password" [(ngModel)]="currentPassword" id="password" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="Current Password" required="">
+
+              <input type="password" name="confirm_password" [(ngModel)]="newPassword" id="confirm_passworda" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="New Password" required="">
+
+              <input type="password" name="confirm_password" [(ngModel)]="confirmationPassword" id="confirm_password" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="Confirm Password" required="">
+
+              <div class="d-flex">
+                <button type="button" class="form-control me-3">
+                  Reset
+                </button>
+
+                <button type="submit" class="form-control ms-2" (click)="changePassword()">
+                  Update Password
+
+                </button>
               </div>
-              <!-- Form Row -->
-              <div class="row gx-3 mb-3">
-                <!-- Form Group (phone number)-->
-                <div class="col-md-6">
-                  <label class="small mb-1" for="inputPhone">Phone number</label>
-                  <input class="form-control" id="inputPhone" formControlName="phoneNumber" type="tel" placeholder="Enter your phone number" style="border: 1px solid #ccc;">
-                </div>
-                <!-- Form Group (birthday)-->
-                <div class="col-md-6">
-                  <label class="small mb-1" for="inputBirthday">Birthday</label>
-                  <input class="form-control" id="inputBirthday" formControlName="birthdate" type="text" placeholder="Enter your birthday" style="border: 1px solid #ccc;">
-                </div>
+            </form>
+          </div>
+
+          <div class="tab-pane fade" id="notification-tab-pane" role="tabpanel" aria-labelledby="notification-tab" tabindex="0">
+            <h6 class="mb-4" style="font-size: 20px;">Notification</h6>
+
+            <form class="custom-form notification-form" action="#" method="post" role="form">
+
+              <div class="form-check form-switch d-flex mb-3 ps-0">
+                <label class="form-check-label" for="flexSwitchCheckCheckedOne">Account activity</label>
+
+                <input class="form-check-input ms-auto" type="checkbox" name="form-check-input" role="switch" id="flexSwitchCheckCheckedOne" checked>
               </div>
-              <!-- Form Row -->
-              <div class="row gx-3 mb-3">
-                <!-- Form Group (office address)-->
-                <div class="col-md-6">
-                  <label class="small mb-1" for="inputOrgName">Office Address</label>
-                  <input class="form-control" id="inputOrgName" formControlName="office_adress" type="text" placeholder="Enter your office address" style="border: 1px solid #ccc;">
-                </div>
-                <!-- Form Group (password)-->
-                <div class="col-md-6">
-                  <label class="small mb-1" for="inputPassword">Password</label>
-                  <input class="form-control" id="inputPassword" formControlName="password" type="password" placeholder="Enter your password" style="border: 1px solid #ccc;">
-                </div>
+
+              <div class="form-check form-switch d-flex mb-3 ps-0">
+                <label class="form-check-label" for="flexSwitchCheckCheckedTwo">Payment updated</label>
+
+                <input class="form-check-input ms-auto" type="checkbox" name="form-check-input" role="switch" id="flexSwitchCheckCheckedTwo" checked>
               </div>
-              <!-- Form Group (email address)-->
-              <div class="mb-3">
-                <label class="small mb-1" for="inputEmailAddress">Email address</label>
-                <input class="form-control" id="inputEmailAddress" formControlName="email" type="email" placeholder="Enter your email address" style="border: 1px solid #ccc;">
+
+              <div class="d-flex mt-4">
+                <button type="button" class="form-control me-3" >
+                  Reset
+                </button>
+
+                <button type="submit" class="form-control ms-2">
+                  Update Password
+                </button>
               </div>
-              <!-- Save changes button-->
-              <button class="btn btn-primary" type="submit" style="background-color: #4c3575; border-color: #4c3575;">Save changes</button>
             </form>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 
-</div>
-
+</main>
 <!-- JAVASCRIPT FILES -->
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>

@@ -40,78 +40,78 @@
 </head>
 
 <body class="job-listings-page" id="top">
-<div class="sidebar px-4 py-4 py-md-5 me-0"
+
+<!-- Toggle Button (Visible Only on Small Screens) -->
 
 
-
->
+<!-- Sidebar -->
+<div class="sidebar px-4 py-4 py-md-5 me-0 d-md-block d-none" id="sidebar">
   <div class="d-flex flex-column h-100">
     <a class="mb-0 brand-icon">
-<span class="logo-icon">
-<img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png" style="width: 200px; height:150px; " />
-
-</span>
-
-
+      <span class="logo-icon">
+        <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png"
+             style="width: 200px; height:150px;" />
+      </span>
     </a>
+
     <ul class="menu-list flex-grow-1 mt-3">
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
-          <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId]">
+          <mat-icon>home</mat-icon> <span>Dashboard</span>
         </a>
-
       </li>
       <li>
         <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
-          <i class="icofont-briefcase"></i> <mat-icon>people</mat-icon> <span>Clients</span>
-        </a>
-      </li>
-
-      <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
-          <i class="icofont-ticket"></i><mat-icon>gavel</mat-icon> <span>Cases</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
-        </a>
-      </li>
-
-      <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
-          <i class="icofont-ticket"></i><mat-icon>event</mat-icon> <span>Consultations</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+          <mat-icon>people</mat-icon> <span>Clients</span>
         </a>
       </li>
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
-          <i class="icofont-users-alt-5"></i> <mat-icon>group</mat-icon> <span>Assistant</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'cases']">
+          <mat-icon>gavel</mat-icon> <span>Cases</span>
         </a>
       </li>
       <li>
-        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'invoice']">
-          <i class="icofont-users-alt-5"></i><mat-icon>description</mat-icon>
-          <span>Invoice</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'consultations']">
+          <mat-icon>event</mat-icon> <span>Consultations</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'assistant']">
+          <mat-icon>group</mat-icon> <span>Assistant</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'invoice']">
+          <mat-icon>description</mat-icon> <span>Invoice</span>
         </a>
       </li>
     </ul>
-    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
-      Logout
-      <span class="ms-2">
-    <mat-icon style="vertical-align: middle;">exit_to_app</mat-icon>
-  </span>
-    </button>
 
+    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
+      Logout <mat-icon>exit_to_app</mat-icon>
+    </button>
   </div>
 </div>
+<button class="d-md-none"
+        style="position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1050;
+    color: white;
+    background-color: #2c3e50;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;"
+        (click)="toggleSidebar()">
+  ☰
+</button>
 
 <header class="navbar sticky-top flex-md-nowrap">
   <div class="col-md-3 col-lg-3 me-0 px-3 fs-6">
   </div>
 
-  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+
 
   <div class="navbar-nav me-lg-2" >
     <div class="nav-item text-nowrap d-flex align-items-center">
@@ -124,7 +124,7 @@
         </a>
 
         <!-- Dropdown menu with max-width and overflow control -->
-        <ul class="dropdown-menu dropdown-menu-lg-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" style="max-width: 300px; width: auto; padding: 10px 0; overflow-x: hidden;">
+        <ul class="dropdown-menu dropdown-menu-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" >
           <small>Notifications</small>
 
           <li *ngFor="let notification of notifications" class="notifications-block border-bottom pb-2 mb-2">
@@ -249,7 +249,7 @@
 
         <!-- Right Column (Form) -->
         <div class="col-lg-6 col-12">
-          <form class="custom-form hero-form" action="#" method="get" role="form" style="background-color:#7F73EBFF;border-radius:3%;padding:40px; height:350px;width:600px;">
+          <form class="custom-form hero-form" action="#" method="get" role="form" style="background-color:#7F73EBFF;border-radius:3%;padding:40px; height:auto; max-width: 100%;">
             <h3 class="text-white mb-3" style="font-size: 36px; font-weight: 700; text-align: center; color: #fff;">
               Search for Client
             </h3>
@@ -488,13 +488,15 @@
           <div *ngIf="client" style="margin-top: 20px;">
             <h5>Client Details:</h5>
             <p>
-              <img [src]="client.image || 'http://bootdey.com/img/Content/avatar/avatar1.png'" alt="" style="width: 50px; height: 50px; border-radius: 50%;">
+              <img [src]="client.image ? client.image : 'http://bootdey.com/img/Content/avatar/avatar1.png'" alt=""
+                   style="width: 50px; height: 50px; border-radius: 50%;">
+
             </p>
             <p><strong>Name:</strong> {{ client.firstName }} {{ client.familyName }}</p>
             <p><strong>Email:</strong> {{ client.email }}</p>
 
             <!-- Display message if client is linked to lawyer -->
-            <div *ngIf="isClientLinked" style="color: green; margin-top: 15px;">
+            <div *ngIf="isClientLinked " style="color: green; margin-top: 15px;">
               <strong>This client is already linked.</strong>
             </div>
 

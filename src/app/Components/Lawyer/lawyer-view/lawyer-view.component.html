@@ -40,9 +40,6 @@
 
   </div>
 
-  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
 
 
 
@@ -179,77 +176,73 @@
     </div>
   </div>
 </header>
-<div class="sidebar px-4 py-4 py-md-5 me-0"
-
-
-
->
+<div class="sidebar px-4 py-4 py-md-5 me-0 d-md-block d-none" id="sidebar">
   <div class="d-flex flex-column h-100">
     <a class="mb-0 brand-icon">
-<span class="logo-icon">
-<img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png" style="width: 200px; height:150px; " />
-
-</span>
-
-
+      <span class="logo-icon">
+        <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png"
+             style="width: 200px; height:150px;" />
+      </span>
     </a>
-    <ul class="menu-list flex-grow-1 mt-3" >
-      <li>
-        <a style="color:white" class="m-link" data-bs-toggle="collapse" data-bs-target="#dashboard-Components" [routerLink]="['/lawyer', lawyerId]">
-          <i class="icofont-home fs-5"></i> <mat-icon>home</mat-icon><span>Dashboard</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
-        </a>
 
-      </li>
+    <ul class="menu-list flex-grow-1 mt-3">
       <li>
-        <a style="color:white" class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
-          <i class="icofont-briefcase"></i> <mat-icon>people</mat-icon> <span>Clients</span>
-        </a>
-      </li>
-
-      <li>
-        <a style="color:white" class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'cases']">
-          <i class="icofont-ticket"></i><mat-icon>gavel</mat-icon> <span>Cases</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
-        </a>
-      </li>
-
-      <li>
-        <a style="color:white" class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/lawyer', lawyerId, 'consultations']">
-          <i class="icofont-ticket"></i><mat-icon>event</mat-icon> <span>Consultations</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId]" style="color:white;">
+          <mat-icon>home</mat-icon> <span>Dashboard</span>
         </a>
       </li>
       <li>
-        <a style="color:white" class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'assistant']">
-          <i class="icofont-users-alt-5"></i> <mat-icon>group</mat-icon> <span>Assistant</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']" style="color:white;">
+          <mat-icon>people</mat-icon> <span>Clients</span>
         </a>
       </li>
       <li>
-        <a style="color:white" class="m-link" data-bs-toggle="collapse" data-bs-target="#team-Components" [routerLink]="['/lawyer', lawyerId, 'invoice']">
-          <i class="icofont-users-alt-5"></i><mat-icon>description</mat-icon>
-          <span>Invoice</span>
-          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'cases']" style="color:white;">
+          <mat-icon>gavel</mat-icon> <span>Cases</span>
         </a>
       </li>
-
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'consultations']" style="color:white;">
+          <mat-icon>event</mat-icon> <span>Consultations</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'assistant']" style="color:white;">
+          <mat-icon>group</mat-icon> <span>Assistant</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'invoice']" style="color:white;">
+          <mat-icon>description</mat-icon> <span>Invoice</span>
+        </a>
+      </li>
     </ul>
-    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
-      Logout
-      <span class="ms-2">
-    <mat-icon style="vertical-align: middle;">exit_to_app</mat-icon>
-  </span>
-    </button>
 
+    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
+      Logout <mat-icon>exit_to_app</mat-icon>
+    </button>
   </div>
 </div>
+<button class="d-md-none"
+        style="position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1050;
+    color: white;
+    background-color: #2c3e50;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;"
+        (click)="toggleSidebar()">
+  ☰
+</button>
 
-<div class="container-fluid" style="padding-right:500px; background:#ececec">
+<div class="container-fluid px-3 px-md-5" style="background:#ececec">
   <div class="row">
-    <main class="main-wrapper col-md-9 ms-sm-auto py-4 col-lg-9 px-md-4 border-start">
+    <main class="col-md-9 col-lg-9 ms-sm-auto py-4 px-md-4 border-start">
       <div class="title-group mb-3">
-        <h1 class="h2 mb-0"style="font-size: 50px;">Overview</h1>
+        <h1 class="h2 mb-0 display-4"style="font-size: 50px;">Overview</h1>
 
         <small class="text-muted">Hello {{ lawyer?.firstName }}, welcome back!</small>
       </div>
@@ -257,27 +250,27 @@
       <div class="row my-4">
         <div class="col-lg-7 col-12">
           <div class="custom-block custom-block-consultation">
-            <h2 style="font-size: 40px; colro:#313557">Recent Consultations</h2>
+            <h2 class="fs-2" style="font-size: 40px; color:#313557">Recent Consultations</h2>
 
             <!-- Loop through all consultations and display them -->
             <div *ngFor="let con of consultations" class="mb-3">
 
               <!-- Consultation Title and Start Date -->
-              <h2 class="mt-2 mb-3">
-                <mat-icon style="font-size: 30px; color: #3f51b5;" aria-hidden="true">event_note</mat-icon>
+              <h2 class="mt-2 mb-3 d-flex align-items-center">
+                <mat-icon  class="me-2 fs-3 " style="font-size: 30px; color: #3f51b5;" aria-hidden="true">event_note</mat-icon>
                 {{ con.title }} - {{ con.start | date: 'short' }}
               </h2>
 
               <!-- Consultation Description -->
               <div class="d-flex align-items-center mb-3">
-                <mat-icon style="font-size: 30px; color: #3f51b5;" aria-hidden="true">description</mat-icon>
+                <mat-icon class="fs-3" style="font-size: 30px; color: #3f51b5;" aria-hidden="true">description</mat-icon>
                 <p class="ms-2">Description:{{ con.description }}</p>
               </div>
 
               <!-- Client Information -->
               <div class="d-flex">
                 <div class="d-flex align-items-center">
-                  <mat-icon style="font-size: 30px; color: #3f51b5;" aria-hidden="true">person</mat-icon>
+                  <mat-icon  class="fs-3" style="font-size: 30px; color: #3f51b5;" aria-hidden="true">person</mat-icon>
                   <div class="ms-2">
                     <small>Client</small>
                     <p>{{ con.client.firstName }} {{ con.client.familyName }}</p>
@@ -296,29 +289,29 @@
 
 
           <div class="custom-block custom-block-exchange">
-            <h5 class="mb-4" style="font-size:40px; color:#313557">Recent Cases</h5>
+            <h5 class="fs-2" style="font-size:40px; color:#313557">Recent Cases</h5>
 
             <!-- Show message if no cases are available -->
-            <div *ngIf="cases.length === 0" class="no-cases-message text-center" style="font-size: 18px; color: #999;">
+            <div *ngIf="cases.length === 0" class="no-cases-message text-center text-muted fs-5 " style="font-size: 18px; color: #999;">
               <p>No cases available</p>
             </div>
 
             <!-- Loop through cases and display them -->
             <div *ngFor="let cas of cases" class="d-flex align-items-center border-bottom pb-3 mb-3">
               <div class="d-flex align-items-center">
-                <mat-icon class="exchange-image img-fluid" style="font-size: 30px; color: #3f51b5;">gavel</mat-icon>
-                <div>
+                <mat-icon class="exchange-image img-fluid fs-3" style="font-size: 30px; color: #3f51b5;">gavel</mat-icon>
+                <div class="ms-2">
                   <p>{{ cas.caseType }}</p>
                   <h6>{{ cas.client?.firstName }} {{ cas.client?.familyName }}</h6>
                 </div>
               </div>
 
-              <div class="ms-auto me-4">
+              <div class="ms-auto text-center">
                 <small>Status</small>
                 <h6>{{ cas.caseStatus }}</h6>
               </div>
 
-              <div class="ms-auto me-4">
+              <div class="ms-auto text-center">
                 <small>Date</small>
                 <h6>{{ cas.start }}</h6>
               </div>
@@ -367,10 +360,10 @@
 
 
 
-          <div class="custom-block custom-block-transations">
-            <h5 class="mb-4" style="color:#1d3557 ;font-size: 40px">Recent Clients</h5>
+          <div class="custom-block custom-block-transactions mt-4">
+            <h5 class="fs-2" style="color:#1d3557 ;font-size: 40px">Recent Clients</h5>
 
-            <div class="d-flex flex-wrap align-items-center mb-4" *ngFor="let client of clients" >
+            <div class="d-flex flex-wrap align-items-center mb-3" *ngFor="let client of clients" >
               <div class="d-flex align-items-center">
                 <img  [src]="client.image || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image img-fluid" alt="">
 

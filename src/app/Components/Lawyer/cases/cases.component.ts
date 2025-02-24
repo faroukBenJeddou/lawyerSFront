@@ -142,7 +142,12 @@ lawyer!:Lawyer;
     this.updatePages(); // Update page numbers after changing the page
     // Fetch new cases for the selected page (implement your logic to paginate cases here)
   }
-
+  toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('d-none'); // Hide/Show Sidebar
+    }
+  }
   // Fetch or filter cases based on the current page
   getPaginatedCases() {
     const start = (this.currentPage - 1) * this.casesPerPage;

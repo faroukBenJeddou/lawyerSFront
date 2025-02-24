@@ -289,6 +289,13 @@ isRequestSent=false;
       }
     });
   }
+  toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('d-none'); // Hide/Show Sidebar
+    }
+  }
+
 
   searchClient(event: any): void {
     const searchTerm = event.target.value.toLowerCase();

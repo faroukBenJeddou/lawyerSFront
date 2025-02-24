@@ -1,258 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Navbar and Sidebar</title>
-  <style>
-    /* Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<!--<div class="container-fluid" style=" background:#ececec; padding-top:150px; padding-left:500px;">-->
+<!--  <div class="container-xl px-4 mt-4"  >-->
+<!--    &lt;!&ndash; Account page navigation&ndash;&gt;-->
+<!--    <hr class="mt-0 mb-4">-->
+<!--    <div class="row">-->
+<!--      <div class="col-xl-4" style="width:350px; ">-->
 
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      display: flex;
-      min-height: 100vh;
-    }
+<!--        &lt;!&ndash; Profile picture card &ndash;&gt;-->
+<!--        <div class="card mb-4 mb-xl-0" style="border: 1px solid #ccc; border-radius: 8px;">-->
+<!--          <div class="card-header" style="font-weight: bold;background-color: #4c3575;color:white">Profile Picture</div>-->
+<!--          <div class="card-body text-center">-->
+<!--            <div class="profile-picture-container" style="width:150px; display: flex; justify-content: center; align-items: center; margin: 0 auto;">-->
+<!--              <img *ngIf="imageUrl" [src]="imageUrl" alt="Profile Picture" class="img-account-profile" style="border: 2px solid #ccc; border-radius: 50%; padding: 5px; width: 100%; height: auto;">-->
+<!--            </div>-->
+<!--            <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>-->
+<!--            <input type="file" class="form-control mb-2" (change)="onFileChange($event)"  formControlName="image">-->
+<!--            <button class="btn btn-primary" (click)="uploadProfilePic()" style="background-color: #4c3575; border-color: #4c3575;">Upload</button>-->
+<!--          </div>-->
+<!--        </div>-->
 
-    /* Navbar */
-    .navbar {
-      width: 100vw; /* Ensure the navbar is full width */
-      background-color: #f8f9fa;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      border-bottom: 1px solid #ddd;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1000;
-    }
+<!--      </div>-->
+<!--      <div class="col-xl-8" style="width:900px;">-->
+<!--        &lt;!&ndash; Account details card&ndash;&gt;-->
+<!--        <div class="card mb-4" style="border: 1px solid #ccc; border-radius: 8px;">-->
+<!--          <div class="card-header" style="font-weight: bold;background-color: #4c3575;color:white">Account Details</div>-->
+<!--          <div class="card-body">-->
+<!--            <form [formGroup]="lawyerForm" (ngSubmit)="updateProfile()">-->
+<!--              <div class="row gx-3 mb-3">-->
+<!--                &lt;!&ndash; Form Group (first name)&ndash;&gt;-->
+<!--                <div class="col-md-6">-->
+<!--                  <label class="small mb-1" for="inputFirstName">First name</label>-->
+<!--                  <input class="form-control" id="inputFirstName" formControlName="firstName" type="text" placeholder="Enter your first name" style="border: 1px solid #ccc;">-->
+<!--                </div>-->
+<!--                &lt;!&ndash; Form Group (last name)&ndash;&gt;-->
+<!--                <div class="col-md-6">-->
+<!--                  <label class="small mb-1" for="inputLastName">Last name</label>-->
+<!--                  <input class="form-control" id="inputLastName" formControlName="familyName" type="text" placeholder="Enter your last name" style="border: 1px solid #ccc;">-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              &lt;!&ndash; Form Row &ndash;&gt;-->
+<!--              <div class="row gx-3 mb-3">-->
+<!--                &lt;!&ndash; Form Group (phone number)&ndash;&gt;-->
+<!--                <div class="col-md-6">-->
+<!--                  <label class="small mb-1" for="inputPhone">Phone number</label>-->
+<!--                  <input class="form-control" id="inputPhone" formControlName="phoneNumber" type="tel" placeholder="Enter your phone number" style="border: 1px solid #ccc;">-->
+<!--                </div>-->
+<!--                &lt;!&ndash; Form Group (birthday)&ndash;&gt;-->
+<!--                <div class="col-md-6">-->
+<!--                  <label class="small mb-1" for="inputBirthday">Birthday</label>-->
+<!--                  <input class="form-control" id="inputBirthday" formControlName="birthdate" type="text" placeholder="Enter your birthday" style="border: 1px solid #ccc;">-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              &lt;!&ndash; Form Row &ndash;&gt;-->
+<!--              <div class="row gx-3 mb-3">-->
+<!--                &lt;!&ndash; Form Group (office address)&ndash;&gt;-->
+<!--                <div class="col-md-6">-->
+<!--                  <label class="small mb-1" for="inputOrgName">Office Address</label>-->
+<!--                  <input class="form-control" id="inputOrgName" formControlName="office_adress" type="text" placeholder="Enter your office address" style="border: 1px solid #ccc;">-->
+<!--                </div>-->
+<!--                &lt;!&ndash; Form Group (password)&ndash;&gt;-->
+<!--                <div class="col-md-6">-->
+<!--                  <label class="small mb-1" for="inputPassword">Password</label>-->
+<!--                  <input class="form-control" id="inputPassword" formControlName="password" type="password" placeholder="Enter your password" style="border: 1px solid #ccc;">-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              &lt;!&ndash; Form Group (email address)&ndash;&gt;-->
+<!--              <div class="mb-3">-->
+<!--                <label class="small mb-1" for="inputEmailAddress">Email address</label>-->
+<!--                <input class="form-control" id="inputEmailAddress" formControlName="email" type="email" placeholder="Enter your email address" style="border: 1px solid #ccc;">-->
+<!--              </div>-->
+<!--              &lt;!&ndash; Save changes button&ndash;&gt;-->
+<!--              <button class="btn btn-primary" type="submit" style="background-color: #4c3575; border-color: #4c3575;">Save changes</button>-->
+<!--            </form>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
 
-    .navbar a {
-      text-decoration: none;
-      color: #333;
-      padding: 10px 15px;
-      transition: background 0.3s;
-    }
-
-    .navbar a:hover {
-      background-color: #ddd;
-    }
-
-    /* Navbar Items */
-    .navbar .nav-items {
-      display: flex;
-      gap: 20px;
-      list-style: none;
-    }
-
-    /* Dropdown */
-    .dropdown {
-      position: relative;
-    }
-
-    .dropdown-menu {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      display: none;
-      flex-direction: column;
-      min-width: 200px;
-      z-index: 1000;
-    }
-
-    .dropdown-menu a {
-      padding: 10px 15px;
-      color: #333;
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    .dropdown-menu a:hover {
-      background-color: #f1f1f1;
-    }
-
-    /* Show dropdown on hover */
-    .dropdown:hover .dropdown-menu {
-      display: flex;
-    }
-
-    /* Profile Picture Dropdown */
-    .profile {
-      position: relative;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-    }
-
-    .profile img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid #ddd;
-    }
-
-    .profile-menu {
-      position: absolute;
-      top: 60px; /* Below the profile picture */
-      right: 0;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      display: none;
-      flex-direction: column;
-      min-width: 150px;
-      z-index: 1000;
-    }
-
-    .profile-menu a {
-      padding: 10px 15px;
-      color: #333;
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    .profile-menu a:hover {
-      background-color: #f1f1f1;
-    }
-
-    /* Show profile dropdown on click */
-    .profile.active .profile-menu {
-      display: flex;
-    }
-
-    /* Align profile section to the right */
-    .navbar .profile-section {
-      display: flex;
-      align-items: center;
-    }
-
-    /* Make sure navbar spans the full width of the page */
-    .navbar .navbar-brand {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-    }
-
-    /* Content below navbar to prevent overlap */
-    body {
-      padding-top: 70px; /* Prevent content from being hidden behind navbar */
-    }
-    /* Sidebar */
-    /* Sidebar Styles */
-    .sidebar {
-      background-color: #4c3575;
-      width: 250px;
-      height: 100vh;
-      position: fixed;
-      top: 60px; /* Adjusted to create space below the navbar */
-      left: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-      z-index: 1050;
-    }
-
-    .brand-icon {
-      margin-top: 20px; /* Add margin top to logo if needed */
-      margin-bottom: 20px; /* Optional: add some space after logo */
-    }
-
-    .menu-list {
-      margin-top: 20px; /* Ensures there’s space between the logo and menu items */
-    }
-
-    .btn {
-      margin-top: auto; /* Ensure the logout button stays at the bottom */
-    }
-
-    /* Ensure the logo size doesn't stretch or break layout */
-    .logo-icon img {
-      width: 200px;
-      height: 150px;
-
-    }
-
-    /* Sidebar links */
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-    }
-
-    .sidebar a:hover {
-      background-color: #6f4a91; /* Lighter shade for hover effect */
-    }
-
-    /* Content */
-    .content {
-      margin-left: 250px; /* Ensures content starts after the sidebar */
-      padding: 20px;
-      padding-top: 70px; /* Adds padding to prevent content overlap with navbar */
-      width: calc(100% - 250px); /* Takes up the remaining space after sidebar */
-    }
-
-  </style>
-</head>
-<body>
-
-<!-- Navbar -->
-<nav class="navbar">
-  <!-- Navbar Left -->
-
-  <ul class="nav-items" style="padding-left:400px;">
-    <li><a href="#">Home</a></li>
-    <li class="dropdown">
-      <a href="#">Reports</a>
-      <div class="dropdown-menu">
-        <a href="#">Daily Report</a>
-        <a href="#">Weekly Report</a>
-        <a href="#">Yearly Report</a>
-      </div>
-    </li>
-    <li><a href="#">Products</a></li>
-    <li><a href="#">Accounts</a></li>
-    <li class="dropdown">
-      <a href="#">Settings</a>
-      <div class="dropdown-menu">
-        <a href="#">Profile</a>
-        <a href="#">Billing</a>
-        <a href="#">Customize</a>
-      </div>
-    </li>
-  </ul>
-
-  <!-- Profile Picture Dropdown (aligned right) -->
-  <div class="profile-section">
-    <div class="profile" onclick="this.classList.toggle('active')">
-      <!-- Profile picture here -->
-      <img src="https://via.placeholder.com/40" alt="Profile Picture" onerror="this.src='https://www.w3schools.com/howto/img_avatar.png';">
-      <div class="profile-menu">
-        <a href="#">View Profile</a>
-        <a href="#">Settings</a>
-        <a href="#">Logout</a>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<!-- Sidebar -->
-
-
-
-
-</body>
-</html>
+<!--</div>-->

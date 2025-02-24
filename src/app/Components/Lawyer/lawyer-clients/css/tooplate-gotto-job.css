@@ -12,8 +12,48 @@ https://www.tooplate.com/view/2134-gotto-job
   padding-top: 8px;
   padding-bottom: 8px;
   z-index: 10; /* Lower than the sidebar */
-
+  margin-top:-25px;
 }
+@media (max-width: 768px) {
+  .modal-dialog {
+    width: 90% !important;  /* Reduce modal width */
+    max-width: 500px;
+    margin: 1rem auto; /* Adjust margins */
+  }
+
+  .modal-content {
+    padding: 1rem; /* Reduce padding */
+  }
+
+  .modal-body {
+    max-height: 70vh; /* Prevent it from getting too tall */
+    overflow-y: auto; /* Add scroll inside modal if needed */
+  }
+
+  .modal-footer {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .dropdown-menu {
+    position: absolute !important;
+    bottom: auto !important;
+    top: 100% !important;
+    left: auto !important;
+    right: 10px !important; /* Keeps it aligned properly */
+  }
+}
+
+@media (max-width: 576px) {
+  .dropdown-menu {
+    position: absolute !important;
+    left: auto !important;
+    right: 0 !important; /* Align to right edge */
+  }
+}
+
 
 .hearing-cards-container {
   display: flex;
