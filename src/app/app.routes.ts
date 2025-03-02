@@ -44,7 +44,7 @@ export const routes: Routes = [
   {path:'client/:id/case/:caseId',component:CaseDetailsClientComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
   {path:'forgotPassword',component:ForgotPasswordComponent},
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'profile/:id', component: AllprofilesComponent },
+  { path: 'profile/:id/:lawyerId', component: AllprofilesComponent },
   {path: 'lawyer/:id/invoice',component: InvoiceComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
   { path: 'home', component: HomeComponent },
 

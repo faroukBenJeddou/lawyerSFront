@@ -2,7 +2,12 @@
   <div class="logo-container">
     <img src="./assets/lawyersoft-high-resolution-logo-transparent.png" alt="Logo" />
   </div>
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <div *ngIf="showAlert" class="alert" [ngClass]="{'alert-success': alertType === 'success', 'alert-danger': alertType === 'danger'}" role="alert">
+    {{ alertMessage }}
+  </div>
+
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <div class="email">
     <label for="Email">Email</label>
     <div class="sec-2">

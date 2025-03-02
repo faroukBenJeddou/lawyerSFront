@@ -26,6 +26,9 @@ import jwtDecode from "jwt-decode";
 export class LoginComponent implements OnInit {
   user: any
   loggedIn: any
+  showAlert = false; // Property to control alert visibility
+  alertMessage = '';
+  alertType = 'success'; // 'success' or 'danger'
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)])
@@ -59,20 +62,18 @@ export class LoginComponent implements OnInit {
           console.log(response);
 
           if (token) {
-            // Save the token in localStorage
             localStorage.setItem('authToken', token);
             const decodedToken: any = jwtDecode(token);
             const userRole = decodedToken?.role;
 
-            // SweetAlert with auto-close after 2 seconds (2000 milliseconds)
-            Swal.fire({
-              title: 'Login Successful',
-              icon: 'success',
-              text: 'You have logged in successfully!',
-              showConfirmButton: false, // Hide the confirm button since we don't need it
-              timer: 2000 // Automatically close the alert after 2 seconds
-            }).then(() => {
-              // Navigate to the appropriate page based on the user's role
+            // Show success alert
+            this.alertMessage = 'Login Successful!';
+            this.alertType = 'success';
+            this.showAlert = true;
+
+            setTimeout(() => {
+              this.showAlert = false;
+              // Navigate based on user role
               if (userRole === 'admin') {
                 this.router.navigate(['/admin']);
               } else if (userRole === 'Lawyer' || userRole === 'assistant') {
@@ -82,30 +83,35 @@ export class LoginComponent implements OnInit {
               } else {
                 this.router.navigate(['/home']);
               }
-            });
+            }, 2000);
 
           } else {
-            // SweetAlert for failed login
-            Swal.fire({
-              title: 'Login Failed',
-              icon: 'error',
-              text: 'Invalid email or password!',
-              confirmButtonText: 'OK'
-            });
+            // Show error alert if no token is received
+            this.alertMessage = 'Invalid email or password!';
+            this.alertType = 'danger';
+            this.showAlert = true;
+
+            setTimeout(() => {
+              this.showAlert = false;
+            }, 2000);
           }
         },
         error => {
-          // SweetAlert for server or network error
-          Swal.fire({
-            title: 'Login Failed',
-            icon: 'error',
-            text: 'Invalid email or password!',
-            confirmButtonText: 'OK'
-          });
+          // Show error alert on API failure
+          this.alertMessage = 'Invalid email or password!';
+          this.alertType = 'danger';
+          this.showAlert = true;
+
+          setTimeout(() => {
+            this.showAlert = false;
+          }, 2000);
         }
       );
     }
   }
+
+
+
   private setLogoutTimer() {
     // Set timeout for 1 hour (3600000 milliseconds)
     setTimeout(() => {

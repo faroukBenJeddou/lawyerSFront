@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {MatIcon} from "@angular/material/icon";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {NgIf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-nav-bar',
@@ -10,7 +10,9 @@ import {NgIf} from "@angular/common";
         MatIcon,
         FormsModule,
         NgIf,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        DatePipe,
+        NgForOf
     ],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'

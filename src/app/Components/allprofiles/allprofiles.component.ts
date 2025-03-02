@@ -1,4 +1,4 @@
-import {Component, HostListener} from '@angular/core';
+import {Component, HostListener, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {ClientService} from "../../services/ClientService/client.service";
 import {AssistantService} from "../../services/Assistant/assistant.service";
@@ -13,19 +13,22 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {Requests} from "../../Models/Requests";
 import {RequestService} from "../../services/Request/request.service";
-import {BehaviorSubject, Observable, Subject, switchMap, tap} from "rxjs";
+import {BehaviorSubject, Observable, Subject, switchMap, take, tap} from "rxjs";
 import {addHours, formatDistanceToNow} from "date-fns";
 import {ConsultationService} from "../../services/Consultation/consultation.service";
 import {CaseService} from "../../services/CaseService/case.service";
 import {Case} from "../../Models/Case";
+import {Hearing} from "../../Models/Hearing";
+import {HearingsService} from "../../services/hearings/hearings.service";
 
 @Component({
   selector: 'app-allprofiles',
 
-  templateUrl: '../PROFILES/keenthemes.com/metronic/tailwind/demo1/account/home/user-profile.html',
-  styleUrl: './allprofiles.component.css'
+  templateUrl: 'allprofiles.component.html',
+  encapsulation: ViewEncapsulation.None
+
 })
-export class AllprofilesComponent {
+export class AllprofilesComponent implements OnInit {
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
   userId!: string;
   userProfile: any; // Adjust the type based on your data structure
@@ -36,6 +39,9 @@ export class AllprofilesComponent {
   lawyer!:Lawyer | undefined;
   client!:Client | undefined;
   lawyerId!:string;
+  reminder!: Hearing[];  // Change to an array
+  displayedNotifications: any[] = []; // Notifications to display
+
   notifications: any[] = []; // Adjust type based on your Request model
   hasNewNotifications: boolean = false;
   notifications$: Observable<Requests[]> = new BehaviorSubject([]);
@@ -57,28 +63,20 @@ export class AllprofilesComponent {
     private authService: AuthService,
     private requestService: RequestService,
     private consultationServ: ConsultationService,
-    private caseServ:CaseService
+    private caseServ:CaseService,
+    private hearingServ:HearingsService
   ) {}
   ngOnInit(): void {
     this.userId = this.route.snapshot.paramMap.get('id') || '';
+    this.lawyerId = this.route.snapshot.paramMap.get('lawyerId') || '';
+    this.getLawyerById(this.lawyerId);
+    this.getClientById(this.userId);
+    this.reminderHearing();
+    this.loadCases(this.userId);
+    this.getCases(this.lawyerId);
+    this.loadNotifications(this.lawyerId);
     console.log('User ID:', this.userId); // Log user ID
-
-    // Subscribe to query parameters to get the lawyerId
-    this.route.queryParams.subscribe(params => {
-      this.lawyerId = params['lawyerId']; // Get lawyerId from query params
-      console.log('Lawyer ID from query params:', this.lawyerId); // Log lawyer ID
-      this.loadProfileImage(this.lawyerId);
-
-      // Check user profile after retrieving the lawyerId
-      if (this.userId) {
-        this.checkUserProfile(this.userId);
-      } else {
-        this.errorMessage = 'No user ID provided.';
-      }
-    });
-  }
-  loadProfileImage(lawyerId: string): void {
-    this.lawyerService.getImageById(lawyerId).subscribe(blob => {
+    this.clientService.getImageById(this.userId).subscribe(blob => {
       if (blob) {
         this.imageUrl = URL.createObjectURL(blob);
       } else {
@@ -87,96 +85,58 @@ export class AllprofilesComponent {
     }, error => {
       console.error('Error fetching image', error);
     });
+  this.loadProfileImage(this.lawyerId);
   }
-
-  async checkUserProfile(userId: string) {
-    console.log(`Checking user profile for ID: ${userId}`);
-
-    try {
-      // First, try fetching the lawyer profile
-      const lawyerProfile = await this.lawyerService.getLawyerById(userId).toPromise();
-      console.log("Lawyer Profile:", lawyerProfile);
-
-      // If found, set the userProfile for Lawyer
-      this.userProfile = { ...lawyerProfile, role: 'Lawyer' };
-
-      // Fetch the lawyer's profile picture
-      if (lawyerProfile?.image) {
-        this.userProfile.profilePicUrl = lawyerProfile.image; // Assuming image contains the URL
-      }
-    } catch (error) {
-      const httpError = error as HttpErrorResponse;
-
-      if (httpError.status === 404) {
-        console.warn(`Lawyer not found for ID: ${userId}`);
-        // Now, check if the user is a client
-        try {
-          const clientProfile = await this.clientService.getClientById(userId).toPromise();
-          console.log("Client Profile:", clientProfile);
-
-          // Set userProfile for Client
-          this.userProfile = { ...clientProfile, role: 'Client' };
-
-          // Check if clientProfile.id is defined before calling getImageById
-          if (clientProfile?.id) {
-            this.clientService.getImageById(clientProfile.id).subscribe(blob => {
-              // Create a URL for the blob and set it to the profilePicUrl
-              this.profilePic = URL.createObjectURL(blob);
-              this.userProfile.profilePicUrl = this.imageUrl; // Set the profilePicUrl for the user profile
-            });
-          } else {
-            console.warn("Client ID is not available.");
-          }
-
-          // Extract the lawyer ID from the client profile's DBRef
-          const lawyerId = clientProfile?.lawyers?.toString().split("'")[1]; // Extract the ID from DBRef
-
-          // Now, fetch the lawyer profile using the lawyerId
-          if (lawyerId) {
-            const lawyerProfile = await this.lawyerService.getLawyerById(lawyerId).toPromise();
-            console.log("Fetched Lawyer for Client:", lawyerProfile);
-            this.userProfile.lawyer = lawyerProfile; // Add the lawyer info to userProfile
-
-            // Also fetch the lawyer's profile picture
-            if (lawyerProfile?.image) {
-              this.userProfile.lawyer.profilePicUrl = lawyerProfile.image; // Assuming image contains the URL
-            }
-          } else {
-            console.warn("Lawyer ID is not available in client profile.");
-          }
-        } catch (clientError) {
-          console.error("Error fetching client profile:", clientError);
-          this.errorMessage = 'Client not found.';
+  loadProfileImageLawyer(lawyer: Lawyer): void {
+    if (lawyer && lawyer.id) {
+      this.lawyerService.getImageById(lawyer.id).subscribe(blob => {
+        if (blob) {
+          this.imageUrl = URL.createObjectURL(blob);
+          console.log('Lawyer image URL:', this.imageUrl); // Debugging line
+        } else {
+          console.error('No image data received for lawyer');
         }
-      } else {
-        console.error("Error fetching lawyer profile:", httpError);
-        this.errorMessage = 'Error fetching lawyer profile.';
-      }
+      }, error => {
+        console.error('Error fetching lawyer image', error);
+      });
     }
-
-    console.log("Final userProfile:", this.userProfile);
   }
-  fetchLawyerForClient(clientId: string): void {
-    this.clientService.getLawyers(clientId).subscribe(
-      (lawyer: Lawyer) => { // This expects a Lawyer type
-        console.log("Lawyer fetched for client:", lawyer);
-        this.clientProfile = lawyer; // Store the lawyer's profile
 
-        // If you also want to set the userProfile with lawyer info
-        this.userProfile = { ...this.userProfile, lawyer: lawyer }; // Add the lawyer to userProfile
+  loadProfileImageC(client: Client): void {
+    this.clientService.getImageById(client.id).subscribe(blob => {
+      if (blob) {
+        client.image = URL.createObjectURL(blob);
+      } else {
+        console.error('No image data received');
+      }
+    }, error => {
+      console.error('Error fetching image', error);
+    });
+  }
+
+
+
+
+  toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('d-none'); // Hide/Show Sidebar
+    }
+  }
+
+  reminderHearing(): void {
+    this.hearingServ.filterUpcomingHearings().pipe(
+      take(1)  // Ensures the observable completes after emitting the first value
+    ).subscribe(
+      (hearings: Hearing[]) => {
+        console.log("Upcoming hearings:", hearings);
+        this.reminder = hearings;  // Store the hearings
       },
       (error) => {
-        console.error("Error fetching lawyer for client:", error);
-        this.errorMessage = 'Error fetching lawyer information.';
+        console.error("Error fetching hearings:", error);
       }
     );
   }
-
-
-
-
-
-
   onLogout(): void {
     this.authService.logout();
   }
@@ -193,8 +153,7 @@ export class AllprofilesComponent {
         this.hasNewNotifications = false;
       }
     );
-  }
-  getTimeAgo(date: Date): string {
+  }  getTimeAgo(date: Date): string {
     return formatDistanceToNow(new Date(date), {addSuffix: true});
   }
 
@@ -238,18 +197,42 @@ export class AllprofilesComponent {
     // Implement the method to fetch Lawyer by ID
     return this.lawyerService.getLawyerById(lawyerId);
   }
-
+  getLawyerById(lawyerId: string) {
+    // Implement the method to fetch Lawyer by ID
+    return this.lawyerService.getLawyerById(lawyerId).subscribe({
+      next: (lawyer) => {
+        this.lawyer = lawyer;
+      },
+      error: (error) => {
+        console.error('Error fetching cases:', error);
+      }
+    });
+  }
   getClient(clientId: string) {
     // Implement the method to fetch Client by ID
     return this.clientService.getClientById(clientId);
   }
-
-  markNotificationsAsViewed(): void {
-    // Mark notifications as viewed
-    if (this.hasNewNotifications) {
-      this.hasNewNotifications = false;
-      // You may also need to update the server to mark notifications as read if applicable
-    }
+  getClientById(clientId: string) {
+    // Implement the method to fetch Lawyer by ID
+    return this.clientService.getClientById(clientId).subscribe({
+      next: (client) => {
+        this.client = client;
+      },
+      error: (error) => {
+        console.error('Error fetching cases:', error);
+      }
+    });
+  }
+  loadProfileImage(lawyerId: string): void {
+    this.lawyerService.getImageById(lawyerId).subscribe(blob => {
+      if (blob) {
+        this.profilePic = URL.createObjectURL(blob);
+      } else {
+        console.error('No image data received');
+      }
+    }, error => {
+      console.error('Error fetching image', error);
+    });
   }
 
   acceptRequest(requestId: string) {
@@ -300,6 +283,17 @@ export class AllprofilesComponent {
       error: (error) => {
         console.error("Error fetching cases:", error); // Log any errors
         this.errorMessage = 'Error fetching cases. Please try again later.'; // Optionally display an error message
+      }
+    });
+  }
+  loadCases(clientId: string): void {
+    this.clientService.getCases(clientId).subscribe({
+      next: (cases) => {
+        this.cases = cases;
+        console.log(cases);
+      },
+      error: (error) => {
+        this.errorMessage = 'Error fetching cases.';
       }
     });
   }

@@ -1,0 +1,25 @@
+<div class="chat-container">
+  <!-- Floating chat button -->
+  <div class="chat-button" (click)="toggleChat()">
+    <i class="material-icons">chat</i>
+  </div>
+
+  <!-- Chat window -->
+  <div class="chat-window" *ngIf="isChatOpen">
+    <div class="chat-header">
+      <span>Chat with Lexi</span>
+      <button (click)="toggleChat()">X</button>
+    </div>
+
+    <div class="chat-body">
+      <div *ngFor="let message of chatHistory" class="message" [ngClass]="{'user-message': message.sender === 'You', 'bot-message': message.sender === 'Bot'}">
+        <p>{{ message.text }}</p>
+      </div>
+    </div>
+
+    <div class="chat-footer">
+      <input [(ngModel)]="userMessage" placeholder="Type a message..." (keyup.enter)="sendMessage()" />
+      <button (click)="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>

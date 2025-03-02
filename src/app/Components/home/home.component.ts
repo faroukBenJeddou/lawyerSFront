@@ -10,6 +10,8 @@ import {MatOption, MatSelect} from "@angular/material/select";
 import {MatCell, MatHeaderCell, MatHeaderRow, MatRow} from "@angular/material/table";
 import {LawyerServiceService} from "../../services/LawyerService/lawyer-service.service";
 import {Lawyer} from "../../Models/Lawyer";
+import {ChatbotService} from "../../services/chatbot/chatbot.service";
+import {ChatbotComponent} from "../chatbot/chatbot.component";
 
 @Component({
   selector: 'app-home',
@@ -33,7 +35,8 @@ import {Lawyer} from "../../Models/Lawyer";
     MatRow,
     NgForOf,
     SlicePipe,
-    NgIf
+    NgIf,
+    ChatbotComponent
   ],
   templateUrl: '../../Law/zoyothemes.com/palexi/index-1.html',
   styleUrl: '../../Law/zoyothemes.com/palexi/css/style.css'
@@ -44,8 +47,10 @@ export class HomeComponent implements OnInit{
   errorMessage: string | null = null; // Variable to hold error messages
   lawyerId!:string;
   defaultImageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
+  userMessage = '';
+  chatHistory: { sender: string; text: string }[] = [];
 
-  constructor(private lawyerServ:LawyerServiceService) {
+  constructor(private lawyerServ:LawyerServiceService,private chatbotService: ChatbotService) {
   }
   ngOnInit() {
     this.lawyerServ.getLawyers().subscribe({

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, HostListener, OnInit, ViewEncapsulation} from '@angular/core';
 import {User} from "../../../Models/User";
 import {Client} from "../../../Models/Client";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 import {addHours, formatDistanceToNow} from "date-fns";
 import {DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
 import {MatIcon} from "@angular/material/icon";
+import {LawyerServiceService} from "../../../services/LawyerService/lawyer-service.service";
 
 @Component({
   selector: 'app-edit-client-profile',
@@ -30,7 +31,8 @@ import {MatIcon} from "@angular/material/icon";
     RouterLink
   ],
   templateUrl: './edit-client-profile.component.html',
-  styleUrl: '../aaaa/keenthemes.com/static/metronic/tailwind/dist/assets/css/styles.css'
+  encapsulation: ViewEncapsulation.None
+
 })
 export class EditClientProfileComponent implements OnInit{
   notifications: any[] = []; // Adjust type based on your Request model
@@ -53,10 +55,14 @@ export class EditClientProfileComponent implements OnInit{
   alertVisible = false; // For controlling the alert visibility
   // Function to toggle dropdown visibility
   alertType: 'success' | 'error' | null = null; // To determine the alert type
+  currentPassword: string = '';
+  newPassword: string = '';
+  confirmationPassword: string = '';
+  message: string = '';
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
   constructor(private authService: AuthService, private router: Router,private route:ActivatedRoute,
               private modalService:NgbModal,  private fb: FormBuilder,private changeDetector: ChangeDetectorRef, private requestService:RequestService,
-              private ClientServ:ClientService,private consultationServ:ConsultationService, private cdr: ChangeDetectorRef
+              private ClientServ:ClientService,private consultationServ:ConsultationService, private cdr: ChangeDetectorRef,private lawyerServ:LawyerServiceService
   ) {
     this.currentUser = this.authService.getCurrentUser()!;
     this.ClientId = this.currentUser ? this.currentUser.id : null; // Changed to clientId
@@ -173,7 +179,17 @@ export class EditClientProfileComponent implements OnInit{
     }
   }
 
-
+  changePassword() {
+    this.lawyerServ.changePassword(this.currentPassword, this.newPassword, this.confirmationPassword)
+      .subscribe({
+        next: () => {
+          this.message = 'Password changed successfully!';
+        },
+        error: (err) => {
+          this.message = `Error: ${err.error}`;
+        }
+      });
+  }
 
   loadProfileImage(ClientId: string): void {
     this.ClientServ.getImageById(ClientId).subscribe(blob => {

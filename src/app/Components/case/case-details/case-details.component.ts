@@ -61,6 +61,8 @@ export class CaseDetailsComponent implements OnInit {
   selectedFile!: File; // Declare the property to store the selected file
   isModalOpen = false;
   title: string | null = null;
+  hasDocuments: boolean = false; // Flag for documents
+  hasHearings: boolean = false; // Flag for hearings
   content: string | null = null;
   newDocument: { title: string; content: string; date: string } = { title: '', content: '', date: '' };
   isDocumentsModalOpen = false;
@@ -172,18 +174,43 @@ export class CaseDetailsComponent implements OnInit {
     this.isModalOpen = false;
 
   }
+  loadHearings() {
+    if (this.caseId) {
+      this.hearingServ.getHearingsForCase(this.caseId).subscribe({
+        next: (hearings: Hearing[]) => {
+          this.hearings = hearings;
+          this.hasHearings = hearings.length > 0; // Track if hearings exist
+        },
+        error: (error) => {
+          console.error('Error fetching hearings:', error);
+          this.hasHearings = false; // Set flag to false on error
+        }
+      });
+    } else {
+      this.hasHearings = false; // If no caseId, set flag to false
+    }
+  }
+
   loadDocuments() {
     if (this.caseId) {
       this.caseService.getDocumentsForCase(this.caseId).subscribe({
         next: (docs: Documents[]) => {
           this.documents = docs;
+          this.hasDocuments = docs.length > 0; // Add a flag to track document presence
         },
         error: (error) => {
           console.error('Error fetching documents:', error);
+          this.hasDocuments = false; // Ensure the flag is set to false on error
         }
       });
+    } else {
+      this.hasDocuments = false; // If no caseId, set flag to false
     }
   }
+
+
+
+
   openShowDocumentsModal(caseId: string) {
     this.caseId = caseId; // Set the current caseId
     this.loadDocuments(); // Load documents before showing modal
@@ -356,18 +383,7 @@ export class CaseDetailsComponent implements OnInit {
   closeShowHearingsModal() {
     this.isShowHearingsModalOpen = false;
   }
-  loadHearings() {
-    if (this.caseId) {
-      this.hearingServ.getHearingsForCase(this.caseId).subscribe({
-        next: (hearings: Hearing[]) => {
-          this.hearings = hearings;
-        },
-        error: (error) => {
-          console.error('Error fetching hearings:', error);
-        }
-      });
-    }
-  }
+
 
   deleteDocument(docId: string) {
     console.log('Deleting document with ID:', docId); // Debugging log
