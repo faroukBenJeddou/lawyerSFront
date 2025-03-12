@@ -43,6 +43,7 @@ export class CaseDetailsClientComponent implements OnInit{
   clientId!: string;
   caseId !: string;
   case !: Case;
+  lawyers !:Lawyer[];
   newHearing: any = {};
   isModalOpen = false;
   title: string | null = null;
@@ -182,14 +183,15 @@ export class CaseDetailsClientComponent implements OnInit{
 
       // Fetch the lawyers associated with the client
       this.clientServ.getLawyers(this.clientId).subscribe({
-        next: (lawyer: Lawyer) => {
-          this.lawyer = lawyer; // Assign lawyer to this.lawyer
-          console.log('Fetched lawyer:', this.lawyer); // Log fetched lawyer
+        next: (lawyers: Lawyer[]) => {
+          this.lawyers = lawyers; // Assign the array of lawyers to this.lawyers
+          console.log('Fetched lawyers:', this.lawyers); // Log the list of fetched lawyers
         },
         error: (error) => {
-          console.error('Error fetching lawyer:', error);
+          console.error('Error fetching lawyers:', error);
         }
       });
+
 
       // Fetch case information
       this.caseService.getCase(this.caseId).subscribe({

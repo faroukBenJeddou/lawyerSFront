@@ -3,6 +3,51 @@
   user-select: none;
   /* cannot give overflow: hidden as it will crop tooltips which overflow outside chart area */
 }
+.job-decision {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #2c3e50;
+  background-color: #f0f8ff;
+  padding: 8px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+}
+
+.job-decision strong {
+  color: #2980b9;
+}
+
+.court-decision {
+  background-color: #f8f9fa; /* Light gray background */
+  border-left: 4px solid #007bff; /* Blue highlight border */
+  padding: 10px 15px;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333; /* Dark text for readability */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+.alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050; /* Ensure it stays on top */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.court-decision strong {
+  color: #007bff; /* Blue color for emphasis */
+  font-weight: 600;
+}
+
+.court-decision:hover {
+  background-color: #e9ecef; /* Slightly darker on hover */
+}
 
 
 /* scrollbar is not visible by default for legend, hence forcing the visibility */
@@ -113,13 +158,13 @@
   font-weight: 600;
 }
 
-.apexcharts-tooltip-text-goals-label, 
+.apexcharts-tooltip-text-goals-label,
 .apexcharts-tooltip-text-goals-value {
   padding: 6px 0 5px;
 }
 
-.apexcharts-tooltip-goals-group, 
-.apexcharts-tooltip-text-goals-label, 
+.apexcharts-tooltip-goals-group,
+.apexcharts-tooltip-text-goals-label,
 .apexcharts-tooltip-text-goals-value {
   display: flex;
 }

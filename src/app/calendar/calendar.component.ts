@@ -85,7 +85,7 @@ export class CalendarComponent implements OnInit{
   errorMessage: string | null = null;
   lawyerId!:string
   ClientId!: string
-  id!:string;
+  id!:string | null;
   client !:Client;
   lawyer !:Lawyer;
   case!:Case;
@@ -143,13 +143,13 @@ export class CalendarComponent implements OnInit{
     this.clientServ.getClientById(id).subscribe({
       next: (data: Client) => {
         this.client = data;
-        if (this.client && this.client.lawyers) {
-          this.lawyer = this.client.lawyers;
+        if (this.client && this.client.lawyers && this.client.lawyers.length > 0) {
+          this.lawyer = this.client.lawyers[0]; // Assign the first lawyer from the array
           this.lawyerId = this.lawyer.id;
           this.isClient = true; // Client is detected
           this.getConsultationsForLawyer(this.lawyer.id);
         } else {
-          console.error('Lawyer data is not available in client object');
+          console.error('No lawyer data available in client object');
           this.getLawyerById(id);
         }
       },
@@ -161,20 +161,6 @@ export class CalendarComponent implements OnInit{
   }
 
 
-  getLawyer() {
-    this.clientServ.getClientById(this.ClientId).subscribe({
-      next: (data: Client) => {
-        this.client = data;
-        this.lawyer = this.client.lawyers; // Assuming client has a `lawyer` property
-        this.lawyerId = this.lawyer.id; // Assign lawyer's ID to lawyerId
-        this.getConsultationsForLawyer(this.lawyer.id);
-      },
-      error: (error) => {
-        this.errorMessage = 'Error fetching client or lawyer data';
-        console.error('Error fetching client or lawyer:', error);
-      },
-    });
-  }
 
   getConsultationsForLawyer(lawyerId: string) {
     console.log('Fetching consultations for Lawyer ID:', lawyerId);
@@ -252,17 +238,22 @@ export class CalendarComponent implements OnInit{
   getLawyerById(id: string) {
     // Implement method to fetch lawyer directly if necessary
     this.clientServ.getLawyers(id).subscribe({
-      next: (data: Lawyer) => {
-        this.lawyer = data;
-        this.getConsultationsForLawyer(this.lawyer.id);
+      next: (data: Lawyer[]) => {
+        if (data && data.length > 0) {
+          this.lawyer = data[0]; // Assign the first lawyer from the list
+          this.getConsultationsForLawyer(this.lawyer.id);
+        } else {
+          console.error('No lawyers found for the provided id');
+        }
       },
       error: (error) => {
-        this.errorMessage = '';
+        
         console.error('Error fetching lawyer data:', error);
       }
     });
   }
-getAllConsultations(){
+
+  getAllConsultations(){
   this.consultationServ.getAll().subscribe({
     next: (events:CalendarEvent[]) => {
       this.events=events;
@@ -318,7 +309,8 @@ getAllConsultations(){
   constructor(private modal: NgbModal,private consultationServ:ConsultationService,private changeDetectorRef: ChangeDetectorRef,private route:ActivatedRoute,
               private authService:AuthService,private clientServ:ClientService,private requestServ:RequestService,private hearingServ:HearingsService
   ,private lawyerServ:LawyerServiceService,private caseServ:CaseService) {
-    this.id = this.route.snapshot.paramMap.get('id') || this.client.lawyers.id;
+    this.id = this.route.snapshot.paramMap.get('id') || (this.client.lawyers.length > 0 ? this.client.lawyers[0].id : null);
+
 
   }
 

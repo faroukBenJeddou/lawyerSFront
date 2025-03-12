@@ -5,6 +5,7 @@ import {Lawyer} from "./Lawyer";
 import {Documents} from "./Documents";
 import {Hearing} from "./Hearing";
 import {Invoice} from "./Invoice";
+import {CaseOutcome} from "./CaseOutcome";
 
 
 export class Case{
@@ -12,6 +13,7 @@ export class Case{
   caseType !:CaseType;
   description !:string;
   caseStatus !: CaseStatus;
+  caseOutcome !: CaseOutcome;
   start !: string;
   endDate !: string;
   client?: Client; // Optional, ensure this field exists

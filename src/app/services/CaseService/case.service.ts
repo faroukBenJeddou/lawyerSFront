@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {AuthService} from "../auth.service";
 import {Case} from "../../Models/Case";
+import {Client} from "../../Models/Client";
 
 @Injectable({
   providedIn: 'root'
@@ -92,5 +93,15 @@ export class CaseService {
   }
 
 
-
+ getClient(caseId:string): Observable<Client> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<Client>(`${this.baseUrl}/${caseId}/client`, { headers });
+  }
+  predictCase(caseDescription: string): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post<any>(this.baseUrl, { case_description: caseDescription }, { headers });
+  }
 }

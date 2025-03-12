@@ -78,14 +78,16 @@ export class ClientService {
     return this.http.put<Client>(`${this.baseUrl}/update/${id}`, client, {headers});
   }
 
-  getLawyers(id: string): Observable<Lawyer> {
+  getLawyers(clientId: string): Observable<Lawyer[]> {
     const token = localStorage.getItem('authToken');
     if (!token) {
       throw new Error('Token is missing');
     }
+
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<Lawyer>(`${this.baseUrl}/${id}/lawyer`, {headers});
+    return this.http.get<Lawyer[]>(`${this.baseUrl}/${clientId}/lawyers`, { headers });
   }
+
 
   uploadProfilePicture(clientId: string, file: File): Observable<any> {
     const token = this.authService.getToken();

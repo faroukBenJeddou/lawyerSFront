@@ -1,7 +1,7 @@
 /* Floating chat button */
 .chat-button {
   position: fixed;
-  bottom: 20px;
+  bottom: 90px; /* Adjusted space from the bottom to ensure the button doesn't overlap the send button */
   right: 20px;
   background-color: #007bff;
   color: white;
@@ -24,7 +24,7 @@
 /* Chat window */
 .chat-window {
   position: fixed;
-  bottom: 80px;
+  bottom: 160px; /* Increased this space to ensure the chat window doesn't overlap the button or send button */
   right: 20px;
   width: 300px;
   height: 400px;
@@ -35,7 +35,7 @@
   display: flex;
   flex-direction: column;
   animation: openChat 0.3s ease-in-out;
-  z-index: 9999; /* Ensure the chat window stays on top of all content */
+  z-index: 9999; /* Ensure the chat window stays below the button but on top of other content */
 }
 
 @keyframes openChat {
@@ -72,6 +72,17 @@
   padding: 10px;
   overflow-y: auto;
   background: #8cc7f8;
+}
+
+.chat-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat-icon {
+  width: 50px; /* Adjust the size as needed */
+  height: 50px; /* Ensure the height matches the width */
 }
 
 .message {

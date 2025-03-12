@@ -102,19 +102,24 @@ export class ClientConsultationComponent implements OnInit{
 
     // Fetch the lawyerId first, then fetch the consultations for that lawyer
     this.clientServ.getLawyers(this.clientId).pipe(
-      switchMap((lawyer: Lawyer) => {
-        this.lawyerId = lawyer.id;
-        return this.consultationServ.getByBoth(this.clientId,this.lawyerId);
+      switchMap((lawyers: Lawyer[]) => {
+        if (lawyers && lawyers.length > 0) {
+          this.lawyerId = lawyers[0].id; // Select the first lawyer, or adjust as needed
+          return this.consultationServ.getByBoth(this.clientId, this.lawyerId);
+        } else {
+          throw new Error('No lawyers found for this client');
+        }
       })
     ).subscribe({
-      next: (data: Consultation[]) => {
-        this.consultations = data;
-        console.log('Lawyer ID:', this.lawyerId); // This should now have the correct value
+      next: (response) => {
+        // Handle the response here
+        console.log('Consultation data:', response);
       },
       error: (error) => {
-        console.error('Error fetching consultations:', error);
+        console.error('Error fetching consultation:', error);
       }
     });
+
   }
   loadProfileImage(clientId: string): void {
     this.clientServ.getImageById(clientId).subscribe(blob => {
@@ -128,13 +133,6 @@ export class ClientConsultationComponent implements OnInit{
     });
   }
 
-  getLawyer(){
-    this.clientServ.getLawyers(this.clientId).subscribe({
-      next:(data:Lawyer)=>{
-        this.lawyerId=data.id;
-      }
-    })
-}
   onLogout(): void {
     this.authService.logout();
   }

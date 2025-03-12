@@ -19,6 +19,7 @@ import {addHours, formatDistanceToNow} from "date-fns";
 import { Location } from '@angular/common';
 import {Hearing} from "../../../Models/Hearing";
 import {HearingsService} from "../../../services/hearings/hearings.service";
+import {CaseType} from "../../../Models/CaseType";
 
 @Component({
   selector: 'app-edit-profile-lawyer',
@@ -46,11 +47,14 @@ import {HearingsService} from "../../../services/hearings/hearings.service";
 export class EditProfileLawyerComponent implements OnInit{
   notifications: any[] = []; // Adjust type based on your Request model
   reminder!: Hearing[];  // Change to an array
-
+  passwordMismatch: boolean = false;
+  caseTypes: string[] = Object.values(CaseType).filter(value => typeof value === "string") as string[];
+  shownNotifications: number = 4; // 1 top notification + 3 recent ones
   hasNewNotifications: boolean = false;
   isLoggedIn = false; // This will be updated based on actual authentication state
   authLinkText = 'Log In';
   currentUser!: User;
+  displayedNotifications: any[] = []; // Notifications to display
   lawyers: Lawyer[] = [];
   lawyer: Lawyer | null = null;
   lawyerId: string | null = null;
@@ -85,10 +89,11 @@ export class EditProfileLawyerComponent implements OnInit{
       office_adress: [''],
       password: [''],
       email: [''],
+      speciality: [''],
     });
   }
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
+  loadMore() {
+    this.shownNotifications += 3; // Show 3 more notifications when clicked
   }
   showAlert(message: string, type: 'success' | 'error'): void {
     this.alertMessage = message; // Set the alert message
@@ -176,8 +181,8 @@ export class EditProfileLawyerComponent implements OnInit{
                 office_adress: this.lawyer.office_adress || '',
                 email: this.lawyer.email || '',
                 password: '',
-                image: [null]  // Initialize the image form control
-
+                image: [null],  // Initialize the image form control
+                speciality: this.lawyer.speciality || '',
               });
 
 
@@ -316,7 +321,28 @@ export class EditProfileLawyerComponent implements OnInit{
       (response: Requests[]) => {
         console.log('Notifications received:', response);
         this.notifications = response;
+
+        // Sort by timestamp or start date (newest first)
+        this.notifications.sort((a, b) => {
+          const dateA = new Date(a.timestamp || a.start).getTime();
+          const dateB = new Date(b.timestamp || b.start).getTime();
+          return dateB - dateA; // newest first
+        });
+
+        // Optionally, you can still apply a filter for special case handling (like 'Consultation')
+        this.notifications.sort((a, b) => {
+          if (a.title === 'Consultation' && b.title !== 'Consultation') return -1;
+          if (b.title === 'Consultation' && a.title !== 'Consultation') return 1;
+          return 0;
+        });
+
         this.hasNewNotifications = this.notifications.length > 0;
+
+        // Set the reminder notification (the first notification)
+        this.reminder = [this.notifications[0]];
+
+        // Set the displayed notifications (only the first 3)
+        this.displayedNotifications = this.notifications.slice(1, 4);
       },
       (error) => {
         console.error('Error fetching notifications', error);
@@ -517,5 +543,13 @@ export class EditProfileLawyerComponent implements OnInit{
           this.message = `Error: ${err.error}`;
         }
       });
+  }
+  checkPasswordMatch() {
+    // Only show the error if the user has entered something in the confirmation field
+    if (this.confirmationPassword.length > 0) {
+      this.passwordMismatch = this.newPassword !== this.confirmationPassword;
+    } else {
+      this.passwordMismatch = false;
+    }
   }
 }

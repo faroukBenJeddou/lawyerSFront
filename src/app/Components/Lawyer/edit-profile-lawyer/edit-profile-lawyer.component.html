@@ -83,7 +83,38 @@
         <ul class="dropdown-menu dropdown-menu-lg-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink">
           <small>Notifications</small>
 
-          <li *ngFor="let notification of notifications | slice:0:4" class="notifications-block border-bottom pb-2 mb-2">
+          <li *ngIf="notifications.length > 0" class="notifications-block border-bottom pb-2 mb-2">
+            <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);">
+              <div class="notifications-icon-wrap" [ngClass]="notifications[0].title === 'Reminder' ? 'bg-info' : 'bg-warning'">
+                <i class="notifications-icon" [ngClass]="notifications[0].title === 'Reminder' ? 'bi-alarm-fill' : 'bi-envelope-fill'"></i>
+              </div>
+
+              <div class="ms-2">
+                <span class="fw-bold">{{ notifications[0].title }}</span>
+                <div class="text-muted">
+                  {{ notifications[0].client.firstName }} {{ notifications[0].client.familyName }}
+                  <br>
+                  {{ notifications[0].start | date: 'fullDate' }} - {{ notifications[0].start | date: 'shortTime' }}
+                </div>
+
+                <div class="mt-2">
+                  <ng-container *ngIf="notifications[0].status === 'PENDING'">
+                    <button class="btn btn-success btn-sm me-2" (click)="acceptRequest(notifications[0].id)">Accept</button>
+                    <button class="btn btn-danger btn-sm" (click)="declineRequest(notifications[0].id)">Decline</button>
+                  </ng-container>
+                  <ng-container *ngIf="notifications[0].status === 'ACCEPTED'">
+                    <span class="text-success">Accepted</span>
+                  </ng-container>
+                  <ng-container *ngIf="notifications[0].status === 'DECLINED'">
+                    <span class="text-danger">Declined</span>
+                  </ng-container>
+                </div>
+              </div>
+            </a>
+          </li>
+
+          <!-- Show only the next most recent notifications based on shownNotifications -->
+          <li *ngFor="let notification of notifications.slice(1, shownNotifications)" class="notifications-block border-bottom pb-2 mb-2">
             <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);">
               <div class="notifications-icon-wrap" [ngClass]="notification.title === 'Reminder' ? 'bg-info' : 'bg-warning'">
                 <i class="notifications-icon" [ngClass]="notification.title === 'Reminder' ? 'bi-alarm-fill' : 'bi-envelope-fill'"></i>
@@ -98,18 +129,13 @@
                 </div>
 
                 <div class="mt-2">
-                  <!-- Show Accept and Decline buttons only if the request is PENDING -->
                   <ng-container *ngIf="notification.status === 'PENDING'">
                     <button class="btn btn-success btn-sm me-2" (click)="acceptRequest(notification.id)">Accept</button>
                     <button class="btn btn-danger btn-sm" (click)="declineRequest(notification.id)">Decline</button>
                   </ng-container>
-
-                  <!-- Show Accepted or Rejected status -->
                   <ng-container *ngIf="notification.status === 'ACCEPTED'">
                     <span class="text-success">Accepted</span>
                   </ng-container>
-
-                  <!-- Show Declined status -->
                   <ng-container *ngIf="notification.status === 'DECLINED'">
                     <span class="text-danger">Declined</span>
                   </ng-container>
@@ -118,20 +144,10 @@
             </a>
           </li>
 
-          <li *ngFor="let hearing of reminder" class="notifications-block border-bottom pb-2 mb-2">
-            <a class="dropdown-item d-flex align-items-center" href="#">
-              <div class="notifications-icon-wrap bg-info">
-                <i class="notifications-icon bi-folder"></i>
-              </div>
-
-              <div class="ms-2">
-                <span>Upcoming hearing: {{ hearing.title }}</span>
-                <p>{{ hearing.start | date:'short' }}</p>
-              </div>
-            </a>
-          </li>
-
           <!-- Load More Button -->
+          <li *ngIf="notifications.length > shownNotifications" class="text-center mt-2">
+            <button class="btn btn-link" (click)="loadMore()">Load More</button>
+          </li>
 
 
 
@@ -298,6 +314,11 @@
               <input class="form-control"  type="email" id="inputBirthday" formControlName="birthdate" placeholder="{{lawyer?.birthdate}}">
               <input class="form-control"  type="tel" id="inputPhone" formControlName="phoneNumber" placeholder="{{lawyer?.phoneNumber}}">
               <input class="form-control"  type="text" id="inputOrgName" formControlName="office_adress" placeholder="{{lawyer?.office_adress}}">
+              <select class="form-control" id="spec" formControlName="speciality">
+                <option value="" disabled selected>{{ lawyer?.speciality || 'Select a Speciality' }}</option>
+                <option *ngFor="let type of caseTypes" [value]="type">{{ type }}</option>
+              </select>
+
 
               <div class="input-group mb-1">
                 <img *ngIf="imageUrl" [src]="imageUrl" class="profile-image img-fluid" >
@@ -322,11 +343,12 @@
             <form class="custom-form password-form" action="#" method="post" role="form">
               <input type="password" name="password" [(ngModel)]="currentPassword" id="password" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="Current Password" required="">
 
-              <input type="password" name="confirm_password" [(ngModel)]="newPassword" id="confirm_passworda" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="New Password" required="">
+              <input type="password" name="confirm_password" [(ngModel)]="newPassword" id="confirm_passworda" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="New Password" required="" (input)="checkPasswordMatch()">
 
-              <input type="password" name="confirm_password" [(ngModel)]="confirmationPassword" id="confirm_password" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="Confirm Password" required="">
+              <input type="password" name="confirm_password" [(ngModel)]="confirmationPassword" id="confirm_password" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="Confirm Password" required="" (input)="checkPasswordMatch()">
 
               <div class="d-flex">
+                <p *ngIf="passwordMismatch" class="text-danger">Passwords do not match!</p>
                 <button type="button" class="form-control me-3">
                   Reset
                 </button>

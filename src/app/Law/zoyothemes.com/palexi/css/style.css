@@ -1340,7 +1340,7 @@ ul.pattern .color6 {
   color: #FFF;
   display: inline-block;
   zoom: 1;
-  *display: inline;/*IE7 life-saver */
+  display: inline;/*IE7 life-saver */
   margin: 5px;
   padding: 3px 10px;
   font-size: 12px;
@@ -1364,7 +1364,7 @@ ul.pattern .color6 {
 .owl-theme .owl-controls .owl-page{
   display: inline-block;
   zoom: 1;
-  *display: inline;/*IE7 life-saver */
+  display: inline;/*IE7 life-saver */
 }
 .owl-theme .owl-controls .owl-page span{
   display: block;

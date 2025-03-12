@@ -1,7 +1,7 @@
-import {ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, HostListener, OnInit, TemplateRef} from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatIcon} from "@angular/material/icon";
-import {DatePipe, NgClass, NgForOf, NgIf, NgStyle} from "@angular/common";
+import {DatePipe, NgClass, NgForOf, NgIf, NgStyle, TitleCasePipe} from "@angular/common";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../../../services/auth.service";
 import {InvoiceService} from "../../../services/Invoice/invoice.service";
@@ -27,7 +27,8 @@ import {ClientService} from "../../../services/ClientService/client.service";
 import {ConsultationService} from "../../../services/Consultation/consultation.service";
 import {Lawyer} from "../../../Models/Lawyer";
 import {Client} from "../../../Models/Client";
-import { saveAs } from 'file-saver'; // Optional: if you want to use FileSaver.js for better compatibility with browsers
+import { saveAs } from 'file-saver';
+import {CourtDecision} from "../../../Models/CourtDecison"; // Optional: if you want to use FileSaver.js for better compatibility with browsers
 
 @Component({
   selector: 'app-case-details',
@@ -43,7 +44,8 @@ import { saveAs } from 'file-saver'; // Optional: if you want to use FileSaver.j
     NgClass,
     NgStyle,
     NgIf,
-    DatePipe
+    DatePipe,
+    TitleCasePipe
   ],
   templateUrl: './case-details.component.html',
   styleUrl: './case-details.component.css'
@@ -56,7 +58,9 @@ export class CaseDetailsComponent implements OnInit {
     start: new Date(),  // Initialize with a Date object
     title: ''
   };
-  imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
+  client!: Client; // Define the client property
+  imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png';
+  imageUrll: string = 'http://bootdey.com/img/Content/avatar/avatar1.png';// Default image
   lawyer: Lawyer | null = null;
   selectedFile!: File; // Declare the property to store the selected file
   isModalOpen = false;
@@ -68,6 +72,7 @@ export class CaseDetailsComponent implements OnInit {
   isDocumentsModalOpen = false;
   documents: Documents[] = [];
   cases: Case[]=[];
+  hearing!:Hearing;
   hearings: Hearing[] = [];
   isShowHearingsModalOpen = false;
   isHearingModalOpen = false; // New property for hearing modal
@@ -82,9 +87,13 @@ export class CaseDetailsComponent implements OnInit {
   isNotificationDropdownOpen = false; // Track the state of the notification dropdown
   isProfileDropdownOpen = false; // Track the state of the profile dropdown
   alertMessage: string | null = null; // For displaying alert messages
-  alertVisible = false; // For controlling the alert visibility
-  // Function to toggle dropdown visibility
+  alertVisible = false;
+  reminder!: Hearing[];  // Change to an array
+  displayedNotifications: any[] = []; // Notifications to display
+  shownNotifications: number = 4; // 1 top notification + 3 recent ones
   alertType: 'success' | 'error' | null = null; // To determine the alert type
+  courtDecisions: string[] = Object.values(CourtDecision).filter(value => typeof value === 'string');
+
   setPhase() {
     if (this.case?.caseStatus) {
       this.currentPhase = this.case.caseStatus;
@@ -115,10 +124,58 @@ export class CaseDetailsComponent implements OnInit {
     this.caseId = caseId; // Set the current caseId
     this.isHearingModalOpen = true;
   }
-
+  loadMore() {
+    this.shownNotifications += 3; // Show 3 more notifications when clicked
+  }
   closeHearingModal() {
     this.isHearingModalOpen = false;
   }
+  openCourtDecisionModal(hearing: any, modalTemplate: TemplateRef<any>) {
+    this.hearing = hearing;  // Make sure this is assigned properly
+    this.modalService.open(modalTemplate).result.then(
+      (result) => {
+        console.log('Modal closed with result:', result);
+      },
+      (reason) => {
+        console.log('Modal dismissed with reason:', reason);
+      }
+    );
+  }
+
+
+  setCourtDecision(hearing: any, decision: string) {
+    hearing.courtDecision = decision; // This will set the selected court decision to the hearing
+    console.log(`Court decision for hearing ${hearing.title}: ${hearing.courtDecision}`);
+    // Here you can also call a service to save the hearing with the updated court decision
+  }
+  updateHearing(hearing: any, decision: string) {
+    hearing.courtDecision = decision; // Update the court decision for the hearing
+    console.log(`Court decision for hearing ${hearing.title}: ${hearing.courtDecision}`);
+
+    // Ensure hearingId is correctly passed
+    if (!hearing.hearingId) {
+      console.error('Error: hearingId is missing');
+      return;
+    }
+
+    // Call the service to update hearing on the backend
+    this.hearingServ.updateHearing(hearing.hearingId, hearing).subscribe(
+      (response) => {
+        console.log('Hearing updated:', response);
+        this.showSuccessAlert = true; // Show success message
+        setTimeout(() => {
+          this.showSuccessAlert = false;
+        }, 3000);
+        // Optionally close the modal here or show a success message
+      },
+      (error) => {
+        console.error('Error updating hearing:', error);
+        // Optionally handle error
+      }
+    );
+  }
+
+
   addHearing() {
     if (this.caseId) {
       // Convert input string to Date object
@@ -253,14 +310,63 @@ export class CaseDetailsComponent implements OnInit {
           console.error('Error fetching case:', error);
         }
       });
+      this.caseService.getClient(this.caseId).subscribe(
+        (client: Client) => {
+          this.clientServ.getImageById(client.id).subscribe(blob => {
+            if (blob) {
+              this.imageUrll = URL.createObjectURL(blob);
+            } else {
+              console.error('No image data received');
+            }
+          }, error => {
+            console.error('Error fetching image', error);
+          });
+        },
+        (error) => {
+          console.error('Error fetching client:', error);
+        }
+      );
+
     }
+  }
+  loadProfileImageC(client: Client): void {
+    this.clientServ.getImageById(client.id).subscribe(blob => {
+      if (blob) {
+        client.image = URL.createObjectURL(blob);
+      } else {
+        console.error('No image data received');
+      }
+    }, error => {
+      console.error('Error fetching image', error);
+    });
   }
   loadNotifications(lawyerId: string): void {
     this.requestService.getNotifications(lawyerId).subscribe(
       (response: Requests[]) => {
         console.log('Notifications received:', response);
         this.notifications = response;
+
+        // Sort by timestamp or start date (newest first)
+        this.notifications.sort((a, b) => {
+          const dateA = new Date(a.timestamp || a.start).getTime();
+          const dateB = new Date(b.timestamp || b.start).getTime();
+          return dateB - dateA; // newest first
+        });
+
+        // Optionally, you can still apply a filter for special case handling (like 'Consultation')
+        this.notifications.sort((a, b) => {
+          if (a.title === 'Consultation' && b.title !== 'Consultation') return -1;
+          if (b.title === 'Consultation' && a.title !== 'Consultation') return 1;
+          return 0;
+        });
+
         this.hasNewNotifications = this.notifications.length > 0;
+
+        // Set the reminder notification (the first notification)
+        this.reminder = [this.notifications[0]];
+
+        // Set the displayed notifications (only the first 3)
+        this.displayedNotifications = this.notifications.slice(1, 4);
       },
       (error) => {
         console.error('Error fetching notifications', error);

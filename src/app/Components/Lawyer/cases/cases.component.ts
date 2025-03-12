@@ -22,6 +22,9 @@ import {RequestService} from "../../../services/Request/request.service";
 import {ClientService} from "../../../services/ClientService/client.service";
 import {ConsultationService} from "../../../services/Consultation/consultation.service";
 import {Lawyer} from "../../../Models/Lawyer";
+import {Hearing} from "../../../Models/Hearing";
+import {CourtDecision} from "../../../Models/CourtDecison";
+import {CaseOutcome} from "../../../Models/CaseOutcome";
 
 @Component({
   selector: 'app-cases',
@@ -48,6 +51,7 @@ import {Lawyer} from "../../../Models/Lawyer";
 export class CasesComponent implements OnInit{
     cases: Case[]=[];
 lawyer!:Lawyer;
+  shownNotifications: number = 4; // 1 top notification + 3 recent ones
   currentPage: number = 1;
   casesPerPage: number = 5; // Adjust according to your needs
   totalPages: number = 0;
@@ -67,12 +71,15 @@ lawyer!:Lawyer;
   invoiceId: string | null = null;
   notifications: any[] = []; // Adjust type based on your Request model
   hasNewNotifications: boolean = false;
-  notifications$: Observable<Requests[]> = new BehaviorSubject([]);
+  reminder!: Hearing[];  // Change to an array
   isDropdownOpen = false;
+  displayedNotifications: any[] = []; // Notifications to display
   isNotificationDropdownOpen = false; // Track the state of the notification dropdown
   isProfileDropdownOpen = false; // Track the state of the profile dropdown
   alertMessage: string | null = null; // For displaying alert messages
   alertVisible = false; // For controlling the alert visibility
+  caseOutcomes: string[] = Object.values(CaseOutcome).filter(value => typeof value === 'string');
+
   // Function to toggle dropdown visibility
   alertType: 'success' | 'error' | null = null; // To determine the alert type
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
@@ -85,6 +92,7 @@ lawyer!:Lawyer;
         description: ['', Validators.required],
         caseStatus: ['', Validators.required],
         start: ['', Validators.required],
+        caseOutcome: ['', Validators.required],
       });
     this.lawyerId = this.route.snapshot.paramMap.get('lawyerId') || '';
     }
@@ -180,6 +188,12 @@ lawyer!:Lawyer;
         console.error('Error fetching case details:', error);
       });
     }
+  }
+  loadMore() {
+    this.shownNotifications += 3; // Show 3 more notifications when clicked
+  }
+  sortNotifications() {
+    this.notifications.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
   }
 
   openModalAdd() {
@@ -308,7 +322,8 @@ lawyer!:Lawyer;
       const invoice: Omit<Invoice, 'id'> = {
         details: this.details,
         price: this.price,
-        date: this.date
+        date: this.date,
+
       };
 
       this.invoiceServ.createInvoice(invoice).subscribe(response => {
@@ -356,7 +371,28 @@ lawyer!:Lawyer;
       (response: Requests[]) => {
         console.log('Notifications received:', response);
         this.notifications = response;
+
+        // Sort by timestamp or start date (newest first)
+        this.notifications.sort((a, b) => {
+          const dateA = new Date(a.timestamp || a.start).getTime();
+          const dateB = new Date(b.timestamp || b.start).getTime();
+          return dateB - dateA; // newest first
+        });
+
+        // Optionally, you can still apply a filter for special case handling (like 'Consultation')
+        this.notifications.sort((a, b) => {
+          if (a.title === 'Consultation' && b.title !== 'Consultation') return -1;
+          if (b.title === 'Consultation' && a.title !== 'Consultation') return 1;
+          return 0;
+        });
+
         this.hasNewNotifications = this.notifications.length > 0;
+
+        // Set the reminder notification (the first notification)
+        this.reminder = [this.notifications[0]];
+
+        // Set the displayed notifications (only the first 3)
+        this.displayedNotifications = this.notifications.slice(1, 4);
       },
       (error) => {
         console.error('Error fetching notifications', error);
@@ -365,6 +401,7 @@ lawyer!:Lawyer;
       }
     );
   }
+
   getRequestById(requestId: string): Observable<Requests> {
     return this.requestService.getRequestById(requestId);
   }

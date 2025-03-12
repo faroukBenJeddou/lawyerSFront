@@ -17,6 +17,7 @@ import {addHours, formatDistanceToNow} from "date-fns";
 import {BehaviorSubject, debounceTime, Observable, of, Subject, switchMap, tap} from "rxjs";
 import Swal from "sweetalert2";
 import {ConsultationService} from "../../../services/Consultation/consultation.service";
+import {Hearing} from "../../../Models/Hearing";
 
 @Component({
   selector: 'app-lawyer-clients',
@@ -39,6 +40,9 @@ import {ConsultationService} from "../../../services/Consultation/consultation.s
 export class LawyerClientsComponent implements OnInit {
   isModalOpen = false;
   isSearchModalOpen = false;
+  shownNotifications: number = 4; // 1 top notification + 3 recent ones
+  reminder!: Hearing[];  // Change to an array
+  displayedNotifications: any[] = []; // Notifications to display
   client: Client | null = null;  // Allow client to be null or a valid Client object
 isRequestSent=false;
   clients: Client[] = []; // Array to hold clients
@@ -296,7 +300,9 @@ isRequestSent=false;
     }
   }
 
-
+  loadMore() {
+    this.shownNotifications += 3; // Show 3 more notifications when clicked
+  }
   searchClient(event: any): void {
     const searchTerm = event.target.value.toLowerCase();
 
@@ -331,7 +337,28 @@ isRequestSent=false;
       (response: Requests[]) => {
         console.log('Notifications received:', response);
         this.notifications = response;
+
+        // Sort by timestamp or start date (newest first)
+        this.notifications.sort((a, b) => {
+          const dateA = new Date(a.timestamp || a.start).getTime();
+          const dateB = new Date(b.timestamp || b.start).getTime();
+          return dateB - dateA; // newest first
+        });
+
+        // Optionally, you can still apply a filter for special case handling (like 'Consultation')
+        this.notifications.sort((a, b) => {
+          if (a.title === 'Consultation' && b.title !== 'Consultation') return -1;
+          if (b.title === 'Consultation' && a.title !== 'Consultation') return 1;
+          return 0;
+        });
+
         this.hasNewNotifications = this.notifications.length > 0;
+
+        // Set the reminder notification (the first notification)
+        this.reminder = [this.notifications[0]];
+
+        // Set the displayed notifications (only the first 3)
+        this.displayedNotifications = this.notifications.slice(1, 4);
       },
       (error) => {
         console.error('Error fetching notifications', error);
@@ -340,6 +367,7 @@ isRequestSent=false;
       }
     );
   }
+
 
   clearNotifications(): void {
     this.notifications = [];

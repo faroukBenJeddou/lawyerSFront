@@ -48,9 +48,8 @@ export class LawyerViewComponent implements OnInit{
   lawyerId: string | null = null;
   errorMessage: string | null = null; // Variable to hold error messages
   lawyerForm: FormGroup;
-  isLoading = false; // Initialize isLoading
-  MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB, adjust as needed
-  notifications$: Observable<Requests[]> = new BehaviorSubject([]);
+  shownNotifications: number = 4; // 1 top notification + 3 recent ones
+
   clients: Client[]=[];
   consultations:Consultation[]=[];
   hearings: Hearing[] = []; // Add this property to store hearings
@@ -110,13 +109,7 @@ export class LawyerViewComponent implements OnInit{
       image: [null],// Form control for profile picture
     });
   }
-  loadMoreNotifications(): void {
-    // Increase the notificationsCount by 4 each time the user clicks "Load More"
-    this.notificationsCount += 4; // Load next 4 notifications
 
-    // Update the displayedNotifications by slicing the array
-    this.displayedNotifications = this.notifications.slice(0, this.notificationsCount); // Show the next 4 notifications
-  }
   ngOnInit(): void {
     console.log(this.notifications);  // Check if each notification has the 'id' property
 
@@ -172,7 +165,6 @@ export class LawyerViewComponent implements OnInit{
               console.log('Calling reminderHearing');
               this.reminderHearing();
               this.loadNotifications(this.lawyerId);
-              this.displayedNotifications = this.notifications.slice(0, 4);
 
             } else {
               this.errorMessage = 'Lawyer ID is missing!';
@@ -242,20 +234,27 @@ export class LawyerViewComponent implements OnInit{
         console.log('Notifications received:', response);
         this.notifications = response;
 
-        // Sort the notifications by start date and status
+        // Sort by timestamp or start date (newest first)
         this.notifications.sort((a, b) => {
           const dateA = new Date(a.timestamp || a.start).getTime();
           const dateB = new Date(b.timestamp || b.start).getTime();
-          if (dateA !== dateB) return dateA - dateB;
-          if (a.status === 'PENDING' && b.status !== 'PENDING') return -1;
-          if (a.status !== 'PENDING' && b.status === 'PENDING') return 1;
+          return dateB - dateA; // newest first
+        });
+
+        // Optionally, you can still apply a filter for special case handling (like 'Consultation')
+        this.notifications.sort((a, b) => {
+          if (a.title === 'Consultation' && b.title !== 'Consultation') return -1;
+          if (b.title === 'Consultation' && a.title !== 'Consultation') return 1;
           return 0;
         });
 
         this.hasNewNotifications = this.notifications.length > 0;
 
-        // Set the displayed notifications (only the first 6)
-        this.displayedNotifications = this.notifications.slice(0, this.notificationsCount);
+        // Set the reminder notification (the first notification)
+        this.reminder = [this.notifications[0]];
+
+        // Set the displayed notifications (only the first 3)
+        this.displayedNotifications = this.notifications.slice(1, 4);
       },
       (error) => {
         console.error('Error fetching notifications', error);
@@ -263,6 +262,13 @@ export class LawyerViewComponent implements OnInit{
         this.hasNewNotifications = false;
       }
     );
+  }
+
+// Load more notifications when the button is clicked
+  loadMoreNotifications(): void {
+    const newCount = this.notificationsCount + 4; // Show 4 more
+    this.notificationsCount = newCount;
+    this.displayedNotifications = this.notifications.slice(1, newCount); // Exclude the first reminder notification
   }
   getRequestById(requestId: string): Observable<Requests> {
     return this.requestService.getRequestById(requestId);
@@ -425,7 +431,20 @@ export class LawyerViewComponent implements OnInit{
   getTimeAgo(date: Date): string {
     return formatDistanceToNow(new Date(date), {addSuffix: true});
   }
+  addNewNotification(notification: Notification) {
+    this.notifications.unshift(notification); // Add new notification at the top
+    this.sortNotifications(); // Ensure the list is sorted after adding new notification
+  }
 
+// Method to sort notifications by creationDate (newest first)
+  sortNotifications() {
+    this.notifications.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
+  }
+
+// Method to load more notifications
+  loadMore() {
+    this.shownNotifications += 3; // Show 3 more notifications when clicked
+  }
 
 
   loadCases(lawyerId: string): void {

@@ -19,6 +19,7 @@ import {ClientService} from "../../../services/ClientService/client.service";
 import {Lawyer} from "../../../Models/Lawyer";
 import {Client} from "../../../Models/Client";
 import {Consultation} from "../../../Models/Consultation";
+import {Hearing} from "../../../Models/Hearing";
 
 @Component({
   selector: 'app-assistant',
@@ -33,12 +34,17 @@ import {Consultation} from "../../../Models/Consultation";
     NgClass
   ],
   templateUrl: './assistant.component.html',
-  styleUrl: './assistant.component.css'
+  styleUrl: './assistant.component.css',
+
 })
 export class AssistantComponent implements OnInit{
   consultations:Consultation[] = [];
   assistant: Assistant | null = null; // Initialize with null or an empty object
   lawyerId!: string;
+  reminder!: Hearing[];  // Change to an array
+  displayedNotifications: any[] = []; // Notifications to display
+  shownNotifications: number = 4; // 1 top notification + 3 recent ones
+
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
   currentUser!: User;
   assistantForm: FormGroup;
@@ -172,6 +178,9 @@ export class AssistantComponent implements OnInit{
 
       });
     }
+  }
+  loadMore() {
+    this.shownNotifications += 3; // Show 3 more notifications when clicked
   }
 
   loadProfileImageLawyer(lawyer: Lawyer): void {
@@ -382,7 +391,28 @@ export class AssistantComponent implements OnInit{
       (response: Requests[]) => {
         console.log('Notifications received:', response);
         this.notifications = response;
+
+        // Sort by timestamp or start date (newest first)
+        this.notifications.sort((a, b) => {
+          const dateA = new Date(a.timestamp || a.start).getTime();
+          const dateB = new Date(b.timestamp || b.start).getTime();
+          return dateB - dateA; // newest first
+        });
+
+        // Optionally, you can still apply a filter for special case handling (like 'Consultation')
+        this.notifications.sort((a, b) => {
+          if (a.title === 'Consultation' && b.title !== 'Consultation') return -1;
+          if (b.title === 'Consultation' && a.title !== 'Consultation') return 1;
+          return 0;
+        });
+
         this.hasNewNotifications = this.notifications.length > 0;
+
+        // Set the reminder notification (the first notification)
+        this.reminder = [this.notifications[0]];
+
+        // Set the displayed notifications (only the first 3)
+        this.displayedNotifications = this.notifications.slice(1, 4);
       },
       (error) => {
         console.error('Error fetching notifications', error);
@@ -391,6 +421,9 @@ export class AssistantComponent implements OnInit{
       }
     );
   }
+
+// Load more notifications when the button is clicked
+
 
   clearNotifications(): void {
     this.notifications = [];

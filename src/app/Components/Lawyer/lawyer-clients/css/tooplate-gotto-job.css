@@ -58,8 +58,7 @@ https://www.tooplate.com/view/2134-gotto-job
 .hearing-cards-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px; /* Adds space between the cards */
-  justify-content: space-between;
+  gap: 15px; /* Adjust the spacing between the cards */
 }
 
 .hearing-card {

@@ -41,6 +41,7 @@ import {Lawyer} from "../../../Models/Lawyer";
 import {ClientService} from "../../../services/ClientService/client.service";
 import {start} from "@popperjs/core";
 import {addHours, formatDistanceToNow} from "date-fns";
+import {Hearing} from "../../../Models/Hearing";
 
 @Component({
   selector: 'app-consultations',
@@ -57,6 +58,8 @@ export class ConsultationsComponent implements OnInit{
   notificationCount: number = 0;
   showNotifications: boolean = false;
   lawyer!:Lawyer;
+  reminder!: Hearing[];  // Change to an array
+  displayedNotifications: any[] = []; // Notifications to display
   view: CalendarView = CalendarView.Month;
   client!:Client
   isDropdownOpen = false;
@@ -83,6 +86,7 @@ export class ConsultationsComponent implements OnInit{
   hasNewNotifications: boolean = false;
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
   selectedConsultation: Consultation | null = null;
+  shownNotifications: number = 4; // 1 top notification + 3 recent ones
 
 
   selectConsultation(con: any) {
@@ -97,8 +101,13 @@ export class ConsultationsComponent implements OnInit{
       console.log('Notifications:', notifications);
     });
   }
-  getTimeAgo(date: Date): string {
-    return formatDistanceToNow(new Date(date), {addSuffix: true});
+  sortNotifications() {
+    this.notifications.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
+  }
+
+// Method to load more notifications
+  loadMore() {
+    this.shownNotifications += 3; // Show 3 more notifications when clicked
   }
 
   openModal(caseId: string) {
@@ -130,7 +139,7 @@ export class ConsultationsComponent implements OnInit{
   ngOnInit(): void {
     // Get the lawyer ID from the route parameters
     this.lawyerId = this.route.snapshot.paramMap.get('id') || '';
-    this.loadNotifications();
+    this.loadNotifications(this.lawyerId);
     console.log(this.notifications);
     this.selectedConsultation = this.consultations[0];
 
@@ -304,13 +313,42 @@ export class ConsultationsComponent implements OnInit{
     }
   }
 
-  loadNotifications() {
-    const lawyerId = this.lawyerId; // Get this from authentication or other means
-    this.requestService.getNotifications(lawyerId).subscribe(notifications => {
-      this.notifications = notifications;
-      this.notificationCount = this.notifications.length;
-    });
+  loadNotifications(lawyerId: string): void {
+    this.requestService.getNotifications(lawyerId).subscribe(
+      (response: Requests[]) => {
+        console.log('Notifications received:', response);
+        this.notifications = response;
+
+        // Sort by timestamp or start date (newest first)
+        this.notifications.sort((a, b) => {
+          const dateA = new Date(a.timestamp || a.start).getTime();
+          const dateB = new Date(b.timestamp || b.start).getTime();
+          return dateB - dateA; // newest first
+        });
+
+        // Optionally, you can still apply a filter for special case handling (like 'Consultation')
+        this.notifications.sort((a, b) => {
+          if (a.title === 'Consultation' && b.title !== 'Consultation') return -1;
+          if (b.title === 'Consultation' && a.title !== 'Consultation') return 1;
+          return 0;
+        });
+
+        this.hasNewNotifications = this.notifications.length > 0;
+
+        // Set the reminder notification (the first notification)
+        this.reminder = [this.notifications[0]];
+
+        // Set the displayed notifications (only the first 3)
+        this.displayedNotifications = this.notifications.slice(1, 4);
+      },
+      (error) => {
+        console.error('Error fetching notifications', error);
+        this.notifications = [];
+        this.hasNewNotifications = false;
+      }
+    );
   }
+
   getLawyer(lawyerId: string) {
     // Implement the method to fetch Lawyer by ID
     return this.lawyerServ.getLawyerById(lawyerId);

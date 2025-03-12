@@ -83,6 +83,15 @@ export class HearingsService {
   }
 
 
+  updateHearing(hearingId: string, hearing: Hearing): Observable<Hearing> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'  // Make sure content-type is set to JSON
+    });
+
+    return this.http.put<Hearing>(`${this.baseUrl}/update/${hearingId}`, hearing, { headers });
+  }
 
 
 }
