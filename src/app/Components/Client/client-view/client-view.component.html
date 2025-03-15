@@ -232,6 +232,14 @@
         </a>
       </li>
 
+      <li>
+        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#ticket-Components" [routerLink]="['/client', ClientId, 'lawyer']">
+          <i class="icofont-ticket"></i><mat-icon>person</mat-icon> <span>Lawyer</span>
+          <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+        </a>
+      </li>
+
+
     </ul>
     <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
       Logout

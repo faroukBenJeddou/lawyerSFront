@@ -1,0 +1,133 @@
+.rating-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+.lawyer-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.lawyer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.lawyer-info h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.lawyer-info p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* Star Rating System */
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.stars span {
+  font-size: 24px;
+  cursor: pointer;
+  color: #ccc;
+  transition: color 0.2s ease-in-out;
+}
+
+.stars span.selected {
+  color: gold;
+}
+
+.stars span.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Average Rating Display */
+.filled {
+  color: gold;
+}
+
+.ms-2 {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Rated Message */
+.rated-message {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #28a745;
+  font-weight: bold;
+}
+
+.lawyer-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.lawyer-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.lawyer-photo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.stars {
+  font-size: 24px;
+  color: #ccc;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.stars span {
+  transition: color 0.3s;
+}
+
+.stars span:hover,
+.stars span.selected {
+  color: gold;
+}
+.stars {
+  display: flex;
+  cursor: pointer;
+}
+.star {
+  font-size: 24px;
+  color: #ccc;
+}
+.star.filled {
+  color: gold;
+}
+.filled {
+  color: gold;
+  font-size: 20px;
+}
+span {
+  font-size: 18px;
+  color: gray;
+}

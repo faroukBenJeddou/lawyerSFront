@@ -3,6 +3,7 @@ import {Gender} from "./Gender";
 import {Lawyer} from "./Lawyer";
 import {Case} from "./Case";
 import {Consultation} from "./Consultation";
+import {Rating} from "./Rating";
 
 export class Client extends User{
   constructor() {
@@ -15,4 +16,5 @@ export class Client extends User{
   cases!: Case[];
   consultations!:Consultation[];
   creationDate!:Date;
+  ratings!:Rating[];
 }

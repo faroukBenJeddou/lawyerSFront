@@ -39,7 +39,7 @@ export const routes: Routes = [
   {path:'lawyer/:id/assistant',component:AssistantComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
   {path:'client/:id/case',component:ClientCaseComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
   {path:'client/:id/consultations',component:ClientConsultationComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
-  {path:'client/:id/lawyer',component:ClientLawyerComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
+  {path:'client/:clientId/lawyer',component:ClientLawyerComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
   {path:'client/:id/case/:caseId',component:CaseDetailsClientComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
   {path:'client/:id/case/:caseId',component:CaseDetailsClientComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
   {path:'forgotPassword',component:ForgotPasswordComponent},
@@ -47,7 +47,6 @@ export const routes: Routes = [
   { path: 'profile/:id/:lawyerId', component: AllprofilesComponent },
   {path: 'lawyer/:id/invoice',component: InvoiceComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
   { path: 'home', component: HomeComponent },
-
   { path: 'notFound', component: NotFoundComponent }, // Ensure this component exists
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/notFound' }

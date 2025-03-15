@@ -222,7 +222,20 @@ export class LawyerServiceService {
     return this.http.patch(`${this.baseUrl}/change-password`, requestBody, { headers });
   }
 
+  rateLawyer(lawyerId: string, rating: number,clientId:string): Observable<Lawyer> {
+    const token = this.authService.getToken(); // Get the token
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
 
+    // Pass headers as options, not in the body
+    return this.http.post<Lawyer>(
+      `${this.baseUrl}/${lawyerId}/rate?rating=${rating}`,
+      {}, // Empty body (or you can pass data if needed)
+      { headers } // Pass headers here in the options
+    );
+  }
   deleteLawyer(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }

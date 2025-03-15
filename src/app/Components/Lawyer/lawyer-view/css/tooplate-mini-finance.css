@@ -133,6 +133,34 @@ strong {
   font-weight: var(--font-weight-bold);
 }
 
+.custom-bio-text {
+  font-size: 16px; /* Adjust font size for better readability */
+  line-height: 1.8; /* Increase line height for a more spacious feel */
+  color: #555555; /* Medium gray color for text */
+  font-family: 'Roboto', sans-serif; /* Use a modern and easy-to-read font */
+  margin: 0; /* Remove any default margin */
+  padding: 10px 0; /* Add padding around the text for better spacing */
+  text-align: justify; /* Justify text for a clean block layout */
+  word-wrap: break-word; /* Ensure long words break properly */
+}
+
+.custom-bio-text::first-letter {
+  font-size: 1.5em; /* Make the first letter larger */
+  font-weight: bold; /* Bold the first letter */
+  color: #007bff; /* Color the first letter (blue) */
+  padding-right: 5px; /* Add space after the first letter */
+}
+
+.custom-bio-text a {
+  color: #007bff; /* Style links with blue color */
+  text-decoration: none; /* Remove underline */
+  font-weight: bold; /* Make links bold */
+}
+
+.custom-bio-text a:hover {
+  text-decoration: underline; /* Underline links on hover */
+  color: #0056b3; /* Darken link color on hover */
+}
 
 /*---------------------------------------
   SECTION
@@ -1232,7 +1260,86 @@ strong {
     font-size: var(--h6-font-size);
   }
 }
+.custom-block {
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
+.custom-block-profile {
+  border-left: 5px solid #007bff; /* Accent color */
+}
 
+.custom-block h6 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 6px;
+}
+
+/* Rating Stars */
+.stars {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.stars span {
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.stars span.selected {
+  color: #f39c12; /* Gold color for selected stars */
+}
+
+.stars span:hover {
+  transform: scale(1.2);
+  color: #ffcc00;
+}
+
+.stars span.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.star-rating {
+  white-space: nowrap;
+}
+.star-rating [type="radio"] {
+  appearance: none;
+}
+.star-rating i {
+  font-size: 1.2em;
+  transition: 0.3s;
+}
+
+.star-rating label:is(:hover, :has(~ :hover)) i {
+  transform: scale(1.35);
+  color: #fffdba;
+  animation: jump 0.5s calc(0.3s + (var(--i) - 1) * 0.15s) alternate infinite;
+}
+.star-rating label:has(~ :checked) i {
+  color: #faec1b;
+  text-shadow: 0 0 2px #ffffff, 0 0 10px #ffee58;
+}
+
+@keyframes jump {
+  0%,
+  50% {
+    transform: translatey(0) scale(1.35);
+  }
+  100% {
+    transform: translatey(-15%) scale(1.35);
+  }
+}
 
 

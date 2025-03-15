@@ -20,6 +20,7 @@ import {ClientService} from "../../../services/ClientService/client.service";
 import {Client} from "../../../Models/Client";
 import {Lawyer} from "../../../Models/Lawyer";
 import {saveAs} from "file-saver";
+import {LawyerServiceService} from "../../../services/LawyerService/lawyer-service.service";
 
 @Component({
   selector: 'app-case-details-client',
@@ -71,6 +72,8 @@ export class CaseDetailsClientComponent implements OnInit{
   successMessage: string = '';
   showSuccessAlert: boolean = false;
   showErrorAlert: boolean = false;
+  profileImageLawyer: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
+
   setPhase() {
     if (this.case?.caseStatus) {
       this.currentPhase = this.case.caseStatus;
@@ -93,7 +96,9 @@ export class CaseDetailsClientComponent implements OnInit{
     }
   }
   constructor(private http: HttpClient, private authService: AuthService, private fb: FormBuilder, private invoiceServ: InvoiceService,private hearingServ:HearingsService,
-              private route: ActivatedRoute, private caseService: CaseService,private modalService:NgbModal,private docServ:DocumentsService,private clientServ:ClientService) {
+              private route: ActivatedRoute, private caseService: CaseService,private modalService:NgbModal,private docServ:DocumentsService,private clientServ:ClientService,
+              private lawyerService:LawyerServiceService) {
+
   }
   openHearingModal(caseId: string) {
     this.caseId = caseId; // Set the current caseId
@@ -175,22 +180,14 @@ export class CaseDetailsClientComponent implements OnInit{
         next: (client: Client) => {
           this.client = client; // Assign client to this.client
           console.log('Fetched client:', this.client); // Log fetched client
+          this.getLawyer(this.clientId);
+
         },
         error: (error) => {
           console.error('Error fetching client:', error);
         }
       });
 
-      // Fetch the lawyers associated with the client
-      this.clientServ.getLawyers(this.clientId).subscribe({
-        next: (lawyers: Lawyer[]) => {
-          this.lawyers = lawyers; // Assign the array of lawyers to this.lawyers
-          console.log('Fetched lawyers:', this.lawyers); // Log the list of fetched lawyers
-        },
-        error: (error) => {
-          console.error('Error fetching lawyers:', error);
-        }
-      });
 
 
       // Fetch case information
@@ -210,9 +207,36 @@ export class CaseDetailsClientComponent implements OnInit{
       });
     }
   }
-loadLawyer(){
+  getLawyer(clientId: string) {
+    this.clientServ.getLawyers(clientId).subscribe({
+      next: (lawyers) => {
+        this.lawyers = lawyers;
+        // Loop over lawyers and load their images
+        this.lawyers.forEach(lawyer => {
+          this.loadProfileImageLawyer(lawyer); // Call for each lawyer
 
-}
+        });
+        console.log("Retrieved Lawyers:", lawyers);
+      },
+      error: (error) => {
+        console.error("Error fetching lawyers:", error);
+      }
+    });
+  }
+  loadProfileImageLawyer(lawyer: Lawyer | undefined): void {
+    if (lawyer && lawyer.id) {
+      this.lawyerService.getImageById(lawyer.id).subscribe(blob => {
+        if (blob) {
+          this.profileImageLawyer = URL.createObjectURL(blob);
+          console.log('Lawyer image URL:', this.imageUrl); // Debugging line
+        } else {
+          console.error('No image data received for lawyer');
+        }
+      }, error => {
+        console.error('Error fetching lawyer image', error);
+      });
+    }
+  }
   loadCase() {
     if (this.caseId) {
       this.caseService.getCase(this.caseId).subscribe({

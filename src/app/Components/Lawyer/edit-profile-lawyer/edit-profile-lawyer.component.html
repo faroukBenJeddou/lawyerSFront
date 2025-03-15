@@ -314,6 +314,7 @@
               <input class="form-control"  type="email" id="inputBirthday" formControlName="birthdate" placeholder="{{lawyer?.birthdate}}">
               <input class="form-control"  type="tel" id="inputPhone" formControlName="phoneNumber" placeholder="{{lawyer?.phoneNumber}}">
               <input class="form-control"  type="text" id="inputOrgName" formControlName="office_adress" placeholder="{{lawyer?.office_adress}}">
+              <input class="form-control"  type="text" id="info" formControlName="info" placeholder="{{lawyer?.info}}">
               <select class="form-control" id="spec" formControlName="speciality">
                 <option value="" disabled selected>{{ lawyer?.speciality || 'Select a Speciality' }}</option>
                 <option *ngFor="let type of caseTypes" [value]="type">{{ type }}</option>

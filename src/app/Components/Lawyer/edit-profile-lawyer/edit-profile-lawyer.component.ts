@@ -90,6 +90,7 @@ export class EditProfileLawyerComponent implements OnInit{
       password: [''],
       email: [''],
       speciality: [''],
+      info : [''],
     });
   }
   loadMore() {
@@ -183,6 +184,7 @@ export class EditProfileLawyerComponent implements OnInit{
                 password: '',
                 image: [null],  // Initialize the image form control
                 speciality: this.lawyer.speciality || '',
+                info: this.lawyer.info || '',
               });
 
 

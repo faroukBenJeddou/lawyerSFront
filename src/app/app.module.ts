@@ -63,6 +63,8 @@ import {ToastrModule} from "ngx-toastr";
 import {LawyerViewComponent} from "./Components/Lawyer/lawyer-view/lawyer-view.component";
 import {AllprofilesComponent} from "./Components/allprofiles/allprofiles.component";
 import {NavBarComponent} from "./nav-bar/nav-bar.component";
+import {LawyersProfilesComponent} from "./Components/lawyers-profiles/lawyers-profiles.component";
+import {RatingComponent} from "./Components/rating/rating.component";
 const appProviders = [
   provideRouter(routes),
   provideAnimationsAsync(),
@@ -105,7 +107,7 @@ const appProviders = [
 ];
 @NgModule({
     declarations: [AppComponent, CalendarComponent,LoginComponent,ConsultationsComponent,ClientViewComponent,ClientLawyerComponent,
-      ClientConsultationComponent,LawyerViewComponent,AllprofilesComponent],
+      ClientConsultationComponent,LawyerViewComponent,AllprofilesComponent,LawyersProfilesComponent,RatingComponent],
     imports: [
         FormsModule,
         MatIcon,
@@ -206,7 +208,8 @@ const appProviders = [
     providers: appProviders,
     bootstrap: [AppComponent],
     exports: [
-        CalendarComponent,LoginComponent,ClientViewComponent,ClientLawyerComponent,ClientConsultationComponent,LawyerViewComponent,AllprofilesComponent
+        CalendarComponent,LoginComponent,ClientViewComponent,ClientLawyerComponent,ClientConsultationComponent,LawyerViewComponent,AllprofilesComponent,LawyersProfilesComponent,
+      RatingComponent
     ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // Add this line
 })

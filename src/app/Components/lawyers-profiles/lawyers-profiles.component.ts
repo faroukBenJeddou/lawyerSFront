@@ -1,38 +1,30 @@
-import {Component, HostListener, OnInit, ViewEncapsulation} from '@angular/core';
-import {AppModule} from "../../../app.module";
-import {HttpClient} from "@angular/common/http";
-import {AuthService} from "../../../services/auth.service";
-import {LawyerServiceService} from "../../../services/LawyerService/lawyer-service.service";
-import {ActivatedRoute} from "@angular/router";
-import {ConsultationService} from "../../../services/Consultation/consultation.service";
-import {ClientService} from "../../../services/ClientService/client.service";
-import {Consultation} from "../../../Models/Consultation";
-import {Client} from "../../../Models/Client";
-import {Lawyer} from "../../../Models/Lawyer";
+import {Component, HostListener} from '@angular/core';
+import {Case} from "../../Models/Case";
+import {Lawyer} from "../../Models/Lawyer";
+import {Client} from "../../Models/Client";
+import {Hearing} from "../../Models/Hearing";
 import {BehaviorSubject, Observable, Subject, switchMap, take, tap} from "rxjs";
-import {Case} from "../../../Models/Case";
-import {Hearing} from "../../../Models/Hearing";
-import {Requests} from "../../../Models/Requests";
-import {AssistantService} from "../../../services/Assistant/assistant.service";
-import {RequestService} from "../../../services/Request/request.service";
-import {CaseService} from "../../../services/CaseService/case.service";
-import {HearingsService} from "../../../services/hearings/hearings.service";
+import {Requests} from "../../Models/Requests";
+import {ActivatedRoute} from "@angular/router";
+import {LawyerServiceService} from "../../services/LawyerService/lawyer-service.service";
+import {ClientService} from "../../services/ClientService/client.service";
+import {AssistantService} from "../../services/Assistant/assistant.service";
+import {AuthService} from "../../services/auth.service";
+import {RequestService} from "../../services/Request/request.service";
+import {ConsultationService} from "../../services/Consultation/consultation.service";
+import {CaseService} from "../../services/CaseService/case.service";
+import {HearingsService} from "../../services/hearings/hearings.service";
 import {addHours, formatDistanceToNow} from "date-fns";
 
 @Component({
-  selector: 'app-client-lawyer',
-
-  templateUrl: './client-lawyer.component.html',
-  styleUrl: './client-lawyer.component.css',
-  encapsulation: ViewEncapsulation.None
-
+  selector: 'app-lawyers-profiles',
+  templateUrl: './lawyers-profiles.component.html',
+  styleUrl: './lawyers-profiles.component.css'
 })
-export class ClientLawyerComponent implements OnInit {
+export class LawyersProfilesComponent {
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
-  profileImageLawyer: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
   userId!: string;
-  caseId!:string;
-  case!:Case;
+  userProfile: any; // Adjust the type based on your data structure
   errorMessage!: string;
   clientProfile: any; // Define lawyerProfile property
   profilePic: string = 'http://bootdey.com/img/Content/avatar/avatar1.png';
@@ -40,14 +32,9 @@ export class ClientLawyerComponent implements OnInit {
   lawyer!:Lawyer | undefined;
   client!:Client | undefined;
   lawyerId!:string;
-  stars: number[] = [1, 2, 3, 4, 5]; // Array of star ratings
-  clientRatings: { [lawyerId: string]: { [clientId: string]: number } } = {}; // Ratings dictionary
-  rating: number = 0; // Single number for current rating
-  star!: number;
-  clientId!:string;
   reminder!: Hearing[];  // Change to an array
   displayedNotifications: any[] = []; // Notifications to display
-  lawyers !:Lawyer [];
+
   notifications: any[] = []; // Adjust type based on your Request model
   hasNewNotifications: boolean = false;
   notifications$: Observable<Requests[]> = new BehaviorSubject([]);
@@ -74,24 +61,30 @@ export class ClientLawyerComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.userId = this.route.snapshot.paramMap.get('id') || '';
-    this.clientId = this.route.snapshot.paramMap.get('clientId') || '';
-    this.getLawyer(this.clientId);
-    this.getClientById(this.clientId);
+    this.lawyerId = this.route.snapshot.paramMap.get('lawyerId') || '';
+    this.getLawyerById(this.lawyerId);
+    this.getClientById(this.userId);
     this.reminderHearing();
     this.loadCases(this.userId);
     this.getCases(this.lawyerId);
-    this.loadProfileImageLawyer(this.lawyer);
-    this.loadProfileImageC(this.client);
-    this.loadNotifications(this.clientId);
+    this.loadNotifications(this.lawyerId);
     console.log('User ID:', this.userId); // Log user ID
-
+    this.clientService.getImageById(this.userId).subscribe(blob => {
+      if (blob) {
+        this.imageUrl = URL.createObjectURL(blob);
+      } else {
+        console.error('No image data received');
+      }
+    }, error => {
+      console.error('Error fetching image', error);
+    });
+    this.loadProfileImage(this.lawyerId);
   }
-
-  loadProfileImageLawyer(lawyer: Lawyer | undefined): void {
+  loadProfileImageLawyer(lawyer: Lawyer): void {
     if (lawyer && lawyer.id) {
       this.lawyerService.getImageById(lawyer.id).subscribe(blob => {
         if (blob) {
-          this.profileImageLawyer = URL.createObjectURL(blob);
+          this.imageUrl = URL.createObjectURL(blob);
           console.log('Lawyer image URL:', this.imageUrl); // Debugging line
         } else {
           console.error('No image data received for lawyer');
@@ -102,23 +95,17 @@ export class ClientLawyerComponent implements OnInit {
     }
   }
 
-  loadProfileImageC(client: Client | undefined): void {
-    if (client && client.id) {  // Ensure the client is defined and has an ID
-      this.clientService.getImageById(client.id).subscribe(blob => {
-        if (blob) {
-          this.imageUrl = URL.createObjectURL(blob);
-          console.log('Client image URL:', this.imageUrl);
-        } else {
-          console.error('No image data received');
-        }
-      }, error => {
-        console.error('Error fetching image', error);
-      });
-    } else {
-      console.error('Client is undefined or missing an id');
-    }
+  loadProfileImageC(client: Client): void {
+    this.clientService.getImageById(client.id).subscribe(blob => {
+      if (blob) {
+        client.image = URL.createObjectURL(blob);
+      } else {
+        console.error('No image data received');
+      }
+    }, error => {
+      console.error('Error fetching image', error);
+    });
   }
-
 
 
 
@@ -166,6 +153,13 @@ export class ClientLawyerComponent implements OnInit {
   getRequestById(requestId: string): Observable<Requests> {
     return this.requestService.getRequestById(requestId);
   }
+  declineRequest(requestId: string) {
+    this.deleteRequest(requestId); // Call backend service to decline the request
+    this.showAlert('Request declined.', 'error'); // Show red alert message
+
+    // Load notifications again after declining
+    this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
+  }
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
@@ -192,30 +186,21 @@ export class ClientLawyerComponent implements OnInit {
       this.isDropdownOpen = false;
     }
   }
-  getLawyer(clientId: string) {
-    this.clientService.getLawyers(clientId).subscribe({
-      next: (lawyers) => {
-        this.lawyers = lawyers;
-        // Loop over lawyers and load their images
-        this.lawyers.forEach(lawyer => {
-          this.loadProfileImageLawyer(lawyer); // Call for each lawyer
-          if (!this.clientRatings[lawyer.id]) {
-            this.clientRatings[lawyer.id] = {};
-          }
-
-        });
-        console.log("Retrieved Lawyers:", lawyers);
+  getLawyer(lawyerId: string) {
+    // Implement the method to fetch Lawyer by ID
+    return this.lawyerService.getLawyerById(lawyerId);
+  }
+  getLawyerById(lawyerId: string) {
+    // Implement the method to fetch Lawyer by ID
+    return this.lawyerService.getLawyerById(lawyerId).subscribe({
+      next: (lawyer) => {
+        this.lawyer = lawyer;
       },
       error: (error) => {
-        console.error("Error fetching lawyers:", error);
+        console.error('Error fetching cases:', error);
       }
     });
   }
-  hasRated(lawyerId: string): boolean {
-    return this.clientRatings[lawyerId]?.[this.clientId] !== undefined;
-  }
-
-
   getClient(clientId: string) {
     // Implement the method to fetch Client by ID
     return this.clientService.getClientById(clientId);
@@ -225,7 +210,6 @@ export class ClientLawyerComponent implements OnInit {
     return this.clientService.getClientById(clientId).subscribe({
       next: (client) => {
         this.client = client;
-        this.loadProfileImageC(client);
       },
       error: (error) => {
         console.error('Error fetching cases:', error);
@@ -244,6 +228,45 @@ export class ClientLawyerComponent implements OnInit {
     });
   }
 
+  acceptRequest(requestId: string) {
+    this.getRequestById(requestId).pipe(
+      switchMap(request =>
+        this.getLawyer(request.lawyer.id).pipe(
+          switchMap(lawyer =>
+            this.getClient(request.client.id).pipe(
+              switchMap(client => {
+                const newConsultation = {
+                  title: request.title,
+                  start: request.start,
+                  end: addHours(new Date(), 1),
+                };
+
+                return this.consultationServ.createConsultation(newConsultation, request.client.id, request.lawyer.id).pipe(
+                  switchMap(() =>
+                    this.requestService.deleteRequest(requestId).pipe(
+                      tap(() => {
+                        this.showAlert('Request accepted.', 'success'); // Show green alert message
+                        // Load notifications again after accepting
+                        this.requestService.getNotifications(this.route.snapshot.paramMap.get('id') || '');
+                      })
+                    )
+                  )
+                );
+              })
+            )
+          )
+        )
+      )
+    ).subscribe({
+      error: err => {
+        console.error('Error handling request', err);
+        this.showAlert('Failed to handle request.', 'error'); // Show error alert if needed
+      }
+    });
+  }
+  deleteRequest(requestId: string) {
+    this.requestService.deleteRequest(requestId).subscribe();
+  }
   getCases(lawyerId: string): void {
     this.caseServ.getCasesForLawyer(lawyerId).subscribe({
       next: (cases) => {
@@ -267,7 +290,5 @@ export class ClientLawyerComponent implements OnInit {
       }
     });
   }
-
-
 
 }

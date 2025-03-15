@@ -1,0 +1,43 @@
+<div class="rating-container">
+  <h2>Rate Your Lawyer</h2>
+
+  <!-- If there are no lawyers to rate -->
+  <div *ngIf="lawyers.length === 0">
+    <p>No lawyers available to rate.</p>
+  </div>
+
+  <!-- Iterate through lawyers and display rating system -->
+  <div *ngFor="let lawyer of lawyers" class="lawyer-card">
+    <div class="lawyer-info">
+      <div>
+        <h3>{{ lawyer.firstName }} {{ lawyer.familyName }}</h3>
+        <p>Specialty: {{ lawyer.speciality || 'Not specified' }}</p>
+      </div>
+    </div>
+
+    <!-- Star Rating System -->
+    <div class="stars">
+    <span *ngFor="let star of [1, 2, 3, 4, 5]"
+          (click)="submitRating(lawyer.id, star)"
+      [class.selected]="star <= (selectedRatings[lawyer.id] || 0)"
+      [class.disabled]="isRated[lawyer.id]">
+      ★
+      </span>
+    </div>
+
+    <!-- Message when lawyer is already rated -->
+    <div *ngIf="isRated[lawyer.id]" class="rated-message">
+      <p>You have already rated this lawyer.</p>
+    </div>
+
+    <p class="d-flex flex-wrap mb-2">
+      <strong>Average Rating:</strong>
+      <span *ngFor="let star of [1, 2, 3, 4, 5]"
+            [class.filled]="star <= averageRatings[lawyer.id]">
+    ★
+  </span>
+      <span class="ms-2">({{ averageRatings[lawyer.id] || 'No Ratings' }})</span>
+    </p>
+
+  </div>
+</div>
