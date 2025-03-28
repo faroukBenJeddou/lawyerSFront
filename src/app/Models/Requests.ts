@@ -17,6 +17,8 @@ export class Requests {
   client: {
     id: string;
   };
+  assistantJ?: { id: string };  // Make 'assistant' optional
+
   status!: ConsultationStatus;
   isRead!: boolean;
   isNotification!: boolean;

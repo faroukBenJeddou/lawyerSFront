@@ -13,6 +13,8 @@ import {LoginPayload} from "../../LoginPayload";
 import Swal from 'sweetalert2';
 import {GoogleSigninButtonModule, SocialAuthService, SocialUser,SocialAuthServiceConfig} from "@abacritt/angularx-social-login";
 import jwtDecode from "jwt-decode";
+import {Assistant} from "../../Models/Assistant";
+import {AssistantService} from "../../services/Assistant/assistant.service";
 
 @Component({
   selector: 'app-login',
@@ -28,6 +30,7 @@ export class LoginComponent implements OnInit {
   loggedIn: any
   showAlert = false; // Property to control alert visibility
   alertMessage = '';
+  assistantId!: string;
   alertType = 'success'; // 'success' or 'danger'
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -35,7 +38,7 @@ export class LoginComponent implements OnInit {
   });
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router
-    , private messageServ: MessageService, private authServ: SocialAuthService) {
+    , private messageServ: MessageService, private authServ: SocialAuthService,private  assistServ:AssistantService) {
   }
 
   ngOnInit() {
@@ -44,6 +47,7 @@ export class LoginComponent implements OnInit {
       this.user = user;
       this.loggedIn = (user != null);
       console.log(this.user)
+      const email = this.user.email;
     });
   }
 
@@ -59,34 +63,53 @@ export class LoginComponent implements OnInit {
           const token = response?.token;
           const lawyerId = response?.lawyerId; // Extract lawyerId from response
           const clientId = response?.id;
-          console.log(response);
+          const email = loginPayload.email; // Use the email from the login form payload
+
+          console.log('Login Response:', response);
 
           if (token) {
+            // Store token for future requests
             localStorage.setItem('authToken', token);
             const decodedToken: any = jwtDecode(token);
             const userRole = decodedToken?.role;
 
-            // Show success alert
+            // Success message after login
             this.alertMessage = 'Login Successful!';
             this.alertType = 'success';
             this.showAlert = true;
 
+            // Redirect after a short delay
             setTimeout(() => {
               this.showAlert = false;
+
               // Navigate based on user role
               if (userRole === 'admin') {
                 this.router.navigate(['/admin']);
-              } else if (userRole === 'Lawyer' || userRole === 'assistant') {
+              } else if (userRole === 'Lawyer') {
                 this.router.navigate([`/lawyer/${lawyerId}`]);
               } else if (userRole === 'Client') {
                 this.router.navigate([`/client/${clientId}`]);
+              } else if (userRole === 'Assistant') {
+                this.assistServ.getAssistantByEmail(email).subscribe(
+                  (response) => {
+                    if (response && response.id) {
+                      this.assistantId = response.id; // Assign the assistantId after getting the response
+                      this.router.navigate([`/assistant/${this.assistantId}`]); // Navigate to the assistant route
+                    } else {
+                      console.error('Assistant not found or response is invalid');
+                    }
+                  },
+                  (error) => {
+                    console.error('Error fetching assistant:', error);
+                  }
+                );
               } else {
-                this.router.navigate(['/home']);
+                this.router.navigate(['/home']); // Default fallback route
               }
             }, 2000);
 
           } else {
-            // Show error alert if no token is received
+            // Show error if no token is received
             this.alertMessage = 'Invalid email or password!';
             this.alertType = 'danger';
             this.showAlert = true;
@@ -97,7 +120,7 @@ export class LoginComponent implements OnInit {
           }
         },
         error => {
-          // Show error alert on API failure
+          // Show error alert on login failure
           this.alertMessage = 'Invalid email or password!';
           this.alertType = 'danger';
           this.showAlert = true;

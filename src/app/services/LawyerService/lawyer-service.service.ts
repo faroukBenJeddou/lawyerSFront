@@ -187,7 +187,15 @@ export class LawyerServiceService {
     return this.http.get<boolean>(`${this.baseUrl}/${lawyerId}/client/email/${email}`, { headers });
   }
 
+  isAssistantLinked(lawyerId:string,email: string): Observable<boolean> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
 
+    return this.http.get<boolean>(`${this.baseUrl}/${lawyerId}/is-linked/${email}`, { headers });
+  }
 
   sendFollowRequest(lawyerId: string, email: string): Observable<string> {
     const token = this.authService.getToken(); // Get the token
@@ -208,6 +216,24 @@ export class LawyerServiceService {
       );
   }
 
+  sendFollowRequestAssistant(lawyerId: string, email: string): Observable<string> {
+    const token = this.authService.getToken(); // Get the token
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<string>(`${this.baseUrl}/sendFollowRequestAssistant?lawyerId=${lawyerId}&email=${email}`, {}, { headers })
+      .pipe(
+        tap((response) => {
+          console.log('Response:', response);  // Log the successful response
+        }),
+        catchError((error) => {
+          console.error('Error sending follow request:', error);
+          return throwError('Failed to send follow request. Please try again later.');
+        })
+      );
+  }
 
 
   changePassword(currentPassword: string, newPassword: string, confirmationPassword: string): Observable<any> {

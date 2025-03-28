@@ -9,7 +9,7 @@ import {Observable} from "rxjs";
 export class RatingService {
 
   private baseUrl = 'http://localhost:8081/Client'
-  private apiUrl='http://localhost:8081/Lawyer'
+  private apiUrl='http://localhost:8081/lawyer'
   constructor(private http: HttpClient, private authService: AuthService) {
   }
 
@@ -48,5 +48,14 @@ export class RatingService {
 
     return this.http.get<number>(`${this.baseUrl}/average/${lawyerId}`, { headers });
   }
+  getAverageRatingLawyer(lawyerId: string): Observable<number> {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      throw new Error('Token is missing');
+    }
 
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get<number>(`${this.apiUrl}/${lawyerId}/average-rating`, { headers });
+  }
 }

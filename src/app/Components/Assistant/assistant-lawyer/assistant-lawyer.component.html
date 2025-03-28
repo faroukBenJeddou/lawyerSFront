@@ -13,8 +13,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700&display=swap" rel="stylesheet">
 
 
-  <link href="../lawyer-view/css/bootstrap-icons.css" rel="stylesheet">
-  <link href="../lawyer-clients/css/tooplate-gotto-job.css" rel="stylesheet">
+  <link href="../../Lawyer/lawyer-view/css/bootstrap-icons.css" rel="stylesheet">
+  <link href="../../Lawyer/lawyer-clients/css/tooplate-gotto-job.css" rel="stylesheet">
 
 </head>
 <body>
@@ -223,7 +223,7 @@
       </div>
 
       <div class="col-lg-6 col-12">
-        <form [formGroup]="assistantForm" (ngSubmit)="getAssistantByEmail(assistantForm.value.email)" class="custom-form hero-form" action="#" method="get" role="form">
+        <form   [formGroup]="lawyerForm" (ngSubmit)="getLawyerByEmail(lawyerForm.value.email)" class="custom-form hero-form" action="#" method="get" role="form">
           <h3 class="text-white mb-3">Search for an Assistant</h3>
 
           <div class="row">
@@ -246,29 +246,33 @@
 
           </div>
         </form>
-        <div *ngIf="assistant" class="assistant-details">
+        <div *ngIf="linkedLawyer" class="assistant-details">
           <h5>Assistant Details:</h5>
           <div class="assistant-info">
-            <img [src]="assistant?.image ? assistant.image : 'http://bootdey.com/img/Content/avatar/avatar1.png'" alt="">
+            <img [src]="lawyer?.image ? lawyer.image : 'http://bootdey.com/img/Content/avatar/avatar1.png'" alt="Assistant Image">
             <div>
-              <p><strong>Name:</strong> {{ assistant.firstName }} {{ assistant.familyName }}</p>
-              <p><strong>Email:</strong> {{ assistant.email }}</p>
+              <p><strong>Name:</strong> {{ lawyer.firstName }} {{ lawyer.familyName }}</p>
+              <p><strong>Email:</strong> {{ lawyer.email }}</p>
             </div>
           </div>
 
-          <div *ngIf="isAssistantLinked" class="assistant-status not-linked">
+          <!-- Check if lawyer is linked -->
+          <div *ngIf="isLawyerLinked" class="assistant-status not-linked">
             <strong>This Assistant is already linked to a Lawyer.</strong>
           </div>
 
-          <div *ngIf="!isAssistantLinked && assistant" class="assistant-status linked">
+          <!-- If lawyer is not linked, display this option -->
+          <div *ngIf="!isLawyerLinked && assistant" class="assistant-status linked">
             <strong>This Assistant is available for hiring.</strong>
-            <br><button (click)="sendFollowRequest()" type="submit" class="btn-add">Add</button>
+            <br><button (click)="sendFollowRequest()" type="button" class="btn-add">Add</button>
           </div>
 
+          <!-- Success message -->
           <div *ngIf="showSuccessMessage" class="alert alert-success">
             <strong>Follow request sent successfully!</strong>
           </div>
 
+          <!-- Error message -->
           <div *ngIf="showErrorMessage" class="alert alert-danger">
             <strong>Failed to send follow request. Please try again later.</strong>
           </div>
@@ -276,9 +280,9 @@
 
 
         <!-- If no client was found -->
-<!--        <div *ngIf="!client && clientForm.touched" style="margin-top: 20px; color: red;">-->
-<!--          <strong>No client found with this email.</strong>-->
-<!--        </div>-->
+        <!--        <div *ngIf="!client && clientForm.touched" style="margin-top: 20px; color: red;">-->
+        <!--          <strong>No client found with this email.</strong>-->
+        <!--        </div>-->
       </div>
 
     </div>

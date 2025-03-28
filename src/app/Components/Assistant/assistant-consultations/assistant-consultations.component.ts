@@ -1,56 +1,35 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  ViewChild,
-  TemplateRef, OnInit, ChangeDetectorRef, HostListener
-} from '@angular/core';
-import {MatIcon} from "@angular/material/icon";
-import {JsonPipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase} from "@angular/common";
-import {ActivatedRoute, RouterLink} from "@angular/router";
-import {Case} from "../../../Models/Case";
+import {ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
+import {Consultation} from "../../../Models/Consultation";
+import {Client} from "../../../Models/Client";
+import {Lawyer} from "../../../Models/Lawyer";
+import {Hearing} from "../../../Models/Hearing";
+import {CalendarView} from "angular-calendar";
+import {Requests} from "../../../Models/Requests";
+import {BehaviorSubject, Observable, of, switchMap, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../../../services/auth.service";
 import {LawyerServiceService} from "../../../services/LawyerService/lawyer-service.service";
-import {Consultation} from "../../../Models/Consultation";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ActivatedRoute, RouterLink} from "@angular/router";
 import {ConsultationService} from "../../../services/Consultation/consultation.service";
-import {Documents} from "../../../Models/Documents";
-import {Client} from "../../../Models/Client";
-import {DayPilotModule} from "@daypilot/daypilot-lite-angular";
-
-
-import { FlatpickrModule } from 'angularx-flatpickr';
-
-import { CalendarModule } from 'angular-calendar';
-import { CommonModule } from '@angular/common'; // Import CommonModule
-
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-  CalendarCommonModule,  CalendarDayModule,
- CalendarMonthModule,
-  CalendarView, CalendarWeekModule
-} from 'angular-calendar';
-import { EventColor } from 'calendar-utils';
-import {CaseDetailsComponent} from "../../case/case-details/case-details.component";
-import {AppModule} from "../../../app.module";
-import {RequestService} from "../../../services/Request/request.service";
-import Swal from "sweetalert2";
-import {Requests} from "../../../Models/Requests";
-import {BehaviorSubject, Observable, of, switchMap, tap} from "rxjs";
-import {Lawyer} from "../../../Models/Lawyer";
 import {ClientService} from "../../../services/ClientService/client.service";
-import {start} from "@popperjs/core";
-import {addHours, formatDistanceToNow} from "date-fns";
-import {Hearing} from "../../../Models/Hearing";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {RequestService} from "../../../services/Request/request.service";
+import {addHours} from "date-fns";
+import jwtDecode from "jwt-decode";
+import {AssistantService} from "../../../services/Assistant/assistant.service";
+import {Assistant} from "../../../Models/Assistant";
+import {AppModule} from "../../../app.module";
+import {DatePipe, NgClass, NgForOf, NgIf, NgStyle} from "@angular/common";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
-  selector: 'app-consultations',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-assistant-consultations',
 
-  templateUrl: './consultations.component.html',
-
+  templateUrl: './assistant-consultations.component.html',
+  styleUrl: './assistant-consultations.component.css'
 })
-export class ConsultationsComponent implements OnInit{
+export class AssistantConsultationsComponent implements OnInit {
   consultations: Consultation[]=[];
   consultation !:Consultation;
   clients: Client[] = []; // Array to hold clients
@@ -87,6 +66,9 @@ export class ConsultationsComponent implements OnInit{
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
   selectedConsultation: Consultation | null = null;
   shownNotifications: number = 4; // 1 top notification + 3 recent ones
+   assistantId!: string | null;
+   assistant!: Assistant;
+   errorMessage!: string;
 
 
   selectConsultation(con: any) {
@@ -94,13 +76,94 @@ export class ConsultationsComponent implements OnInit{
   }
 
   constructor(private http:HttpClient,private authService:AuthService,private lawyerServ:LawyerServiceService,private route:ActivatedRoute,
-              private consultationServ:ConsultationService,private clientServ:ClientService,private cdRef: ChangeDetectorRef,
+              private consultationServ:ConsultationService,private clientServ:ClientService,private cdRef: ChangeDetectorRef,private assistantService:AssistantService,
               private modal: NgbModal,private requestService:RequestService,private cdr: ChangeDetectorRef) {
 
     this.notifications$.subscribe(notifications => {
       console.log('Notifications:', notifications);
     });
   }
+
+  ngOnInit(): void {
+    // Get the lawyer ID from the route parameters
+    this.assistantId = this.route.snapshot.paramMap.get('id'); // Get ID from URL
+    this.loadNotifications(this.lawyerId);
+    this.selectedConsultation = this.consultations[0];
+    const token = this.authService.getToken();
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      const email = decodedToken?.sub;
+
+      if (email) {
+        this.assistantService.getAssistantByEmail(email).subscribe({
+          next: (assistant) => {
+            this.assistant = assistant;
+            this.lawyerId=this.assistant.lawyer.id;
+            this.loadDocuments();
+            if (this.lawyerId) {
+              // Fetch lawyer details
+              this.lawyerServ.getLawyerById(this.lawyerId).subscribe(
+                (data: Lawyer) => {
+                  this.lawyer = data;
+                  this.loadProfileImageLawyer(this.lawyer);
+                },
+                (error) => {
+                  console.error('Error fetching lawyer details:', error);
+                }
+              );
+
+              // Fetch consultations for the lawyer
+              this.lawyerServ.getConsultations(this.lawyerId).subscribe((data: Consultation[]) => {
+                this.consultations = data;
+                this.cdRef.detectChanges(); // Force change detection after updating consultations
+              });
+
+              // Fetch clients for the dropdown
+              this.lawyerServ.getClients(this.lawyerId).subscribe({
+                next: (data: Client[]) => {
+                  console.log('Fetched clients for dropdown:', data);
+                  this.clients = data;
+                },
+                error: (error) => {
+                  console.error('Error fetching clients:', error);
+                }
+              });
+
+              // Subscribe to notifications
+              this.notifications$.subscribe(notifications => {
+                this.notificationCount = notifications.length;
+                this.cdRef.detectChanges(); // Detect changes if necessary
+              });
+            }
+
+            if (this.assistant && this.assistant.id) {
+              if (this.assistantId) {
+                this.loadNotifications(this.assistantId);
+              }
+
+
+
+            } else {
+              this.errorMessage = 'Lawyer ID is missing!';
+            }
+          },
+          error: (error) => {
+            this.errorMessage = 'Error fetching lawyer details.';
+          }
+        });
+      } else {
+        this.errorMessage = 'Email not found in token!';
+      }
+    } else {
+      this.errorMessage = 'Token is missing!';
+    }
+
+  }
+
+
+
+
+
   sortNotifications() {
     this.notifications.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
   }
@@ -136,49 +199,6 @@ export class ConsultationsComponent implements OnInit{
     }
   }
 
-  ngOnInit(): void {
-    // Get the lawyer ID from the route parameters
-    this.lawyerId = this.route.snapshot.paramMap.get('id') || '';
-    this.loadNotifications(this.lawyerId);
-    console.log(this.notifications);
-    this.selectedConsultation = this.consultations[0];
-
-    if (this.lawyerId) {
-      // Fetch lawyer details
-      this.lawyerServ.getLawyerById(this.lawyerId).subscribe(
-        (data: Lawyer) => {
-          this.lawyer = data;
-          this.loadProfileImageLawyer(this.lawyer);
-        },
-        (error) => {
-          console.error('Error fetching lawyer details:', error);
-        }
-      );
-
-      // Fetch consultations for the lawyer
-      this.lawyerServ.getConsultations(this.lawyerId).subscribe((data: Consultation[]) => {
-        this.consultations = data;
-        this.cdRef.detectChanges(); // Force change detection after updating consultations
-      });
-
-      // Fetch clients for the dropdown
-      this.lawyerServ.getClients(this.lawyerId).subscribe({
-        next: (data: Client[]) => {
-          console.log('Fetched clients for dropdown:', data);
-          this.clients = data;
-        },
-        error: (error) => {
-          console.error('Error fetching clients:', error);
-        }
-      });
-
-      // Subscribe to notifications
-      this.notifications$.subscribe(notifications => {
-        this.notificationCount = notifications.length;
-        this.cdRef.detectChanges(); // Detect changes if necessary
-      });
-    }
-  }
 
 
 
@@ -208,6 +228,7 @@ export class ConsultationsComponent implements OnInit{
     this.authService.logout();
   }
   addConsultation() {
+    console.log(this.lawyerId);
     if (this.lawyerId) {
       // Directly use the start Date object from newConsultation
       const consultation = {

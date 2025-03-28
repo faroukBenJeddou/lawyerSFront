@@ -9,6 +9,7 @@ export class Lawyer extends User{
   office_adress !:string;
   info !:string;
   clients !: Client[];
+  permission !:boolean;
   cases !: Case[];
   speciality !:CaseType;
   consultation !:Consultation;

@@ -57,6 +57,16 @@ export class RequestService {
     // Pass headers as part of an options object
     return this.http.get<Requests[]>(`${this.baseUrl}/ClientNotifications/${clientId}`, { headers });
   }
+  getNotificationsForAssistant(assistantId: string): Observable<Requests[]> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'  // Ensure content type is set
+    });
+
+    // Pass headers as part of an options object
+    return this.http.get<Requests[]>(`${this.baseUrl}/AssNotifications/${assistantId}`, { headers });
+  }
 
   updateRequestStatus(id: string, status: 'ACCEPTED' | 'DECLINED'): Observable<void> {
     const token = this.authService.getToken();

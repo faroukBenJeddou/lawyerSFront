@@ -686,6 +686,103 @@ strong {
   margin-left: 5px;
 }
 
+.assistant-details {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  transition: all 0.3s ease-in-out;
+}
+
+.assistant-details h5 {
+  font-size: 1.2rem;
+  color: #313175;
+  margin-bottom: 10px;
+}
+
+.assistant-details img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid #313175;
+  object-fit: cover;
+}
+
+.assistant-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.assistant-info p {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.assistant-info strong {
+  font-weight: 600;
+}
+
+.assistant-status {
+  margin-top: 15px;
+  font-size: 0.95rem;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.linked {
+  background-color: #e6f9e6;
+  color: green;
+  border: 1px solid #3c763d;
+}
+
+.not-linked {
+  background-color: #fdeaea;
+  color: red;
+  border: 1px solid #d9534f;
+}
+
+.btn-add {
+  background-color: #313175;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.btn-add:hover {
+  background-color: #23225d;
+}
+
+.alert {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.alert-success {
+  background-color: #e6f9e6;
+  color: #3c763d;
+  border: 1px solid #3c763d;
+}
+
+.alert-danger {
+  background-color: #fdeaea;
+  color: #d9534f;
+  border: 1px solid #d9534f;
+}
 
 /*---------------------------------------
   CUSTOM FORM

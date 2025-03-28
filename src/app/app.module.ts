@@ -65,6 +65,12 @@ import {AllprofilesComponent} from "./Components/allprofiles/allprofiles.compone
 import {NavBarComponent} from "./nav-bar/nav-bar.component";
 import {LawyersProfilesComponent} from "./Components/lawyers-profiles/lawyers-profiles.component";
 import {RatingComponent} from "./Components/rating/rating.component";
+import {ChartModule} from "primeng/chart";
+import {AssistantViewComponent} from "./Components/Assistant/assistant-view/assistant-view.component";
+import {
+  AssistantConsultationsComponent
+} from "./Components/Assistant/assistant-consultations/assistant-consultations.component";
+import {AssistantLawyerComponent} from "./Components/Assistant/assistant-lawyer/assistant-lawyer.component";
 const appProviders = [
   provideRouter(routes),
   provideAnimationsAsync(),
@@ -107,7 +113,7 @@ const appProviders = [
 ];
 @NgModule({
     declarations: [AppComponent, CalendarComponent,LoginComponent,ConsultationsComponent,ClientViewComponent,ClientLawyerComponent,
-      ClientConsultationComponent,LawyerViewComponent,AllprofilesComponent,LawyersProfilesComponent,RatingComponent],
+      ClientConsultationComponent,LawyerViewComponent,AllprofilesComponent,LawyersProfilesComponent,RatingComponent,AssistantViewComponent,AssistantConsultationsComponent,AssistantLawyerComponent],
     imports: [
         FormsModule,
         MatIcon,
@@ -119,6 +125,7 @@ const appProviders = [
         NgStyle,
         CommonModule,
         CalendarModule,
+      ChartModule,
         FlatpickrModule,
         MatIcon,
         NgForOf,
@@ -209,7 +216,7 @@ const appProviders = [
     bootstrap: [AppComponent],
     exports: [
         CalendarComponent,LoginComponent,ClientViewComponent,ClientLawyerComponent,ClientConsultationComponent,LawyerViewComponent,AllprofilesComponent,LawyersProfilesComponent,
-      RatingComponent
+      RatingComponent,AssistantViewComponent,AssistantConsultationsComponent,AssistantLawyerComponent
     ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // Add this line
 })

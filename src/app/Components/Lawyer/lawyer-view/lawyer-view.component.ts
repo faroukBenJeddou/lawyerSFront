@@ -25,6 +25,9 @@ import {HearingsService} from "../../../services/hearings/hearings.service";
 import {CaseService} from "../../../services/CaseService/case.service";
 import {Hearing} from "../../../Models/Hearing";
 import {ConsultationStatus} from "../../../Models/ConsultationStatus";
+import {CaseOutcome} from "../../../Models/CaseOutcome";
+import {RatingService} from "../../../services/Rating/rating.service";
+import {ChartData} from "chart.js";
 
 @Component({
   selector: 'app-lawyer-view',
@@ -44,12 +47,14 @@ export class LawyerViewComponent implements OnInit{
   currentUser!: User;
   lawyers: Lawyer[] = [];
   cases:Case[]=[];
+  averageRatings: { [key: string]: number } = {}; // Store lawyer ratings
   lawyer: Lawyer | null = null;
   lawyerId: string | null = null;
   errorMessage: string | null = null; // Variable to hold error messages
   lawyerForm: FormGroup;
   shownNotifications: number = 4; // 1 top notification + 3 recent ones
-
+  chartLabels: string[] = [];
+  chartData: any;
   clients: Client[]=[];
   consultations:Consultation[]=[];
   hearings: Hearing[] = []; // Add this property to store hearings
@@ -67,10 +72,18 @@ export class LawyerViewComponent implements OnInit{
   reminder!: Hearing[];  // Change to an array
   displayedNotifications: any[] = []; // Notifications to display
   notificationsCount = 6; // Initial number of notifications to load
-  Notif!:any[];
-  loadAll(){
-
-  }
+  chartDataa: ChartData = {
+    labels: [],  // Array for lawyer names or ids
+    datasets: [
+      {
+        label: 'Average Rating',
+        data: [],  // Array for average ratings
+        backgroundColor: '#42A5F5',
+        borderColor: '#1E88E5',
+        borderWidth: 1
+      }
+    ]
+  };
   showAlert(message: string, type: 'success' | 'error'): void {
     this.alertMessage = message; // Set the alert message
     this.alertVisible = true; // Show the alert
@@ -93,7 +106,7 @@ export class LawyerViewComponent implements OnInit{
   constructor(private authService: AuthService, private router: Router,private lawyerService:LawyerServiceService,private route:ActivatedRoute,
               private modalService:NgbModal,  private fb: FormBuilder,private changeDetector: ChangeDetectorRef, private requestService:RequestService,
               private lawyerServ:LawyerServiceService,private clientServ:ClientService,private consultationServ:ConsultationService, private cdr: ChangeDetectorRef,
-              private hearingServ:HearingsService,private caseServ:CaseService
+              private hearingServ:HearingsService,private caseServ:CaseService,private ratingService:RatingService
   ) {
     this.currentUser = this.authService.getCurrentUser()!;
     this.lawyerId = this.currentUser ? this.currentUser.id : null;
@@ -128,7 +141,7 @@ export class LawyerViewComponent implements OnInit{
             if (this.lawyer && this.lawyer.id) {
               this.lawyerId = this.lawyer.id; // Set lawyerId
               console.log('Lawyer ID:', this.lawyerId); // Debugging
-
+              this.getAverageRating(this.lawyerId);
               // Initialize the form with lawyer data
               this.lawyerForm.patchValue({
                 firstName: this.lawyer.firstName || '',
@@ -160,7 +173,7 @@ export class LawyerViewComponent implements OnInit{
                 }
               );
               this.loadCases(this.lawyerId);
-              this.fetchConsultations();
+              this.fetchConsultations(this.lawyerId);
               this.getClosestConsultation();
               console.log('Calling reminderHearing');
               this.reminderHearing();
@@ -446,20 +459,54 @@ export class LawyerViewComponent implements OnInit{
     this.shownNotifications += 3; // Show 3 more notifications when clicked
   }
 
+  prepareChartData(): void {
+    // Define the accumulator with explicit type
+    const caseOutcomeCounts: { [key in CaseOutcome]?: number } = {};
 
+    // Count the number of each CaseOutcome
+    this.cases.forEach(caseItem => {
+      const outcome = caseItem.caseOutcome;
+      if (outcome) {
+        caseOutcomeCounts[outcome] = (caseOutcomeCounts[outcome] || 0) + 1;
+      }
+    });
+
+    // Prepare the labels and data for the chart
+    this.chartLabels = Object.keys(caseOutcomeCounts) as string[];
+    const chartDataValues = Object.values(caseOutcomeCounts);
+
+    // Assign data to the chartData
+    this.chartData = {
+      labels: this.chartLabels, // Labels for the donut chart
+      datasets: [
+        {
+          data: chartDataValues, // The counts of each case outcome
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40'], // Example colors, customize as needed
+        }
+      ]
+    };
+  }
   loadCases(lawyerId: string): void {
     this.caseServ.getCasesForLawyer(lawyerId).subscribe({
       next: (cases) => {
         this.cases = cases;
+        this.prepareChartData();
+
         this.loadHearingsForCases(cases); // Fetch hearings for each case
+        for (const outcome in cases) {
+          if (cases.hasOwnProperty(outcome)) {
+            this.chartLabels.push(outcome);
+            this.chartData.push(cases[outcome]);
+          }
+        }
       },
       error: (error) => {
         console.error('Error fetching cases:', error);
       }
     });
   }
-  async fetchConsultations() {
-    this.consultationServ.getAll().subscribe(
+  async fetchConsultations(lawyerId: string) {
+    this.consultationServ.getConsultationsForLawyer(lawyerId).subscribe(
       (consultations: Consultation[]) => {
         this.consultations = consultations;
 
@@ -567,6 +614,32 @@ export class LawyerViewComponent implements OnInit{
       }
     );
   }
+  getAverageRating(lawyerId: string): void {
+    this.ratingService.getAverageRatingLawyer(lawyerId).subscribe({
+      next: (average) => {
+        this.averageRatings[lawyerId] = average;
+        this.updateChart();
+      },
+      error: (error) => {
+        console.error("Error fetching average rating:", error);
+      }
+    });
+  }
+  updateChart(): void {
+    // Clear the previous data
+    this.chartDataa.labels = [];
+    this.chartDataa.datasets[0].data = [];
 
+    // Update chart data based on current average ratings
+    for (const lawyerId in this.averageRatings) {
+      if (this.averageRatings.hasOwnProperty(lawyerId)) {
+        this.chartDataa.labels.push(lawyerId); // Or use lawyer name
+        this.chartDataa.datasets[0].data.push(this.averageRatings[lawyerId]);
+      }
+    }
+
+    // Manually trigger change detection
+    this.chartDataa = { ...this.chartDataa };  // This triggers Angular change detection
+  }
 }
 

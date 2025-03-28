@@ -21,8 +21,11 @@ export const authGuard: CanActivateFn = (route, state) => {
       // Allow access based on role
       if (state.url.includes('/admin') && userRole === 'admin') {
         return true;
-      } else if ((state.url.includes('/lawyer') && (userRole === 'Lawyer' || userRole === 'assistant')) ||
-        (state.url.includes('/client') && userRole === 'Client')) {
+      } else if (
+        (state.url.includes('/lawyer') && (userRole === 'Lawyer' )) ||
+        (state.url.includes('/client') && userRole === 'Client') ||
+        (state.url.includes('/assistant') && userRole === 'Assistant') // ✅ Add this line
+      ) {
         return true;
       } else {
         // Redirect unauthorized access to the appropriate page

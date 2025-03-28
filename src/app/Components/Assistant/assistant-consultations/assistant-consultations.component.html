@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lawyer Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/icofont/1.0.0/css/icofont.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="../../Lawyer/lawyer-view/css/bootstrap-icons.css">
+  <link rel="stylesheet" href="../../Lawyer/lawyer-view/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../Lawyer/lawyer-view/css/apexcharts.css">
+  <link rel="stylesheet" href="../../Lawyer/lawyer-view/css/bootstrap-icons.css">
+  <link rel="stylesheet" href="../../Lawyer/lawyer-view/css/tooplate-mini-finance.css">
+  <link rel="stylesheet" href="../../Lawyer/consultations/css/magnific-popup.css">
+  <link rel="stylesheet" href="../../Lawyer/consultations/css/tooplate-waso-strategy.css">
+
+  <style>
+    .add-consultation-btn {
+      margin-bottom: 20px;
+      /* Adjust as needed */
+    }
+
+    .btn-delete-assigned {
+      background-color: #f8d7da; /* Light red for assigned client */
+      color: #721c24; /* Dark red text for assigned client */
+    }
+
+  </style>
+</head>
+<body>
+<div class="sidebar px-4 py-4 py-md-5 me-0 d-md-block d-none" id="sidebar">
+  <div class="d-flex flex-column h-100">
+    <a class="mb-0 brand-icon">
+      <span class="logo-icon">
+        <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png"
+             style="width: 200px; height:150px;" />
+      </span>
+    </a>
+
+    <ul class="menu-list flex-grow-1 mt-3">
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId]">
+          <mat-icon>home</mat-icon> <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'clients']">
+          <mat-icon>people</mat-icon> <span>Clients</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'cases']">
+          <mat-icon>gavel</mat-icon> <span>Cases</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'consultations']">
+          <mat-icon>event</mat-icon> <span>Consultations</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'assistant']">
+          <mat-icon>group</mat-icon> <span>Assistant</span>
+        </a>
+      </li>
+      <li>
+        <a class="m-link" [routerLink]="['/lawyer', lawyerId, 'invoice']">
+          <mat-icon>description</mat-icon> <span>Invoice</span>
+        </a>
+      </li>
+    </ul>
+
+    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
+      Logout <mat-icon>exit_to_app</mat-icon>
+    </button>
+  </div>
+</div>
+<button class="d-md-none"
+        style="position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1050;
+    color: white;
+    background-color: #2c3e50;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;"
+        (click)="toggleSidebar()">
+  ☰
+</button>
+
+<header class="navbar sticky-top flex-md-nowrap">
+  <div class="col-md-3 col-lg-3 me-0 px-3 fs-6">
+  </div>
+
+
+
+  <div class="navbar-nav me-lg-2" >
+    <div class="nav-item text-nowrap d-flex align-items-center">
+      <div class="dropdown ps-3 position-relative">
+        <a class="nav-link dropdown-toggle text-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="navbarLightDropdownMenuLink">
+          <i class="bi-bell fs-3"></i>
+          <span class="position-absolute start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+            <span class="visually-hidden">New alerts</span>
+          </span>
+        </a>
+
+        <!-- Dropdown menu with max-width and overflow control -->
+        <ul class="dropdown-menu dropdown-menu-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink" >
+          <small>Notifications</small>
+
+          <li *ngIf="notifications.length > 0" class="notifications-block border-bottom pb-2 mb-2">
+            <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);">
+              <div class="notifications-icon-wrap" [ngClass]="notifications[0].title === 'Reminder' ? 'bg-info' : 'bg-warning'">
+                <i class="notifications-icon" [ngClass]="notifications[0].title === 'Reminder' ? 'bi-alarm-fill' : 'bi-envelope-fill'"></i>
+              </div>
+
+              <div class="ms-2">
+                <span class="fw-bold">{{ notifications[0].title }}</span>
+                <div class="text-muted">
+                  {{ notifications[0].client.firstName }} {{ notifications[0].client.familyName }}
+                  <br>
+                  {{ notifications[0].start | date: 'fullDate' }} - {{ notifications[0].start | date: 'shortTime' }}
+                </div>
+
+                <div class="mt-2">
+                  <ng-container *ngIf="notifications[0].status === 'PENDING'">
+                    <button class="btn btn-success btn-sm me-2" (click)="acceptRequest(notifications[0].id)">Accept</button>
+                    <button class="btn btn-danger btn-sm" (click)="declineRequest(notifications[0].id)">Decline</button>
+                  </ng-container>
+                  <ng-container *ngIf="notifications[0].status === 'ACCEPTED'">
+                    <span class="text-success">Accepted</span>
+                  </ng-container>
+                  <ng-container *ngIf="notifications[0].status === 'DECLINED'">
+                    <span class="text-danger">Declined</span>
+                  </ng-container>
+                </div>
+              </div>
+            </a>
+          </li>
+
+          <!-- Show only the next most recent notifications based on shownNotifications -->
+          <li *ngFor="let notification of notifications.slice(1, shownNotifications)" class="notifications-block border-bottom pb-2 mb-2">
+            <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);">
+              <div class="notifications-icon-wrap" [ngClass]="notification.title === 'Reminder' ? 'bg-info' : 'bg-warning'">
+                <i class="notifications-icon" [ngClass]="notification.title === 'Reminder' ? 'bi-alarm-fill' : 'bi-envelope-fill'"></i>
+              </div>
+
+              <div class="ms-2">
+                <span class="fw-bold">{{ notification.title }}</span>
+                <div class="text-muted">
+                  {{ notification.client.firstName }} {{ notification.client.familyName }}
+                  <br>
+                  {{ notification.start | date: 'fullDate' }} - {{ notification.start | date: 'shortTime' }}
+                </div>
+
+                <div class="mt-2">
+                  <ng-container *ngIf="notification.status === 'PENDING'">
+                    <button class="btn btn-success btn-sm me-2" (click)="acceptRequest(notification.id)">Accept</button>
+                    <button class="btn btn-danger btn-sm" (click)="declineRequest(notification.id)">Decline</button>
+                  </ng-container>
+                  <ng-container *ngIf="notification.status === 'ACCEPTED'">
+                    <span class="text-success">Accepted</span>
+                  </ng-container>
+                  <ng-container *ngIf="notification.status === 'DECLINED'">
+                    <span class="text-danger">Declined</span>
+                  </ng-container>
+                </div>
+              </div>
+            </a>
+          </li>
+
+          <!-- Load More Button -->
+          <li *ngIf="notifications.length > shownNotifications" class="text-center mt-2">
+            <button class="btn btn-link" (click)="loadMore()">Load More</button>
+          </li>
+
+        </ul>
+      </div>
+
+      <div class="dropdown px-3 position-relative">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image" alt="" style="width: 50px; height: 50px; border-radius: 25%; object-fit: cover;">
+        </a>
+
+        <!-- Dropdown menu with max-width and overflow control -->
+        <ul class="dropdown-menu dropdown-menu-end bg-white shadow" style="max-width: 250px; width: auto; padding: 10px 0; overflow-x: hidden;">
+          <li>
+            <div class="dropdown-menu-profile-thumb d-flex" style="padding: 8px;">
+              <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image img-fluid me-3" alt="" style="width: 40px; height: 40px; object-fit: cover;">
+              <div class="d-flex flex-column">
+                <small>{{ lawyer?.firstName }}</small>
+                <a href="#">{{lawyer?.email}}</a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a class="dropdown-item" [routerLink]="['/lawyer', lawyerId]">
+              <i class="bi-person me-2"></i>
+              Profile
+            </a>
+          </li>
+
+          <li>
+            <a class="dropdown-item" href="setting.html">
+              <i class="bi-gear me-2"></i>
+              Settings
+            </a>
+          </li>
+
+          <li>
+            <a class="dropdown-item" href="help-center.html">
+              <i class="bi-question-circle me-2"></i>
+              Help
+            </a>
+          </li>
+
+          <li class="border-top mt-3 pt-2 mx-4">
+            <a class="dropdown-item ms-0 me-0" (click)="onLogout()">
+              <i class="bi-box-arrow-left me-2"></i>
+              Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Add Consultation Modal -->
+<div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true" [ngClass]="{'show': isModalOpen}" [ngStyle]="{'display': isModalOpen ? 'block' : 'none'}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="documentModalLabel">Add Consultation</h4>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="addConsultation()" >
+          <div class="mb-3">
+            <label for="documentDate" class="form-label">Date</label>
+            <input type="datetime-local" class="form-control" id="documentDate" [(ngModel)]="newConsultation.start" name="start" required>
+
+          </div>
+          <div class="mb-3">
+            <label for="documentContent" class="form-label">Title</label>
+            <textarea class="form-control" id="documentContent" [(ngModel)]="newConsultation.title" name="content" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="documentDesc" class="form-label">Description</label>
+            <textarea class="form-control" id="documentDesc" [(ngModel)]="newConsultation.description" name="description" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="background-color:blue">Add Consultation</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Assign Client Modal -->
+<div class="modal fade" id="assignClientModal" tabindex="-1" role="dialog" aria-labelledby="assignClientLabel" aria-hidden="true" [ngClass]="{'show': isAssignClientModalOpen}" [ngStyle]="{'display': isAssignClientModalOpen ? 'block' : 'none'}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="assignClientLabel">Assign Client to Consultation</h4>
+        <button type="button" class="btn-close" (click)="closeAssignClientModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="assignClientToConsultation()">
+          <div class="mb-3">
+            <label for="client" class="form-label">Client</label>
+            <select class="form-select" id="client" [(ngModel)]="selectedClientId" name="clientId" required>
+              <option value="" disabled>Select a client</option>
+              <option *ngFor="let client of clients" [value]="client.id">
+                {{ client.firstName }} {{ client.familyName }}
+              </option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Assign Client</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeAssignClientModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="d-flex" style="margin-top: 100px;margin-left:200px;">
+  <!-- Calendar Container -->
+
+
+  <!-- Main Content -->
+
+  <section class="about section-padding" id="section_2">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-lg-6 col-12 mb-5 mb-lg-0">
+          <div class="about-image-wrap h-100">
+            <app-calendar></app-calendar>
+            <div class="about-image-info"></div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 col-12 d-flex flex-column">
+          <div class="about-thumb bg-white shadow-lg flex-grow-1">
+            <div class="about-info">
+              <h2 class="mb-3">Track your consultations</h2>
+              <p>The integrated calendar helps you keep track of key legal events. Consultation dates are marked with <strong>red dots</strong>, while hearing dates are highlighted with <strong>blue dots</strong>. This visual representation ensures you never miss an important appointment.</p>
+              <p>Stay organized and plan ahead with ease by using the calendar to manage your consultations and hearings efficiently.</p>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-lg-6 col-md-6 col-12">
+              <div class="about-thumb d-flex flex-column justify-content-center bg-danger mb-lg-0 h-100">
+                <div class="about-info">
+                  <h5 class="text-white mb-4">Add new Consultation</h5>
+                  <a class="custom-btn btn custom-bg-primary" (click)="openModal(consultationId)"
+                     style="padding: 12px 20px; border-radius: 10px; font-size: 16px; font-weight: bold; text-align: center; text-decoration: none; display: inline-block; background-color: #ffc107; color: white; transition: background-color 0.3s ease, transform 0.2s ease;">
+                    Add Consultation
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+<section class="services section-padding" id="section_3">
+  <div class="container">
+    <div class="row">
+
+      <div class="col-lg-10 col-12 text-center mx-auto mb-5">
+
+        <h2 style="font-size:35px; color:#6f4a91;font-weight:bold">Available Consultations</h2>
+
+      </div>
+      <style>
+        .business-consulting-right {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          border-left: 2px solid #ddd; /* Optional: Adds a separator */
+          padding-left: 20px;
+          max-width: 50%;
+          background-color: #f9f9f9;
+          border-radius: 8px;
+          padding: 20px;
+        }
+
+        .tab-pane img {
+          width: 100%;
+          border-radius: 8px;
+          box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h5 {
+          font-size: 24px;
+          font-weight: 600;
+          color: #333;
+        }
+
+        .consultation-detail {
+          display: flex;
+          align-items: center;
+          margin-bottom: 15px;
+          font-size: 16px;
+          color: #555;
+        }
+
+        .consultation-detail i {
+          font-size: 18px;
+          color: #4a90e2;
+          margin-right: 10px;
+        }
+
+        .consultation-detail span {
+          font-size: 16px;
+          color: #333;
+        }
+
+        .consultation-detail i.fa-check-circle {
+          color: #28a745; /* Green color for active status */
+        }
+
+        .consultation-detail i.fa-calendar-alt {
+          color: #f39c12; /* Orange color for date */
+        }
+
+        .consultation-detail i.fa-user {
+          color: #3498db; /* Blue color for client */
+        }
+
+        /* Add hover effect to the details for a nice interaction */
+        .consultation-detail:hover {
+          cursor: pointer;
+          background-color: #f1f1f1;
+          padding: 5px;
+          border-radius: 5px;
+        }
+
+
+        .nav-tabs {
+          border: none;
+        }
+
+        .nav-tabs .nav-link {
+          background: #fff;
+          border-radius: 5px;
+          padding: 20px;
+          box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+          text-align: left;
+          transition: all 0.3s ease-in-out;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          width: 100%; /* Ensure the buttons take up the full width */
+        }
+
+        .nav-tabs .nav-link h3 {
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+
+        .nav-tabs .nav-link span {
+          font-size: 16px;
+          color: #6c757d;
+        }
+
+        .nav-tabs .nav-link.active {
+          border-left-color: #e63946;
+        }
+
+        .nav-tabs .nav-link.active h3 {
+          color: #f4a261;
+        }
+
+        .tab-content img {
+          width: 100%; /* Ensure the image is responsive */
+          max-width: 100%; /* Prevent it from overflowing */
+          height: auto; /* Maintain aspect ratio */
+          border-radius: 5px;
+        }
+
+        .tab-content h5 {
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        .tab-content p {
+          font-size: 16px;
+          color: #333;
+        }
+
+        .tab-content ul {
+          padding-left: 20px;
+        }
+
+        .tab-content ul li {
+          font-size: 16px;
+          color: #555;
+          margin-bottom: 5px;
+        }
+
+        .business-consulting-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20px; /* Adjust the gap between the left and right sections */
+        }
+
+        .business-consulting-left,
+        .business-consulting-right {
+          flex: 1; /* Distribute the space equally */
+        }
+
+        .business-consulting-right {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          border-left: 2px solid #ddd; /* Optional: Adds a separator */
+          padding-left: 20px;
+          max-width: 50%;
+        }
+
+        .nav-tabs {
+          border: none;
+        }
+
+        .nav-tabs .nav-link {
+          .business-consulting-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+          }
+
+          .business-consulting-left {
+            flex: 1;
+          }
+
+          .business-consulting-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            border-left: 2px solid #ddd; /* Optional: Adds a separator */
+            padding-left: 20px;
+          }
+
+          background: #fff;
+          border-radius: 5px;
+          padding: 20px;
+          box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+          text-align: left;
+          width: 50%;
+          border-left: 5px solid transparent;
+          transition: all 0.3s ease-in-out;
+        }
+
+        .nav-tabs .nav-link h3 {
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+
+        .nav-tabs .nav-link span {
+          font-size: 16px;
+          color: #6c757d;
+        }
+        .business-consulting-right {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          max-width: 50%;
+        }
+
+        .nav-tabs .nav-link.active {
+          border-left-color: #e63946;
+        }
+
+        .nav-tabs .nav-link.active h3 {
+          color: #f4a261;
+        }
+
+        .tab-content img {
+          width: 100%;
+          border-radius: 5px;
+        }
+
+        .tab-content h5 {
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        .tab-content p {
+          font-size: 16px;
+          color: #333;
+        }
+
+        .tab-content ul {
+          padding-left: 20px;
+        }
+
+        .tab-content ul li {
+          font-size: 16px;
+          color: #555;
+          margin-bottom: 5px;
+        }
+
+      </style>
+      <div class="row business-consulting-container">
+        <!-- Left side: Consultation buttons -->
+        <div class="col-lg-6 col-12 business-consulting-left">
+
+          <nav>
+            <div class="nav nav-tabs flex-column align-items-baseline" id="nav-tab" role="tablist">
+              <button
+                class="nav-link"
+                *ngFor="let con of consultations"
+                [class.active]="con === selectedConsultation"
+                (click)="selectConsultation(con)">
+                <h3>{{ con.title }}</h3>
+                <span>{{ con.description }}</span>
+                <i
+                  class="fas fa-trash-alt"
+                  (click)="deleteConsultation(con.idConsultation)"
+                  style="color: red; cursor: pointer; font-size: 20px; margin-left: 10px;">
+                </i>
+
+              </button>
+            </div>
+          </nav>
+        </div>
+
+        <!-- Right side: Consultation details -->
+        <div class="col-lg-6 col-12 business-consulting-right">
+          <div class="tab-pane fade show active" *ngIf="selectedConsultation">
+
+            <!-- Consultation Image -->
+            <img src="./assets/consultation.jpeg" class="img-fluid" alt="Consultation Image">
+
+            <!-- Consultation Title -->
+            <h5 class="mt-4 mb-2">{{ selectedConsultation.title }}</h5>
+
+            <!-- Client Information with Icons -->
+            <div class="consultation-detail">
+              <i class="fas fa-user"></i>
+
+              <!-- Display the Assign Client button only if there is no client assigned -->
+              <button class="btn btn-success" (click)="openAssignClientModal(selectedConsultation.idConsultation)" *ngIf="!selectedConsultation.client">
+                Assign Client
+              </button>
+
+              <!-- Display client name only if there is a client assigned -->
+              <span *ngIf="selectedConsultation.client">
+        {{ selectedConsultation.client.firstName }} {{ selectedConsultation.client.familyName }}
+      </span>
+            </div>
+
+            <!-- Consultation Start Time with Icon -->
+            <div class="consultation-detail">
+              <i class="fas fa-calendar-alt"></i>
+              <span>{{ selectedConsultation.start | date: 'dd MMM dd, HH:mm' }}</span>
+            </div>
+
+            <!-- Consultation Status with Icon -->
+            <div class="consultation-detail">
+              <i class="fas fa-check-circle"></i>
+              <span>{{ selectedConsultation.description }}</span>
+
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</section>
+</body>
+</html>

@@ -1,45 +1,35 @@
 import {ChangeDetectorRef, Component, HostListener, OnInit, ViewEncapsulation} from '@angular/core';
-import {MatIcon} from "@angular/material/icon";
-import {ActivatedRoute, RouterLink} from "@angular/router";
-import {Case} from "../../../Models/Case";
+import {Consultation} from "../../../Models/Consultation";
+import {Assistant} from "../../../Models/Assistant";
+import {Hearing} from "../../../Models/Hearing";
+import {Client} from "../../../Models/Client";
+import {User} from "../../../Models/User";
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {BehaviorSubject, Observable, of, switchMap, tap} from "rxjs";
+import {Requests} from "../../../Models/Requests";
+import {Lawyer} from "../../../Models/Lawyer";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../../../services/auth.service";
 import {LawyerServiceService} from "../../../services/LawyerService/lawyer-service.service";
-import {Assistant} from "../../../Models/Assistant";
-import {DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {User} from "../../../Models/User";
+import {ActivatedRoute, RouterLink} from "@angular/router";
 import {AssistantService} from "../../../services/Assistant/assistant.service";
-import {BehaviorSubject, Observable, of, switchMap, tap} from "rxjs";
-import {addHours, formatDistanceToNow} from "date-fns";
 import {RequestService} from "../../../services/Request/request.service";
 import {ConsultationService} from "../../../services/Consultation/consultation.service";
-import {Requests} from "../../../Models/Requests";
 import {ClientService} from "../../../services/ClientService/client.service";
-import {Lawyer} from "../../../Models/Lawyer";
-import {Client} from "../../../Models/Client";
-import {Consultation} from "../../../Models/Consultation";
-import {Hearing} from "../../../Models/Hearing";
+import {addHours} from "date-fns";
+import {DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
+import {MatIcon} from "@angular/material/icon";
+import jwtDecode from "jwt-decode";
 
 @Component({
-  selector: 'app-assistant',
-  standalone: true,
-  imports: [
-    MatIcon,
-    RouterLink,
-    NgForOf,
-    ReactiveFormsModule,
-    DatePipe,
-    NgIf,
-    NgClass,
-    FormsModule
-  ],
-  templateUrl: './assistant.component.html',
-  styleUrl: './assistant.component.css',
+  selector: 'app-assistant-lawyer',
+
+  templateUrl: './assistant-lawyer.component.html',
+  styleUrl: './assistant-lawyer.component.css',
   encapsulation: ViewEncapsulation.None
 
 })
-export class AssistantComponent implements OnInit{
+export class AssistantLawyerComponent implements OnInit {
   consultations:Consultation[] = [];
   assistant: Assistant | null = null; // Initialize with null or an empty object
   lawyerId!: string;
@@ -53,8 +43,8 @@ export class AssistantComponent implements OnInit{
   showErrorMessage: boolean = false;
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
   currentUser!: User;
-  assistantForm!: FormGroup;
-  assistantId!: string;
+  lawyerForm!: FormGroup;
+  assistantId!: string | null;
   errorMessage: string | null = null; // Variable to hold error messages
   isDropdownOpen = false;
   isNotificationDropdownOpen = false; // Track the state of the notification dropdown
@@ -71,103 +61,161 @@ export class AssistantComponent implements OnInit{
   lawyer!:Lawyer;
   clients: Client[] = []; // Array to hold clients
   notificationCount: number = 0; // Define the notificationCount property
-   isAssistantLinked: boolean= false;
-
+  isLawyerLinked: boolean= false;
+  isFormInitialized: boolean = false; // Flag to track initialization
+  linkedLawyer!: Lawyer;
   constructor(private http:HttpClient,private authService:AuthService,private lawyerServ:LawyerServiceService,private route:ActivatedRoute,private fb: FormBuilder,
-              private assistantServ:AssistantService,private requestService:RequestService,private consultationServ:ConsultationService,private clientServ:ClientService, private cdr: ChangeDetectorRef,) {
+              private assistantServ:AssistantService,private requestService:RequestService,private consultationServ:ConsultationService,private clientServ:ClientService, private cdr: ChangeDetectorRef,
+              private assistantService:AssistantService,) {
 
 
     this.currentUser = this.authService.getCurrentUser()!;
-    this.assistantId = this.currentUser ? this.currentUser.id : ''; // Initialize to an empty string if null
 
   }
 
-
-
-
-
-
   ngOnInit(): void {
-    this.assistantForm = this.fb.group({
+    // Initialize form here
+    this.lawyerForm = this.fb.group({
       firstName: [''],
       familyName: [''],
       phoneNumber: [''],
       birthdate: [''],
       office_address: [''],
       password: [''],
-      email: [''],
+      email: ['', [Validators.required, Validators.email]],
       photo: [null], // Form control for profile picture
     });
 
     // Get the lawyer ID from the route parameters
-    this.lawyerId = this.route.snapshot.paramMap.get('id') || '';
-    this.loadNotifications(this.lawyerId);
-    // Check if a lawyer ID is present
-    if (this.lawyerId) {
-      // Fetch the assistant associated with the lawyer
-      this.lawyerServ.getAssistant(this.lawyerId).subscribe({
-        next: (data: Assistant) => {
-          this.assistant = data;
-          this.assistantId = this.assistant.id; // Ensure this is set
-          this.initializeForm();
-        },
-        error: (error) => {
-          console.error('Error fetching assistant:', error);
-        }
-      });
+    this.assistantId = this.route.snapshot.paramMap.get('id'); // Get ID from URL
 
-      // Fetch lawyer details
-      this.lawyerServ.getLawyerById(this.lawyerId).subscribe(
-        (data: Lawyer) => {
-          this.lawyer = data;
-          this.loadProfileImageLawyer(this.lawyer);
+    const token = this.authService.getToken();
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      const email = decodedToken?.sub;
 
-          // Fetch consultations for the lawyer
-          this.consultationServ.getConsultationsForLawyer(this.lawyerId).subscribe((data: Consultation[]) => {
-            this.consultations = data;
-          });
-        },
-        (error) => {
-          console.error('Error fetching lawyer details:', error);
-        }
-      );
+      if (email) {
+        this.assistantService.getAssistantByEmail(email).subscribe({
+          next: (assistant) => {
+            this.assistant = assistant;
+            this.lawyerId = this.assistant.lawyer.id;
 
-      // Fetch clients for the dropdown
-      this.lawyerServ.getClients(this.lawyerId).subscribe({
-        next: (data: Client[]) => {
-          console.log('Fetched clients for dropdown:', data); // Log clients for dropdown
-          this.clients = data;
-        },
-        error: (error) => {
-          console.error('Error fetching clients:', error);
-        }
-      });
+            if (this.assistant && this.assistant.id) {
+              if (this.assistantId) {
+                this.lawyerServ.getAssistant(this.lawyerId).subscribe({
+                  next: (data: Assistant) => {
+                    this.assistant = data;
+                    this.assistantId = this.assistant.id;
+                  },
+                  error: (error) => {
+                    console.error('Error fetching assistant:', error);
+                  }
+                });
 
-      // Subscribe to notifications
-      this.notifications$.subscribe(notifications => {
-        this.notificationCount = notifications.length;
-      });
+                // Fetch lawyer details
+                this.lawyerServ.getLawyerById(this.lawyerId).subscribe(
+                  (data: Lawyer) => {
+                    this.lawyer = data;
+                    this.loadProfileImageLawyer(this.lawyer);
+
+                    // Fetch consultations for the lawyer
+                    this.consultationServ.getConsultationsForLawyer(this.lawyerId).subscribe((data: Consultation[]) => {
+                      this.consultations = data;
+                    });
+
+                    // Check if the form is already initialized, only initialize if not done
+                    if (!this.isFormInitialized) {
+                      this.initializeForm();
+                    }
+                  },
+                  (error) => {
+                    console.error('Error fetching lawyer details:', error);
+                  }
+                );
+
+                // Fetch clients for the dropdown
+                this.lawyerServ.getClients(this.lawyerId).subscribe({
+                  next: (data: Client[]) => {
+                    this.clients = data;
+                  },
+                  error: (error) => {
+                    console.error('Error fetching clients:', error);
+                  }
+                });
+
+                // Subscribe to notifications
+                this.notifications$.subscribe(notifications => {
+                  this.notificationCount = notifications.length;
+                });
+                this.loadNotifications(this.assistantId);
+              }
+            } else {
+              this.errorMessage = 'Lawyer ID is missing!';
+            }
+          },
+          error: (error) => {
+            this.errorMessage = 'Error fetching lawyer details.';
+          }
+        });
+      } else {
+        this.errorMessage = 'Email not found in token!';
+      }
+    } else {
+      this.errorMessage = 'Token is missing!';
     }
 
-    // Trigger change detection if necessary
-    this.cdr.detectChanges(); // Force change detection
+    // Set the flag to indicate form has been initialized
+    this.isFormInitialized = true;
   }
-
 
   initializeForm() {
-    if (this.assistant) {
-      this.assistantForm.patchValue({
-        firstName: this.assistant.firstName || '',
-        familyName: this.assistant.familyName || '',
-        phoneNumber: this.assistant.phoneNumber || '',
-        birthdate: this.assistant.birthdate || '',
-        office_address: this.assistant.office_address || '',
-        password: '', // Generally, you wouldn't prefill the password for security reasons
-        email: this.assistant.email || '',
-
+    if (this.lawyer && !this.isFormInitialized) {
+      this.lawyerForm.patchValue({
+        firstName: this.lawyer.firstName || '',
+        familyName: this.lawyer.familyName || '',
+        phoneNumber: this.lawyer.phoneNumber || '',
+        birthdate: this.lawyer.birthdate || '',
+        office_address: this.lawyer.office_adress || '',
+        password: '', // Do not prefill password
+        email: this.lawyer.email || '',
       });
     }
   }
+  checkLawyerLink(lawyerEmail: string): void {
+    // Call the method to check if client is linked
+    this.assistantService.isLawyerLinked(this.lawyerId, lawyerEmail).subscribe(
+      (isLinked: boolean) => {
+        this.isLawyerLinked = isLinked;  // Set the flag based on the response
+      },
+      (error) => {
+        console.error('Error checking client link status:', error);
+        this.isLawyerLinked = false;  // In case of error, assume not linked
+      }
+    );
+  }
+  getLawyerByEmail(email: string): void {
+    this.lawyerServ.getLawyerByEmail(email).subscribe(
+      (lawyer: Lawyer) => {
+        this.linkedLawyer = lawyer;  // Store the client data
+        // Now check if the client is assigned to the lawyer by calling the backend API
+        this.checkLawyerLink(lawyer.email);  // Check if the client is linked
+        this.openModal();  // Open the modal once the client is found
+        this.isModalOpen = false;
+      },
+      (error) => {
+        console.error('Error fetching client by email:', error);
+        this.client = null;  // Reset client data if not found
+        this.isClientLinked = false;  // Reset the linked status
+        this.openModal();  // Open the modal even if client is not found
+      }
+    );
+  }
+  // Ensure form is not reset unexpectedly
+  resetForm() {
+    this.lawyerForm.reset();
+    this.lawyerForm.get('email')?.setValue('');
+  }
+
   loadMore() {
     this.shownNotifications += 3; // Show 3 more notifications when clicked
   }
@@ -402,23 +450,7 @@ export class AssistantComponent implements OnInit{
     // Implement the method to fetch Client by ID
     return this.clientServ.getClientById(clientId);
   }
-  getAssistantByEmail(email: string): void {
-    this.assistantServ.getAssistantByEmail(email).subscribe(
-      (assistant: Assistant) => {
-        this.assistant = assistant;  // Store the client data
-        // Now check if the client is assigned to the lawyer by calling the backend API
-        this.checkAssistantLink(assistant.email);  // Check if the client is linked
-        this.openModal();  // Open the modal once the client is found
-        this.isModalOpen = false;
-      },
-      (error) => {
-        console.error('Error fetching client by email:', error);
-        this.client = null;  // Reset client data if not found
-        this.isClientLinked = false;  // Reset the linked status
-        this.openModal();  // Open the modal even if client is not found
-      }
-    );
-  }
+
   searchAssistant(event: any): void {
     const searchTerm = event.target.value.toLowerCase();
 
@@ -433,20 +465,9 @@ export class AssistantComponent implements OnInit{
     this.isModalOpen = true;
 
   }
-  checkAssistantLink(assistantEmail: string): void {
-    // Call the method to check if client is linked
-    this.lawyerServ.isAssistantLinked(this.lawyerId, assistantEmail).subscribe(
-      (isLinked: boolean) => {
-        this.isAssistantLinked = isLinked;  // Set the flag based on the response
-      },
-      (error) => {
-        console.error('Error checking client link status:', error);
-        this.isAssistantLinked = false;  // In case of error, assume not linked
-      }
-    );
-  }
+
   sendFollowRequest(): void {
-    this.lawyerServ.sendFollowRequestAssistant(this.lawyerId, this.assistantForm.value.email).subscribe(
+    this.lawyerServ.sendFollowRequestAssistant(this.lawyerId, this.lawyerForm.value.email).subscribe(
       (response) => {
         // Success response: show success message
         console.log('Follow request sent:', response);
