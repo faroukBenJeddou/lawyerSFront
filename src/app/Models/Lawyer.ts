@@ -4,6 +4,7 @@ import {Case} from "./Case";
 import {Consultation} from "./Consultation";
 import {CaseType} from "./CaseType";
 import {Rating} from "./Rating";
+import {Assistant} from "./Assistant";
 
 export class Lawyer extends User{
   office_adress !:string;
@@ -15,7 +16,7 @@ export class Lawyer extends User{
   consultation !:Consultation;
   ratings !:Rating[];
   selectedRatings: { [lawyerId: string]: number } = {}; // Store selected stars
-
+  assistantJ !:Assistant;
   constructor() {
     super();
   }

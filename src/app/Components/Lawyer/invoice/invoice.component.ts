@@ -21,6 +21,7 @@ import {HearingsService} from "../../../services/hearings/hearings.service";
 import {CaseService} from "../../../services/CaseService/case.service";
 import jwtDecode from "jwt-decode";
 import {addHours, formatDistanceToNow} from "date-fns";
+import {LawyerSideBarNavbarComponent} from "../lawyer-side-bar-navbar/lawyer-side-bar-navbar.component";
 
 @Component({
   selector: 'app-invoice',
@@ -32,7 +33,8 @@ import {addHours, formatDistanceToNow} from "date-fns";
     NgIf,
     SlicePipe,
     NgClass,
-    RouterLink
+    RouterLink,
+    LawyerSideBarNavbarComponent
   ],
   templateUrl: './invoice.component.html',
   styleUrl: './invoice.component.css',

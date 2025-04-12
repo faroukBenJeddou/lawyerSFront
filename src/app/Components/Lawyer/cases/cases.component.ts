@@ -25,25 +25,27 @@ import {Lawyer} from "../../../Models/Lawyer";
 import {Hearing} from "../../../Models/Hearing";
 import {CourtDecision} from "../../../Models/CourtDecison";
 import {CaseOutcome} from "../../../Models/CaseOutcome";
+import {LawyerSideBarNavbarComponent} from "../lawyer-side-bar-navbar/lawyer-side-bar-navbar.component";
 
 @Component({
   selector: 'app-cases',
   standalone: true,
-    imports: [
-        MatIcon,
-        NgForOf,
-        RouterLink,
-        ReactiveFormsModule,
-        NgClass,
-        NgStyle,
-        MatButton,
-        MatFormField,
-        MatSelect,
-        MatOption,
-        FormsModule,
-        DatePipe,
-        NgIf
-    ],
+  imports: [
+    MatIcon,
+    NgForOf,
+    RouterLink,
+    ReactiveFormsModule,
+    NgClass,
+    NgStyle,
+    MatButton,
+    MatFormField,
+    MatSelect,
+    MatOption,
+    FormsModule,
+    DatePipe,
+    NgIf,
+    LawyerSideBarNavbarComponent
+  ],
   templateUrl: './cases.component.html',
   styleUrl: './cases.component.css',
 

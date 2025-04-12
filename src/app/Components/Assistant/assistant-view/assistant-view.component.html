@@ -34,203 +34,7 @@
 </head>
 
 <body>
-<header class="navbar sticky-top flex-md-nowrap">
-  <div class="col-md-3 col-lg-3 me-0 px-3 fs-6">
-
-  </div>
-
-
-
-
-  <div class="navbar-nav me-lg-2">
-    <div class="nav-item text-nowrap d-flex align-items-center">
-      <div class="dropdown ps-3">
-        <a class="nav-link dropdown-toggle text-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="navbarLightDropdownMenuLink">
-          <i class="bi-bell fs-3"></i>
-          <span class="position-absolute start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                <span class="visually-hidden">New alerts</span>
-                            </span>
-        </a>
-
-        <ul class="dropdown-menu dropdown-menu-lg-end notifications-block-wrap bg-white shadow" aria-labelledby="navbarLightDropdownMenuLink">
-          <small>Notifications</small>
-
-          <!-- Display the most recent notification on top -->
-          <ng-container *ngFor="let notification of notifications">
-            <!-- Follow Request notifications -->
-            <li *ngIf="notification.title === 'Follow Request'" class="notifications-block border-bottom pb-2 mb-2">
-              <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);">
-                <div class="notifications-icon-wrap bg-warning">
-                  <i class="notifications-icon bi-person-plus"></i>
-                </div>
-                <div class="ms-2">
-                  <span class="fw-bold">{{ notification.title }}</span>
-                  <div class="text-muted">
-                    {{ notification.lawyer.firstName }} {{ notification.lawyer.familyName }}
-                    <br>
-                    {{ notification.start | date: 'fullDate' }} - {{ notification.start | date: 'shortTime' }}
-                  </div>
-
-                  <div *ngIf="notification.status === 'PENDING'" class="mt-2">
-                    <!-- Accept and Decline buttons -->
-                    <button (click)="acceptRequest(notification)" class="btn btn-success btn-sm">Accept</button>
-                  </div>
-
-                  <!-- Show Accepted status -->
-                  <div *ngIf="notification.status === 'ACCEPTED'" class="mt-2">
-                    <span class="text-success">Request Accepted</span>
-                  </div>
-
-                  <!-- Show Declined status -->
-                  <div *ngIf="notification.status === 'DECLINED'" class="mt-2">
-                    <span class="text-danger">Request Declined</span>
-                  </div>
-                </div>
-              </a>
-            </li>
-
-            <!-- Consultation notifications (only Accepted) -->
-<!--            <li *ngIf="notification.title === 'Consultation' && notification.status === 'ACCEPTED'" class="notifications-block border-bottom pb-2 mb-2">-->
-<!--              <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);">-->
-<!--                <div class="notifications-icon-wrap bg-success">-->
-<!--                  <i class="notifications-icon bi-calendar-check"></i>-->
-<!--                </div>-->
-<!--                <div class="ms-2">-->
-<!--                  <span class="fw-bold">{{ notification.title }}</span>-->
-<!--                  <div class="text-muted">-->
-<!--                    {{ notification.lawyer.firstName }} {{ notification.lawyer.familyName }}-->
-<!--                    <br>-->
-<!--                    {{ notification.start | date: 'fullDate' }} - {{ notification.start | date: 'shortTime' }}-->
-<!--                  </div>-->
-<!--                  <div class="mt-2">-->
-<!--                    <ng-container *ngIf="notification.status === 'ACCEPTED'">-->
-<!--                      <span class="text-success">Accepted</span>-->
-<!--                    </ng-container>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </a>-->
-<!--            </li>-->
-          </ng-container>
-
-
-
-
-
-
-        </ul>
-      </div>
-      <div class="dropdown px-3">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image img-fluid" alt=""style="width: 50px; height: 50px; border-radius: 25%; object-fit: cover;">
-        </a>
-        <ul class="dropdown-menu bg-white shadow">
-          <li>
-            <div class="dropdown-menu-profile-thumb d-flex">
-              <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="profile-image img-fluid me-3" alt="">
-
-              <div class="d-flex flex-column">
-                <small>{{ lawyer?.firstName }}</small>
-                <a href="#">{{lawyer?.email}}</a>
-              </div>
-            </div>
-          </li>
-
-          <li>
-            <a class="dropdown-item" [routerLink]="['/assistant', assistantId]">
-              <i class="bi-person me-2"></i>
-              Profile
-            </a>
-          </li>
-
-          <li>
-            <a class="dropdown-item" href="setting.html">
-              <i class="bi-gear me-2"></i>
-              Settings
-            </a>
-          </li>
-
-          <li>
-            <a class="dropdown-item" href="help-center.html">
-              <i class="bi-question-circle me-2"></i>
-              Help
-            </a>
-          </li>
-
-          <li class="border-top mt-3 pt-2 mx-4">
-<!--            <a class="dropdown-item ms-0 me-0" (click)="onLogout()">-->
-<!--              <i class="bi-box-arrow-left me-2"></i>-->
-<!--              Logout-->
-<!--            </a>-->
-          </li>
-
-        </ul>
-      </div>
-
-    </div>
-  </div>
-</header>
-<div class="sidebar px-4 py-4 py-md-5 me-0 d-md-block d-none" id="sidebar">
-  <div class="d-flex flex-column h-100">
-    <a class="mb-0 brand-icon">
-      <span class="logo-icon">
-        <img src="../../../../assets/lawyersoft-high-resolution-logo-transparent.png"
-             style="width: 200px; height:150px;" />
-      </span>
-    </a>
-
-    <ul class="menu-list flex-grow-1 mt-3">
-      <li>
-        <a class="m-link" [routerLink]="['/assistant', assistantId]" style="color:white;">
-          <mat-icon>home</mat-icon> <span>Dashboard</span>
-        </a>
-      </li>
-      <li>
-        <a class="m-link" [routerLink]="['/assistant', assistantId, 'clients']" style="color:white;">
-          <mat-icon>people</mat-icon> <span>Clients</span>
-        </a>
-      </li>
-      <li>
-        <a class="m-link" [routerLink]="['/assistant', assistantId, 'cases']" style="color:white;">
-          <mat-icon>gavel</mat-icon> <span>Cases</span>
-        </a>
-      </li>
-      <li>
-        <a class="m-link" [routerLink]="['/assistant', assistantId, 'consultations']" style="color:white;">
-          <mat-icon>event</mat-icon> <span>Consultations</span>
-        </a>
-
-      </li>
-      <li>
-        <a class="m-link" [routerLink]="['/assistant', assistantId, 'lawyer']" style="color:white;">
-          <mat-icon>group</mat-icon> <span>Lawyer</span>
-        </a>
-      </li>
-      <li>
-        <a class="m-link" [routerLink]="['/assistant', assistantId, 'invoice']" style="color:white;">
-          <mat-icon>description</mat-icon> <span>Invoice</span>
-        </a>
-      </li>
-    </ul>
-
-    <button class="btn btn-danger" (click)="onLogout()" style="background-color:#dc2f2f;color:white">
-      Logout <mat-icon>exit_to_app</mat-icon>
-    </button>
-  </div>
-</div>
-<button class="d-md-none"
-        style="position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1050;
-    color: white;
-    background-color: #2c3e50;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;"
-        (click)="toggleSidebar()"  >
-  ☰
-</button>
+<app-assistant-side-bar-navbar></app-assistant-side-bar-navbar>
 
 <div class="container-fluid px-3 px-md-5" style="background:#ececec">
   <div class="row">
@@ -238,7 +42,7 @@
       <div class="title-group mb-3">
         <h1 class="h2 mb-0 display-4"style="font-size: 50px;">Overview</h1>
 
-        <small class="text-muted">Hello {{ lawyer?.firstName }}, welcome back!</small>
+        <small class="text-muted">Hello {{ assistant?.firstName }}, welcome back!</small>
       </div>
 
       <div class="row my-4">
@@ -297,10 +101,10 @@
             <div *ngFor="let cas of cases" class="d-flex align-items-center border-bottom pb-3 mb-3">
               <div class="d-flex align-items-center">
                 <mat-icon class="exchange-image img-fluid fs-3" style="font-size: 30px; color: #3f51b5;">gavel</mat-icon>
-<!--                <div class="ms-2">-->
-<!--                  <p>{{ cas.caseType }}</p>-->
-<!--                  <h6>{{ cas.client?.firstName }} {{ cas.client?.familyName }}</h6>-->
-<!--                </div>-->
+                <div class="ms-2">
+                  <p>{{ cas.caseType }}</p>
+                  <h6>{{ cas.client?.firstName }} {{ cas.client?.familyName }}</h6>
+                </div>
               </div>
 
               <div class="ms-auto text-center">
@@ -361,21 +165,21 @@
             <div class="custom-block-profile-image-wrap mb-4">
               <img [src]="imageUrl || 'http://bootdey.com/img/Content/avatar/avatar1.png'" class="custom-block-profile-image img-fluid" alt="">
 
-              <a [routerLink]="['/edit/lawyer', lawyerId]" class="bi-pencil-square custom-block-edit-icon" style="color:white; background-color:#ff2100; border-radius:50%; "></a>
+              <a [routerLink]="['/edit/assistant', assistantId]" class="bi-pencil-square custom-block-edit-icon" style="color:white; background-color:#ff2100; border-radius:50%; "></a>
             </div>
 
 
             <p class="d-flex flex-wrap mb-2">
               <strong>Name:</strong>
 
-              <span>{{ lawyer?.firstName }} {{lawyer?.familyName}}</span>
+              <span>{{ assistant?.firstName }} {{assistant?.familyName}}</span>
             </p>
 
             <p class="d-flex flex-wrap mb-2">
               <strong>Email:</strong>
 
               <a href="#">
-                {{ lawyer?.email }}
+                {{ assistant?.email }}
               </a>
             </p>
 
@@ -383,7 +187,7 @@
               <strong>Phone:</strong>
 
               <a href="#">
-                {{ lawyer?.phoneNumber }}
+                {{ assistant?.phoneNumber }}
               </a>
             </p>
           </div>

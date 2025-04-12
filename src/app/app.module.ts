@@ -71,6 +71,16 @@ import {
   AssistantConsultationsComponent
 } from "./Components/Assistant/assistant-consultations/assistant-consultations.component";
 import {AssistantLawyerComponent} from "./Components/Assistant/assistant-lawyer/assistant-lawyer.component";
+import {
+    AssistantSideBarNavbarComponent
+} from "./Components/Assistant/assistant-side-bar-navbar/assistant-side-bar-navbar.component";
+import {
+    ClientSideBarNavbarComponent
+} from "./Components/Client/client-side-bar-navbar/client-side-bar-navbar.component";
+import {
+  LawyerSideBarNavbarComponent
+} from "./Components/Lawyer/lawyer-side-bar-navbar/lawyer-side-bar-navbar.component";
+import {BrowseLawyersComponent} from "./Components/Client/browse-lawyers/browse-lawyers.component";
 const appProviders = [
   provideRouter(routes),
   provideAnimationsAsync(),
@@ -125,7 +135,7 @@ const appProviders = [
         NgStyle,
         CommonModule,
         CalendarModule,
-      ChartModule,
+        ChartModule,
         FlatpickrModule,
         MatIcon,
         NgForOf,
@@ -211,6 +221,10 @@ const appProviders = [
         MatCardContent,
         MatCheckbox,
         NavBarComponent,
+        AssistantSideBarNavbarComponent,
+        ClientSideBarNavbarComponent,
+        LawyerSideBarNavbarComponent,
+        BrowseLawyersComponent,
     ],
     providers: appProviders,
     bootstrap: [AppComponent],

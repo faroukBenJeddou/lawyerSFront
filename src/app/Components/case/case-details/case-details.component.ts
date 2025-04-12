@@ -28,7 +28,8 @@ import {ConsultationService} from "../../../services/Consultation/consultation.s
 import {Lawyer} from "../../../Models/Lawyer";
 import {Client} from "../../../Models/Client";
 import { saveAs } from 'file-saver';
-import {CourtDecision} from "../../../Models/CourtDecison"; // Optional: if you want to use FileSaver.js for better compatibility with browsers
+import {CourtDecision} from "../../../Models/CourtDecison";
+import {LawyerSideBarNavbarComponent} from "../../Lawyer/lawyer-side-bar-navbar/lawyer-side-bar-navbar.component"; // Optional: if you want to use FileSaver.js for better compatibility with browsers
 
 @Component({
   selector: 'app-case-details',
@@ -45,7 +46,8 @@ import {CourtDecision} from "../../../Models/CourtDecison"; // Optional: if you 
     NgStyle,
     NgIf,
     DatePipe,
-    TitleCasePipe
+    TitleCasePipe,
+    LawyerSideBarNavbarComponent
   ],
   templateUrl: './case-details.component.html',
   styleUrl: './case-details.component.css'

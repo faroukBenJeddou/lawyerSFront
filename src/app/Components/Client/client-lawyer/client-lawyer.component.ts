@@ -3,7 +3,7 @@ import {AppModule} from "../../../app.module";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../../../services/auth.service";
 import {LawyerServiceService} from "../../../services/LawyerService/lawyer-service.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ConsultationService} from "../../../services/Consultation/consultation.service";
 import {ClientService} from "../../../services/ClientService/client.service";
 import {Consultation} from "../../../Models/Consultation";
@@ -70,7 +70,8 @@ export class ClientLawyerComponent implements OnInit {
     private requestService: RequestService,
     private consultationServ: ConsultationService,
     private caseServ:CaseService,
-    private hearingServ:HearingsService
+    private hearingServ:HearingsService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.userId = this.route.snapshot.paramMap.get('id') || '';
@@ -214,6 +215,7 @@ export class ClientLawyerComponent implements OnInit {
   hasRated(lawyerId: string): boolean {
     return this.clientRatings[lawyerId]?.[this.clientId] !== undefined;
   }
+
 
 
   getClient(clientId: string) {

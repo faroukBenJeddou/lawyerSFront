@@ -18,6 +18,7 @@ import {BehaviorSubject, debounceTime, Observable, of, Subject, switchMap, tap} 
 import Swal from "sweetalert2";
 import {ConsultationService} from "../../../services/Consultation/consultation.service";
 import {Hearing} from "../../../Models/Hearing";
+import {LawyerSideBarNavbarComponent} from "../lawyer-side-bar-navbar/lawyer-side-bar-navbar.component";
 
 @Component({
   selector: 'app-lawyer-clients',
@@ -31,7 +32,8 @@ import {Hearing} from "../../../Models/Hearing";
     NgClass,
     NgStyle,
     NgIf,
-    DatePipe
+    DatePipe,
+    LawyerSideBarNavbarComponent
   ],
   templateUrl: './lawyer-clients.component.html',
   styleUrls: [],

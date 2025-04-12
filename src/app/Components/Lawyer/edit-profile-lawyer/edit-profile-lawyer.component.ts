@@ -20,6 +20,7 @@ import { Location } from '@angular/common';
 import {Hearing} from "../../../Models/Hearing";
 import {HearingsService} from "../../../services/hearings/hearings.service";
 import {CaseType} from "../../../Models/CaseType";
+import {LawyerSideBarNavbarComponent} from "../lawyer-side-bar-navbar/lawyer-side-bar-navbar.component";
 
 @Component({
   selector: 'app-edit-profile-lawyer',
@@ -33,7 +34,8 @@ import {CaseType} from "../../../Models/CaseType";
     ReactiveFormsModule,
     RouterLink,
     NgClass,
-    SlicePipe
+    SlicePipe,
+    LawyerSideBarNavbarComponent
   ],
   templateUrl: './edit-profile-lawyer.component.html',
   styleUrls: [

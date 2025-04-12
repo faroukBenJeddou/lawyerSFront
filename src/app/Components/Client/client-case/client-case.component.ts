@@ -12,6 +12,7 @@ import {ClientService} from "../../../services/ClientService/client.service";
 import {MatIcon} from "@angular/material/icon";
 import {DatePipe, NgClass, NgForOf, NgIf, NgStyle} from "@angular/common";
 import {Lawyer} from "../../../Models/Lawyer";
+import {ClientSideBarNavbarComponent} from "../client-side-bar-navbar/client-side-bar-navbar.component";
 
 @Component({
   selector: 'app-client-case',
@@ -25,7 +26,8 @@ import {Lawyer} from "../../../Models/Lawyer";
     NgClass,
     NgStyle,
     NgIf,
-    DatePipe
+    DatePipe,
+    ClientSideBarNavbarComponent
   ],
   templateUrl: './client-case.component.html',
   styleUrl: './client-case.component.css'

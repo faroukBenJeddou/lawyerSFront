@@ -33,6 +33,10 @@ import {
   AssistantConsultationsComponent
 } from "./Components/Assistant/assistant-consultations/assistant-consultations.component";
 import {AssistantLawyerComponent} from "./Components/Assistant/assistant-lawyer/assistant-lawyer.component";
+import {
+  AssistantEditProfileComponent
+} from "./Components/Assistant/assistant-edit-profile/assistant-edit-profile.component";
+import {BrowseLawyersComponent} from "./Components/Client/browse-lawyers/browse-lawyers.component";
 
 export const routes: Routes = [
   {path:'login', component: LoginComponent},
@@ -41,6 +45,7 @@ export const routes: Routes = [
   { path: 'assistant/:id', component: AssistantViewComponent, canActivate: [authGuard], data: { role: 'Assistant' } },
   {path:'lawyer/:id',component:LawyerViewComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
   {path:'edit/lawyer/:id',component:EditProfileLawyerComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
+  {path:'edit/assistant/:id',component:AssistantEditProfileComponent,canActivate: [authGuard], data: { expectedRole: 'Assistant' }},
   {path:'client/edit/:id',component:EditClientProfileComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
   {path:'lawyer/:id/calendar',component:CalendarComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
   {path:'lawyer/:id/clients',component:LawyerClientsComponent,canActivate: [authGuard],   data: { expectedRole: ['Lawyer', 'Assistant'] }},
@@ -53,6 +58,7 @@ export const routes: Routes = [
   {path:'assistant/:id/cases/:caseId',component:AssistantCaseDetailsComponent,canActivate: [authGuard], data: { expectedRole: 'Assistant' }},
   {path:'lawyer/:id/assistant',component:AssistantComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
   {path:'assistant/:id/lawyer',component:AssistantLawyerComponent,canActivate: [authGuard], data: { expectedRole: 'Lawyer' }},
+  {path:'client/:id/browse',component:BrowseLawyersComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
 
   {path:'client/:id/case',component:ClientCaseComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},
   {path:'client/:id/consultations',component:ClientConsultationComponent,canActivate: [authGuard], data: { expectedRole: 'Client' }},

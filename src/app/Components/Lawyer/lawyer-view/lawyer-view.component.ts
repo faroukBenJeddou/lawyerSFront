@@ -177,7 +177,6 @@ export class LawyerViewComponent implements OnInit{
               this.getClosestConsultation();
               console.log('Calling reminderHearing');
               this.reminderHearing();
-              this.loadNotifications(this.lawyerId);
 
             } else {
               this.errorMessage = 'Lawyer ID is missing!';
@@ -241,41 +240,6 @@ export class LawyerViewComponent implements OnInit{
     this.authService.logout();
   }
 
-  loadNotifications(lawyerId: string): void {
-    this.requestService.getNotifications(lawyerId).subscribe(
-      (response: Requests[]) => {
-        console.log('Notifications received:', response);
-        this.notifications = response;
-
-        // Sort by timestamp or start date (newest first)
-        this.notifications.sort((a, b) => {
-          const dateA = new Date(a.timestamp || a.start).getTime();
-          const dateB = new Date(b.timestamp || b.start).getTime();
-          return dateB - dateA; // newest first
-        });
-
-        // Optionally, you can still apply a filter for special case handling (like 'Consultation')
-        this.notifications.sort((a, b) => {
-          if (a.title === 'Consultation' && b.title !== 'Consultation') return -1;
-          if (b.title === 'Consultation' && a.title !== 'Consultation') return 1;
-          return 0;
-        });
-
-        this.hasNewNotifications = this.notifications.length > 0;
-
-        // Set the reminder notification (the first notification)
-        this.reminder = [this.notifications[0]];
-
-        // Set the displayed notifications (only the first 3)
-        this.displayedNotifications = this.notifications.slice(1, 4);
-      },
-      (error) => {
-        console.error('Error fetching notifications', error);
-        this.notifications = [];
-        this.hasNewNotifications = false;
-      }
-    );
-  }
 
 // Load more notifications when the button is clicked
   loadMoreNotifications(): void {

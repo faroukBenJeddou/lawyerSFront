@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
-import {catchError, Observable, throwError} from "rxjs";
+import {catchError, Observable, tap, throwError} from "rxjs";
 import {Lawyer} from "../../Models/Lawyer";
 import {Client} from "../../Models/Client";
 import {AuthService} from "../auth.service";
@@ -142,6 +142,33 @@ export class ClientService {
 
     // Sending POST request to affect client to lawyer
     return this.http.post<any>(`${this.baseUrl}/affect-to-lawyer/${lawyerId}/${clientId}`, {}, { headers });
+  }
+  sendFollowRequest(clientId: string, email: string): Observable<string> {
+    const token = this.authService.getToken();  // Get the token
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<string>(`${this.baseUrl}/sendFollowRequest?clientId=${clientId}&email=${email}`, {}, { headers, responseType: 'text' as 'json' })
+      .pipe(
+        tap((response) => {
+          console.log('Response:', response);  // Log the successful response
+        }),
+        catchError((error) => {
+          console.error('Error sending follow request:', error);
+
+          let errorMessage = 'An unexpected error occurred.';
+
+          if (error.status === 409) {
+            errorMessage = 'You are already following this lawyer.';
+          } else if (error.status === 404) {
+            errorMessage = 'Lawyer not found.';
+          }
+
+          return throwError(errorMessage); // Return the error message
+        })
+      );
   }
 
 }

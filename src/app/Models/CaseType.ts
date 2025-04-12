@@ -1,6 +1,6 @@
 export enum CaseType{
-  Penal,
-  Civil,
-  Administratif,
-  social
+  Penal='Penal',
+  Civil='Civil',
+  Administratif='Administratif',
+  social='Social',
 }

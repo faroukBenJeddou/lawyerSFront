@@ -23,6 +23,7 @@ import {MatIcon} from "@angular/material/icon";
 import jwtDecode from "jwt-decode";
 import {AssistantService} from "../../../services/Assistant/assistant.service";
 import {Assistant} from "../../../Models/Assistant";
+import {AssistantSideBarNavbarComponent} from "../assistant-side-bar-navbar/assistant-side-bar-navbar.component";
 
 @Component({
   selector: 'app-assistant-cases',
@@ -36,7 +37,8 @@ import {Assistant} from "../../../Models/Assistant";
     ReactiveFormsModule,
     NgClass,
     NgStyle,
-    RouterLink
+    RouterLink,
+    AssistantSideBarNavbarComponent
   ],
   templateUrl: './assistant-cases.component.html',
   styleUrl: './assistant-cases.component.css'

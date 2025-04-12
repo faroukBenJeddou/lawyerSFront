@@ -20,6 +20,7 @@ import {Lawyer} from "../../../Models/Lawyer";
 import {Client} from "../../../Models/Client";
 import {Consultation} from "../../../Models/Consultation";
 import {Hearing} from "../../../Models/Hearing";
+import {LawyerSideBarNavbarComponent} from "../lawyer-side-bar-navbar/lawyer-side-bar-navbar.component";
 
 @Component({
   selector: 'app-assistant',
@@ -32,7 +33,8 @@ import {Hearing} from "../../../Models/Hearing";
     DatePipe,
     NgIf,
     NgClass,
-    FormsModule
+    FormsModule,
+    LawyerSideBarNavbarComponent
   ],
   templateUrl: './assistant.component.html',
   styleUrl: './assistant.component.css',
@@ -52,6 +54,7 @@ export class AssistantComponent implements OnInit{
   showSuccessMessage: boolean = false;
   showErrorMessage: boolean = false;
   imageUrl: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
+  imageUrll: string = 'http://bootdey.com/img/Content/avatar/avatar1.png'; // Default image
   currentUser!: User;
   assistantForm!: FormGroup;
   assistantId!: string;
@@ -72,13 +75,13 @@ export class AssistantComponent implements OnInit{
   clients: Client[] = []; // Array to hold clients
   notificationCount: number = 0; // Define the notificationCount property
    isAssistantLinked: boolean= false;
+  linkedAssistant!: Assistant;
 
   constructor(private http:HttpClient,private authService:AuthService,private lawyerServ:LawyerServiceService,private route:ActivatedRoute,private fb: FormBuilder,
               private assistantServ:AssistantService,private requestService:RequestService,private consultationServ:ConsultationService,private clientServ:ClientService, private cdr: ChangeDetectorRef,) {
 
 
     this.currentUser = this.authService.getCurrentUser()!;
-    this.assistantId = this.currentUser ? this.currentUser.id : ''; // Initialize to an empty string if null
 
   }
 
@@ -86,8 +89,55 @@ export class AssistantComponent implements OnInit{
 
 
 
+  initializeData(lawyerId: string): void {
+    this.loadNotifications(lawyerId);
+
+    this.lawyerServ.getAssistant(lawyerId).subscribe({
+      next: (data: Assistant) => {
+        this.assistant = data;
+        this.assistantId = this.assistant.id;
+        this.initializeForm();
+      },
+      error: (error) => console.error('Error fetching assistant:', error)
+    });
+
+    this.lawyerServ.getLawyerById(lawyerId).subscribe({
+      next: (data: Lawyer) => {
+        this.lawyer = data;
+        this.loadProfileImageAss(this.lawyer.assistantJ.id);
+        this.loadProfileImageLawyer(this.lawyer);
+        this.consultationServ.getConsultationsForLawyer(lawyerId).subscribe((data: Consultation[]) => {
+          this.consultations = data;
+        });
+      },
+      error: (error) => console.error('Error fetching lawyer details:', error)
+    });
+
+    this.lawyerServ.getClients(lawyerId).subscribe({
+      next: (data: Client[]) => {
+        this.clients = data;
+      },
+      error: (error) => console.error('Error fetching clients:', error)
+    });
+
+    this.notifications$.subscribe(notifications => {
+      this.notificationCount = notifications.length;
+    });
+
+    this.cdr.detectChanges();
+  }
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      this.lawyerId = params.get('id') || '';
+
+      if (this.lawyerId) {
+        this.initializeData(this.lawyerId);
+      } else {
+        console.warn('No lawyerId found in route params.');
+      }
+    });
+
     this.assistantForm = this.fb.group({
       firstName: [''],
       familyName: [''],
@@ -96,61 +146,8 @@ export class AssistantComponent implements OnInit{
       office_address: [''],
       password: [''],
       email: [''],
-      photo: [null], // Form control for profile picture
+      photo: [null],
     });
-
-    // Get the lawyer ID from the route parameters
-    this.lawyerId = this.route.snapshot.paramMap.get('id') || '';
-    this.loadNotifications(this.lawyerId);
-    // Check if a lawyer ID is present
-    if (this.lawyerId) {
-      // Fetch the assistant associated with the lawyer
-      this.lawyerServ.getAssistant(this.lawyerId).subscribe({
-        next: (data: Assistant) => {
-          this.assistant = data;
-          this.assistantId = this.assistant.id; // Ensure this is set
-          this.initializeForm();
-        },
-        error: (error) => {
-          console.error('Error fetching assistant:', error);
-        }
-      });
-
-      // Fetch lawyer details
-      this.lawyerServ.getLawyerById(this.lawyerId).subscribe(
-        (data: Lawyer) => {
-          this.lawyer = data;
-          this.loadProfileImageLawyer(this.lawyer);
-
-          // Fetch consultations for the lawyer
-          this.consultationServ.getConsultationsForLawyer(this.lawyerId).subscribe((data: Consultation[]) => {
-            this.consultations = data;
-          });
-        },
-        (error) => {
-          console.error('Error fetching lawyer details:', error);
-        }
-      );
-
-      // Fetch clients for the dropdown
-      this.lawyerServ.getClients(this.lawyerId).subscribe({
-        next: (data: Client[]) => {
-          console.log('Fetched clients for dropdown:', data); // Log clients for dropdown
-          this.clients = data;
-        },
-        error: (error) => {
-          console.error('Error fetching clients:', error);
-        }
-      });
-
-      // Subscribe to notifications
-      this.notifications$.subscribe(notifications => {
-        this.notificationCount = notifications.length;
-      });
-    }
-
-    // Trigger change detection if necessary
-    this.cdr.detectChanges(); // Force change detection
   }
 
 
@@ -190,7 +187,17 @@ export class AssistantComponent implements OnInit{
   onLogout(): void {
     this.authService.logout();
   }
-
+  loadProfileImageAss(assistantId: string): void {
+    this.assistantServ.getImageById(assistantId).subscribe(blob => {
+      if (blob) {
+        this.imageUrll = URL.createObjectURL(blob);
+      } else {
+        console.error('No image data received');
+      }
+    }, error => {
+      console.error('Error fetching image', error);
+    });
+  }
   showAlert(message: string, type: 'success' | 'error'): void {
     this.alertMessage = message; // Set the alert message
     this.alertVisible = true; // Show the alert
@@ -405,7 +412,7 @@ export class AssistantComponent implements OnInit{
   getAssistantByEmail(email: string): void {
     this.assistantServ.getAssistantByEmail(email).subscribe(
       (assistant: Assistant) => {
-        this.assistant = assistant;  // Store the client data
+        this.linkedAssistant = assistant;  // Store the client data
         // Now check if the client is assigned to the lawyer by calling the backend API
         this.checkAssistantLink(assistant.email);  // Check if the client is linked
         this.openModal();  // Open the modal once the client is found

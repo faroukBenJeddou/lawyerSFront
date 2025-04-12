@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lawyer Profile</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
+  <!-- CSS FILES -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <link href="../../Lawyer/lawyer-view/css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="../../Lawyer/lawyer-view/css/bootstrap-icons.css" rel="stylesheet">
+
+  <link href="../../Lawyer/lawyer-view/css/tooplate-mini-finance.css" rel="stylesheet">
+  <!--
+
+  Tooplate 2135 Mini Finance
+
+  https://www.tooplate.com/view/2135-mini-finance
+
+  Bootstrap 5 Dashboard Admin Template
+
+  -->
+  <!-- Google tag (gtag.js) -->
+  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-52YZ3XGZJ6">
+
+  </script>
+  <script>
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+      const dropdown = this.nextElementSibling;
+      dropdown.classList.toggle('hidden');
+    });
+
+  </script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-52YZ3XGZJ6');
+  </script>
+</head>
+<body >
+
+
+
+
+<app-assistant-side-bar-navbar></app-assistant-side-bar-navbar>
+
+
+<main class="main-wrapper col-md-9  py-4 col-lg-9 px-md-4 border-start" style="margin-left: 500px">
+  <div class="title-group mb-3">
+    <h1 class="h2 mb-0" style="font-size: 50px">Settings</h1>
+  </div>
+
+  <div class="row my-4" >
+    <div class="col-lg-7 col-12">
+      <div class="custom-block bg-white">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="true">Profile</button>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-tab-pane" type="button" role="tab" aria-controls="password-tab-pane" aria-selected="false">Password</button>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification-tab-pane" type="button" role="tab" aria-controls="notification-tab-pane" aria-selected="false">Notification</button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <h6 class="mb-4" style="font-size:30px;">User Profile</h6>
+
+            <form class="custom-form profile-form"  [formGroup]="assistantForm" (ngSubmit)="updateProfile()" role="form">
+              <input class="form-control" type="text" id="inputFirstName" formControlName="firstName" placeholder="{{assistant?.firstName}}">
+              <input class="form-control" type="text" id="inputLastName" formControlName="familyName" placeholder="{{assistant?.familyName}}">
+              <input class="form-control" formControlName="email" type="email" name="profile-email" id="inputEmailAddress" placeholder="{{assistant?.email}}">
+              <input class="form-control"  type="email" id="inputBirthday" formControlName="birthdate" placeholder="{{assistant?.birthdate}}">
+              <input class="form-control"  type="tel" id="inputPhone" formControlName="phoneNumber" placeholder="{{assistant?.phoneNumber}}">
+              <input class="form-control"  type="text" id="inputOrgName" formControlName="office_address" placeholder="{{assistant?.office_address}}">
+              <input class="form-control"  type="text" id="info" formControlName="info" placeholder="{{assistant?.info}}">
+
+
+              <div class="input-group mb-1">
+                <img *ngIf="imageUrl" [src]="imageUrl" class="profile-image img-fluid" >
+
+                <input type="file" class="form-control" id="inputGroupFile02" (change)="onFileChange($event)" formControlName="image">
+              </div>
+
+              <div class="d-flex">
+                <button type="button" class="form-control me-3" >
+                  Reset
+                </button>
+
+                <button type="submit" class="form-control ms-2">
+                  Update
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane fade" id="password-tab-pane" role="tabpanel" aria-labelledby="password-tab" tabindex="0">
+            <h6 class="mb-4" style="font-size:30px;">Password</h6>
+
+            <form class="custom-form password-form" action="#" method="post" role="form">
+              <input type="password" name="password" [(ngModel)]="currentPassword" id="password" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="Current Password" required="">
+
+              <input type="password" name="confirm_password" [(ngModel)]="newPassword" id="confirm_passworda" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="New Password" required="" (input)="checkPasswordMatch()">
+
+              <input type="password" name="confirm_password" [(ngModel)]="confirmationPassword" id="confirm_password" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="Confirm Password" required="" (input)="checkPasswordMatch()">
+
+              <div class="d-flex">
+                <p *ngIf="passwordMismatch" class="text-danger">Passwords do not match!</p>
+                <button type="button" class="form-control me-3">
+                  Reset
+                </button>
+
+                <button type="submit" class="form-control ms-2" (click)="changePassword()">
+                  Update Password
+
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="tab-pane fade" id="notification-tab-pane" role="tabpanel" aria-labelledby="notification-tab" tabindex="0">
+            <h6 class="mb-4" style="font-size: 20px;">Notification</h6>
+
+            <form class="custom-form notification-form" action="#" method="post" role="form">
+
+              <div class="form-check form-switch d-flex mb-3 ps-0">
+                <label class="form-check-label" for="flexSwitchCheckCheckedOne">Account activity</label>
+
+                <input class="form-check-input ms-auto" type="checkbox" name="form-check-input" role="switch" id="flexSwitchCheckCheckedOne" checked>
+              </div>
+
+              <div class="form-check form-switch d-flex mb-3 ps-0">
+                <label class="form-check-label" for="flexSwitchCheckCheckedTwo">Payment updated</label>
+
+                <input class="form-check-input ms-auto" type="checkbox" name="form-check-input" role="switch" id="flexSwitchCheckCheckedTwo" checked>
+              </div>
+
+              <div class="d-flex mt-4">
+                <button type="button" class="form-control me-3" >
+                  Reset
+                </button>
+
+                <button type="submit" class="form-control ms-2">
+                  Update Password
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+<!-- JAVASCRIPT FILES -->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/custom.js"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

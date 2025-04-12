@@ -6,12 +6,188 @@ https://www.tooplate.com/view/2134-gotto-job
 
 
 */
+/* Main Container */
+.custom-text-block {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Section Title */
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Info List */
+.lawyer-info-list {
+  list-style: none;
+  padding: 0;
+}
+
+.lawyer-info-list li {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.lawyer-info-list i {
+  font-size: 18px;
+  color: #007bff;
+  margin-right: 10px;
+}
+
+/* Buttons */
+.custom-border-btn-wrap {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.custom-border-btn {
+  padding: 10px 20px;
+  border: 2px solid #007bff;
+  color: #007bff;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+.custom-border-btn:hover {
+  background: #007bff;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .custom-text-block {
+    text-align: center;
+  }
+
+  .lawyer-info-list li {
+    justify-content: center;
+  }
+
+  .custom-border-btn-wrap {
+    flex-direction: column;
+  }
+}
+
+.about-section {
+  background-color: #f8f9fa; /* Light background for a professional look */
+  padding: 50px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.about-image-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-image {
+  width: 100%;
+  max-width: 250px; /* Keeps image size reasonable */
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.about-info {
+  position: absolute;
+  bottom: -20px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  width: 90%;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.about-info h4 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.about-info p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.custom-text-block {
+  padding: 20px;
+}
+
+.custom-text-block h2 {
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.custom-text-block p {
+  color: #555;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.custom-border-btn-wrap {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Buttons */
+.custom-border-btn {
+  padding: 10px 20px;
+  border: 2px solid #007bff;
+  color: #007bff;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.custom-border-btn:hover {
+  background: #007bff;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .row {
+    text-align: center;
+  }
+
+  .about-image-wrap {
+    margin-bottom: 20px;
+  }
+
+  .custom-border-btn-wrap {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 .navbar {
   background: #f5f7fa;
   border-bottom: 1px solid var(--border-color);
   padding-top: 8px;
   padding-bottom: 8px;
-  z-index: 10; /* Lower than the sidebar */
+  z-index: 100000; /* Lower than the sidebar */
   margin-top:-25px;
 }
 @media (max-width: 768px) {
@@ -291,7 +467,7 @@ https://www.tooplate.com/view/2134-gotto-job
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 100;
+  z-index: 100000;
   padding: 58px 0 0;
   color: white;
 }

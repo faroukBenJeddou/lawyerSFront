@@ -20,6 +20,7 @@ import {addHours} from "date-fns";
 import {DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
 import {MatIcon} from "@angular/material/icon";
 import jwtDecode from "jwt-decode";
+import {RatingService} from "../../../services/Rating/rating.service";
 
 @Component({
   selector: 'app-assistant-lawyer',
@@ -56,8 +57,7 @@ export class AssistantLawyerComponent implements OnInit {
   notifications: any[] = []; // Adjust type based on your Request model
   hasNewNotifications: boolean = false;
   notifications$: Observable<Requests[]> = new BehaviorSubject([]);
-  filteredClients: any[] = []; // Filtered list of clients
-  searchValue: string = ''; // Store the search value
+  averageRatings: { [key: string]: number } = {}; // Store lawyer ratings
   lawyer!:Lawyer;
   clients: Client[] = []; // Array to hold clients
   notificationCount: number = 0; // Define the notificationCount property
@@ -66,7 +66,7 @@ export class AssistantLawyerComponent implements OnInit {
   linkedLawyer!: Lawyer;
   constructor(private http:HttpClient,private authService:AuthService,private lawyerServ:LawyerServiceService,private route:ActivatedRoute,private fb: FormBuilder,
               private assistantServ:AssistantService,private requestService:RequestService,private consultationServ:ConsultationService,private clientServ:ClientService, private cdr: ChangeDetectorRef,
-              private assistantService:AssistantService,) {
+              private assistantService:AssistantService,private  ratingService:RatingService,) {
 
 
     this.currentUser = this.authService.getCurrentUser()!;
@@ -117,7 +117,7 @@ export class AssistantLawyerComponent implements OnInit {
                   (data: Lawyer) => {
                     this.lawyer = data;
                     this.loadProfileImageLawyer(this.lawyer);
-
+                    this.getAverageRating(this.lawyerId);
                     // Fetch consultations for the lawyer
                     this.consultationServ.getConsultationsForLawyer(this.lawyerId).subscribe((data: Consultation[]) => {
                       this.consultations = data;
@@ -465,9 +465,19 @@ export class AssistantLawyerComponent implements OnInit {
     this.isModalOpen = true;
 
   }
+  getAverageRating(lawyerId: string): void {
+    this.ratingService.getAverageRating(lawyerId).subscribe({
+      next: (average) => {
+        this.averageRatings[lawyerId] = average;
+      },
+      error: (error) => {
+        console.error("Error fetching average rating:", error);
+      }
+    });
+  }
 
   sendFollowRequest(): void {
-    this.lawyerServ.sendFollowRequestAssistant(this.lawyerId, this.lawyerForm.value.email).subscribe(
+    this.assistantService.sendFollowRequestToLawyer(this.assistantId, this.lawyerForm.value.email).subscribe(
       (response) => {
         // Success response: show success message
         console.log('Follow request sent:', response);

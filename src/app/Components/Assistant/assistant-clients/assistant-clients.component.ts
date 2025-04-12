@@ -18,21 +18,23 @@ import {AssistantService} from "../../../services/Assistant/assistant.service";
 import {Assistant} from "../../../Models/Assistant";
 import {DatePipe, NgClass, NgForOf, NgIf, NgStyle} from "@angular/common";
 import {MatIcon} from "@angular/material/icon";
+import {AssistantSideBarNavbarComponent} from "../assistant-side-bar-navbar/assistant-side-bar-navbar.component";
 
 @Component({
   selector: 'app-assistant-clients',
   standalone: true,
-  imports: [
-    DatePipe,
-    FormsModule,
-    MatIcon,
-    NgForOf,
-    NgIf,
-    ReactiveFormsModule,
-    RouterLink,
-    NgClass,
-    NgStyle
-  ],
+    imports: [
+        DatePipe,
+        FormsModule,
+        MatIcon,
+        NgForOf,
+        NgIf,
+        ReactiveFormsModule,
+        RouterLink,
+        NgClass,
+        NgStyle,
+        AssistantSideBarNavbarComponent
+    ],
   templateUrl: './assistant-clients.component.html',
   styleUrl: './assistant-clients.component.css'
 })

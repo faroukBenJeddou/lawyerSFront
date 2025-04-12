@@ -1,0 +1,148 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100;300;400;600;700&display=swap" rel="stylesheet">
+
+<link href="../../Lawyer/lawyer-clients/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="../../Lawyer/lawyer-clients/css/bootstrap-icons.css" rel="stylesheet">
+
+<link href="../../Lawyer/lawyer-clients/css/owl.carousel.min.css" rel="stylesheet">
+
+<link href="../../Lawyer/lawyer-clients/css/owl.theme.default.min.css" rel="stylesheet">
+
+<link href="../../Lawyer/lawyer-clients/css/tooplate-gotto-job.css" rel="stylesheet">
+<!-- In index.html, inside <head> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<app-client-side-bar-navbar></app-client-side-bar-navbar>
+<section class="job-section section-padding">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 col-12 mb-lg-4">
+        <h3>Lawyers list</h3>
+        <p><strong>Over 100 Lawyers</strong> Check and contact the best Lawyer for your case</p>
+      </div>
+
+      <div class="col-lg-4 col-12 d-flex ms-auto mb-5 mb-lg-4">
+        <div class="dropdown ms-lg-auto">
+          <button class="custom-btn custom-border-btn btn " type="button" id="specialityDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            Browse by Speciality
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="specialityDropdown">
+            <li *ngFor="let speciality of caseTypes">
+              <a class="dropdown-item" (click)="filterBySpeciality(speciality)">
+                {{ speciality }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Display message if no lawyers found -->
+      <div *ngIf="noLawyersMessage" class="alert alert-warning">
+        {{ noLawyersMessage }}
+      </div>
+
+      <!-- Display filtered lawyers -->
+      <div *ngIf="filteredLawyers.length > 0"  class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        <div *ngFor="let lawyer of filteredLawyers" class="lawyer-card">
+          <div class="job-thumb job-thumb-box">
+            <div class="job-image-box-wrap">
+              <a href="job-details.html">
+                <img [src]="imageUrl" class="job-image img-fluid" alt="Profile Image">
+              </a>
+
+              <div class="job-image-box-wrap-info d-flex align-items-center">
+                <p class="mb-0">
+                  <a href="job-listings.html" class="badge badge-level">{{ lawyer.speciality }}</a>
+                </p>
+              </div>
+            </div>
+
+            <div class="job-body">
+              <h4 class="job-title">
+                <a href="job-details.html" class="job-title-link">{{ lawyer.firstName }} {{ lawyer.familyName }}</a>
+              </h4>
+
+              <div class="d-flex align-items-center">
+                <i class="fas fa-star" style="color: gold; font-size: 24px;"></i>
+                <span class="ms-2">({{ averageRatings[lawyer.id] || 'No Ratings' }})</span>
+              </div>
+
+              <div class="d-flex align-items-center">
+                <p class="job-location">
+                  <i class="custom-icon bi-geo-alt me-1"></i>
+                  {{ lawyer.office_adress }}
+                </p>
+              </div>
+
+              <div class="d-flex align-items-center border-top pt-3">
+                <p class="job-price mb-0">
+                  <i class="custom-icon bi-cash me-1"></i>
+                  Consultation price: $50k
+                </p>
+
+                <a href="job-details.html" class="custom-btn btn ms-auto">Hire</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div *ngIf="showSuccessMessage" class="alert alert-success mt-2" role="alert">
+        Follow request sent successfully!
+      </div>
+      <div *ngIf="showErrorMessage" class="alert alert-danger mt-2" role="alert">
+        Failed to send follow request. Please try again.
+      </div>
+      <!-- Display all lawyers if no speciality is selected -->
+      <div *ngIf="filteredLawyers.length === 0 && !noLawyersMessage"  class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        <div *ngFor="let lawyer of lawyers" class="col">
+          <div class="job-thumb job-thumb-box">
+            <div class="job-image-box-wrap">
+              <a href="job-details.html">
+                <img [src]="imageUrl" class="job-image img-fluid" alt="Profile Image">
+              </a>
+
+              <div class="job-image-box-wrap-info d-flex align-items-center">
+                <p class="mb-0">
+                  <a href="job-listings.html" class="badge badge-level">{{ lawyer.speciality }}</a>
+                </p>
+              </div>
+            </div>
+
+            <div class="job-body">
+              <h4 class="job-title">
+                <a href="job-details.html" class="job-title-link">{{ lawyer.firstName }} {{ lawyer.familyName }}</a>
+              </h4>
+
+              <div class="d-flex align-items-center">
+                <i class="fas fa-star" style="color: gold; font-size: 24px;"></i>
+                <span class="ms-2">({{ averageRatings[lawyer.id] || 'No Ratings' }})</span>
+              </div>
+
+              <div class="d-flex align-items-center">
+                <p class="job-location">
+                  <i class="custom-icon bi-geo-alt me-1"></i>
+                  {{ lawyer.office_adress }}
+                </p>
+              </div>
+
+
+              <div class="d-flex align-items-center border-top pt-3">
+                <p class="job-price mb-0">
+                  <i class="custom-icon bi-cash me-1"></i>
+                  Consultation price: $50k
+                </p>
+
+                <a href="javascript:void(0)" class="custom-btn btn ms-auto" (click)="sendFollowRequest(clientId,lawyer.email)">Hire</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

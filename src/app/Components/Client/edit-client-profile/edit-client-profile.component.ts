@@ -16,6 +16,7 @@ import {addHours, formatDistanceToNow} from "date-fns";
 import {DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
 import {MatIcon} from "@angular/material/icon";
 import {LawyerServiceService} from "../../../services/LawyerService/lawyer-service.service";
+import {ClientSideBarNavbarComponent} from "../client-side-bar-navbar/client-side-bar-navbar.component";
 
 @Component({
   selector: 'app-edit-client-profile',
@@ -28,7 +29,8 @@ import {LawyerServiceService} from "../../../services/LawyerService/lawyer-servi
     NgIf,
     ReactiveFormsModule,
     NgClass,
-    RouterLink
+    RouterLink,
+    ClientSideBarNavbarComponent
   ],
   templateUrl: './edit-client-profile.component.html',
   encapsulation: ViewEncapsulation.None

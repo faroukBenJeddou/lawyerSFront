@@ -21,22 +21,24 @@ import {Client} from "../../../Models/Client";
 import {Lawyer} from "../../../Models/Lawyer";
 import {saveAs} from "file-saver";
 import {LawyerServiceService} from "../../../services/LawyerService/lawyer-service.service";
+import {ClientSideBarNavbarComponent} from "../client-side-bar-navbar/client-side-bar-navbar.component";
 
 @Component({
   selector: 'app-case-details-client',
   standalone: true,
-    imports: [
-        DatePipe,
-        FormsModule,
-        MatProgressBar,
-        NgForOf,
-        NgIf,
-        PaginatorModule,
-        NgClass,
-        RouterLink,
-        NgStyle,
-        MatIcon
-    ],
+  imports: [
+    DatePipe,
+    FormsModule,
+    MatProgressBar,
+    NgForOf,
+    NgIf,
+    PaginatorModule,
+    NgClass,
+    RouterLink,
+    NgStyle,
+    MatIcon,
+    ClientSideBarNavbarComponent
+  ],
   templateUrl: './case-details-client.component.html',
   styleUrl: './case-details-client.component.css'
 })
